@@ -4,6 +4,18 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
+    image_url TEXT
+);
+
+CREATE TABLE user_experience (
+    user_id INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL,
+    experience_id INTEGER NOT NULL
+);
+
+CREATE TABLE messages (
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    message TEXT NOT NULL
 );
 
 CREATE TABLE companies (
@@ -16,17 +28,21 @@ CREATE TABLE companies (
 
 CREATE TABLE users_from_company (
     user_id INTEGER NOT NULL,
-    company_id INTEGER PRIMARY KEY NOT NULL
+    company_id INTEGER PRIMARY KEY NOT NULL,
+    no_longer BOOLEAN NOT NULL
 );
 
 CREATE TABLE jobs (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    company_id INTEGER NOT NULL,
+    poster_id INTEGER NOT NULL,
     title TEXT NOT NULL,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    is_closed BOOLEAN NOT NULL
 );
 
 CREATE TABLE possible_job_benefits (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL,
     benefit TEXT NOT NULL
 );
 
@@ -36,25 +52,35 @@ CREATE TABLE job_benefits (
 );
 
 CREATE TABLE job_experience (
-
+    job_id INTEGER PRIMARY KEY NOT NULL,
+    experience_id INTEGER NOT NULL
 );
 
 CREATE TABLE job_applications (
-
+    job_id INTEGER NOT NULL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    message TEXT,
 );
 
 CREATE TABLE job_comments (
+    job_id INTEGER PRIMARY KEY NOT NULL,
+    user_id INTEGER NOT NULL,
+    comment TEXT NOT NULL
+);
 
+CREATE TABLE job_experience (
+    job_id INTEGER PRIMARY KEY NOT NULL,
+    experience_id INTEGER NOT NULL
 );
 
 CREATE TABLE experience (
-    user_id ,
-    role_id
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    role_id INTEGER NOT NULL,
     start_year INTEGER NOT NULL,
-    start_month INTEGER NOT NULL,
+    start_month INTEGER NOT NULL
 );
 
 CREATE TABLE roles (
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    role TEXT UNIQUE NOT NULL
 );
-
