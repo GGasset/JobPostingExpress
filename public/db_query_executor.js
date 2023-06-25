@@ -27,7 +27,7 @@ let query_queue = [];
 
 module.exports = query_queue;
 
-new  Promise(async (resolve, reject) => {
+new Promise(async (resolve, reject) => {
     const db = new sqlite.Database('../models/db.db');
     while (true) {
         if (query_queue.length === 0)
@@ -37,7 +37,7 @@ new  Promise(async (resolve, reject) => {
         query_queue[0]['output'] = new Promise((resolve, reject) => {
             let query_object = query_queue[0];
             copied = true;
-            console.log(`${query_object.res.statusCode} ${query_object.req.path} ${query_object.query}`);
+            console.log(`${query_object.res.statusCode} "${query_object.req.path}" executed "${query_object.query}"`);
             db.all(query_object['query'], (err, rows) => {
                 if (err)
                     reject(err);
