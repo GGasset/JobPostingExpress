@@ -8,11 +8,12 @@ CREATE TABLE users (
     has_deactivated_comments INTEGER DEFAULT FALSE NOT NULL
 );
 
-CREATE TABLE profile_comments (
+CREATE TABLE comments (
     id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
     account_id INTEGER PRIMARY KEY NOT NULL,
     poster_id INTEGER PRIMARY KEY NOT NULL,
-    comment TEXT NOT NULL
+    comment TEXT NOT NULL,
+    content_name TEXT PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE saved_jobs (
