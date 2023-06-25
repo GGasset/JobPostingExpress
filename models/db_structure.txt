@@ -4,7 +4,15 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     first_name TEXT PRIMARY KEY NOT NULL,
     last_name TEXT PRIMARY KEY NOT NULL,
-    image_url TEXT
+    image_url TEXT,
+    has_deactivated_comments INTEGER DEFAULT FALSE NOT NULL
+);
+
+CREATE TABLE profile_comments (
+    id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
+    account_id INTEGER PRIMARY KEY NOT NULL,
+    poster_id INTEGER PRIMARY KEY NOT NULL,
+    comment TEXT NOT NULL
 );
 
 CREATE TABLE saved_jobs (
@@ -17,6 +25,12 @@ CREATE TABLE posts (
     poster_id INTEGER PRIMARY KEY NOT NULL,
     text TEXT NOT NULL
 );
+
+CREATE TABLE likes (
+    user_id INTEGER PRIMARY KEY NOT NULL,
+    content_id INTEGER PRIMARY KEY NOT NULL,
+    content_name TEXT PRIMARY KEY NOT NULL
+)
 
 CREATE TABLE follows (
     follower_id INTEGER PRIMARY KEY NOT NULL,
@@ -100,4 +114,8 @@ CREATE TABLE experience (
 CREATE TABLE roles (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     role TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE banned_words (
+    word TEXT UNIQUE NOT NULL
 );
