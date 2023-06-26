@@ -61,7 +61,7 @@ CREATE TABLE companies (
 CREATE TABLE users_from_company (
     user_id INTEGER PRIMARY KEY NOT NULL,
     company_id INTEGER PRIMARY KEY NOT NULL,
-    no_longer BOOLEAN NOT NULL
+    is_admin INTEGER PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE jobs (
