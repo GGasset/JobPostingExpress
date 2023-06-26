@@ -9,9 +9,17 @@ CREATE TABLE users (
 );
 
 CREATE TABLE comments (
+    id INTEGER PRIMARY KEY NOT NULL,
+    to_id INTEGER PRIMARY KEY NOT NULL,
+    poster_id INTEGER NOT NULL,
+    comment TEXT NOT NULL,
+    content_name TEXT PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE profile_comments (
     id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
     account_id INTEGER PRIMARY KEY NOT NULL,
-    poster_id INTEGER PRIMARY KEY NOT NULL,
+    poster_id INTEGER NOT NULL,
     comment TEXT NOT NULL,
     content_name TEXT PRIMARY KEY NOT NULL
 );
