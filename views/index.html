@@ -1,7 +1,36 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    {% if req.session.authentication %}
-    <!-- Let the user post -->
+    {% if req.session.authorization.accessToken %}
+        <!-- Let the user post -->
+        <form action="/post" method="post">
+            <div class="centered">
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="text" placeholder="Post something" cols="60" rows="5" style="resize: none;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="on_right" type="submit">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
     {% endif %}
+
+    {% for post in posts %}
+        <div>
+            <a href="/users/{{ post.user.id }}">{{ post.user.username }}</a>
+            <table>
+                <tr>
+                    <td><img id="profile_photo" src="{{ post.user.image_url }}" alt="Profile photo"></td>
+                    <td>{{ post.text }}</td>
+                </tr>
+            </table>
+            <a href="/post/{{ post.id }}"><img alt="Comments" href="{{ post.user.image_url }}"></a>
+        </div>
+    {% endfor %}
 {% endblock %}
