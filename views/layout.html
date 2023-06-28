@@ -2,10 +2,26 @@
 <html lang="en">
     <head>
         <title>{% block title %}Contacted{% endblock %}</title>
+
+        <script>
+            // On mouse hover for header icons
+
+            
+        </script>
         {% block head %}
         {% endblock %}
     </head>
     <body>
+        <header>
+            <div class="on_right">
+                {% if req.session.authorization.accessToken %}
+                    <img id="profile_photo" onclick="">
+                {% else %}
+                    <a href="/session/login">Login</a>
+                    <a href="/session/register">Register</a>
+                {% endif %}
+            </div>
+        </header>
         {% block body %}
         {% endblock %}
     </body>

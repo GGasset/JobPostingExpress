@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div>
+        <form method="post" autocomplete="on">
+            <div>
+                <input required type="email" name="email" placeholder="email">
+            </div>
+            <div>
+                <input required type="text" name="first_name" placeholder="first name">
+            </div>
+            <div>
+                <input required type="text" name="last_name" placeholder="last name">
+            </div>
+            <div>
+                <input required type="password" name="password" placeholder="password">
+            </div>
+            <div>
+                <input required type="password" name="repeated_password" placeholder="repeat password">
+            </div>
+            <input type="submit" value="Register">
+        </form>
+    </div>
+{% endblock %}
