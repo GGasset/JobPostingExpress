@@ -1,28 +1,27 @@
 CREATE TABLE users (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    username TEXT PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
     password_hash TEXT NOT NULL,
-    first_name TEXT PRIMARY KEY NOT NULL,
-    last_name TEXT PRIMARY KEY NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     image_url TEXT,
     has_deactivated_comments INTEGER DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    to_id INTEGER PRIMARY KEY NOT NULL,
+    to_id INTEGER NOT NULL,
     poster_id INTEGER NOT NULL,
     comment TEXT NOT NULL,
-    content_name TEXT PRIMARY KEY NOT NULL
+    content_name TEXT NOT NULL
 );
 
 CREATE TABLE profile_comments (
-    id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
-    account_id INTEGER PRIMARY KEY NOT NULL,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    account_id INTEGER NOT NULL,
     poster_id INTEGER NOT NULL,
     comment TEXT NOT NULL,
-    content_name TEXT PRIMARY KEY NOT NULL
+    content_name TEXT NOT NULL
 );
 
 CREATE TABLE saved_jobs (
@@ -31,31 +30,31 @@ CREATE TABLE saved_jobs (
 );
 
 CREATE TABLE posts (
-    id INTEGER NOT NULL AUTOINCREMENT,
-    poster_id INTEGER PRIMARY KEY NOT NULL,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    poster_id INTEGER NOT NULL,
     text TEXT NOT NULL
 );
 
 CREATE TABLE likes (
     user_id INTEGER PRIMARY KEY NOT NULL,
-    content_id INTEGER PRIMARY KEY NOT NULL,
-    content_name TEXT PRIMARY KEY NOT NULL
-)
+    content_id INTEGER NOT NULL,
+    content_name TEXT NOT NULL
+);
 
 CREATE TABLE follows (
     follower_id INTEGER PRIMARY KEY NOT NULL,
-    followed_id INTEGER PRIMARY KEY NOT NULL,
-    is_company BOOLEAN NOT NULL
+    followed_id INTEGER NOT NULL,
+    is_company INTEGER NOT NULL
 );
 
 CREATE TABLE user_experience (
     user_id INTEGER PRIMARY KEY NOT NULL,
-    experience_id INTEGER PRIMARY KEY NOT NULL
+    experience_id INTEGER NOT NULL
 );
 
 CREATE TABLE messages (
-    sender_id INTEGER PRIMARY KEY NOT NULL,
-    receiver_id INTEGER PRIMARY KEY NOT NULL,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
     message TEXT NOT NULL
 );
 
@@ -63,55 +62,50 @@ CREATE TABLE companies (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
     password_hash TEXT NOT NULL,
-    company_name TEXT PRIMARY KEY NOT NULL,
-    company_size TEXT PRIMARY KEY NOT NULL
+    company_name TEXT NOT NULL,
+    company_size TEXT NOT NULL
 );
 
 CREATE TABLE users_from_company (
     user_id INTEGER PRIMARY KEY NOT NULL,
-    company_id INTEGER PRIMARY KEY NOT NULL,
-    is_admin INTEGER PRIMARY KEY NOT NULL
+    company_id INTEGER NOT NULL,
+    is_admin INTEGER NOT NULL
 );
 
 CREATE TABLE jobs (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    company_id INTEGER PRIMARY KEY NOT NULL,
-    poster_id INTEGER PRIMARY KEY NOT NULL,
-    title TEXT PRIMARY KEY NOT NULL,
+    company_id INTEGER NOT NULL,
+    poster_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
     description TEXT NOT NULL,
-    is_closed BOOLEAN PRIMARY KEY NOT NULL
+    is_closed INTEGER NOT NULL
 );
 
 CREATE TABLE possible_job_benefits (
-    id INTEGER AUTOINCREMENT NOT NULL,
-    benefit TEXT UNIQUE  PRIMARY KEY NOT NULL
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    benefit TEXT UNIQUE  NOT NULL
 );
 
 CREATE TABLE job_benefits (
     job_id INTEGER PRIMARY KEY NOT NULL,
-    benefit_id INTEGER PRIMARY KEY NOT NULL
+    benefit_id INTEGER NOT NULL
 );
 
 CREATE TABLE job_experience (
     job_id INTEGER PRIMARY KEY NOT NULL,
-    experience_id INTEGER PRIMARY KEY NOT NULL
+    experience_id INTEGER NOT NULL
 );
 
 CREATE TABLE job_applications (
     job_id INTEGER NOT NULL PRIMARY KEY,
-    user_id INTEGER NOT NULL PRIMARY KEY,
-    message TEXT,
+    user_id INTEGER NOT NULL,
+    message TEXT
 );
 
 CREATE TABLE job_comments (
     job_id INTEGER PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL,
     comment TEXT NOT NULL
-);
-
-CREATE TABLE job_experience (
-    job_id INTEGER PRIMARY KEY NOT NULL,
-    experience_id INTEGER NOT NULL
 );
 
 CREATE TABLE experience (
