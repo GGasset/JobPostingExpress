@@ -17,8 +17,11 @@
                 {% if req.session.authorization.accessToken %}
                     <img id="profile_photo" onclick="">
                 {% else %}
-                    <a href="/session/login">Login</a>
-                    <a href="/session/register">Register</a>
+                    {% if don_not_show_session_links %}
+                    {% else %}
+                        <a href="/session/login">Login</a>
+                        <a href="/session/register">Register</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </header>

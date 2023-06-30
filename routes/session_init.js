@@ -6,7 +6,9 @@ const db = require('../public/db.js');
 const session_router = express.Router()
 
 session_router.get('/login', (req, res) => {
-    res.render('login.html');
+    res.render('login.html', {
+        "do_not_show_session_links": true
+    });
 });
 
 session_router.post('/login', (req, res) => {
@@ -16,12 +18,13 @@ session_router.post('/login', (req, res) => {
         if (email === undefined || password === undefined)
         {
             res.status(200).render('login.html', {
-                "message": "Incorrect credentials",
+                "message": "Provide your credentials to login",
                 "message_color": "red"
             });
             return;
         }
-    
+        
+
         db.verify_credentials(email, password).then((hashed_password) => {
             const accessToken = jwt.sign({data: hashed_password}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
     
@@ -30,13 +33,20 @@ session_router.post('/login', (req, res) => {
                 "accessToken": accessToken
             };
             res.redirect('/');
+        })
+        .catch((reason) => {
+            return res.status(200).render("login.html", {
+                "message": reason,
+                "message_color": "red"
+            })
         });
-        resolve(undefined)
     })
 });
 
 session_router.get('/register', (req, res) => {
-    res.render('register.html');
+    res.render('register.html', {
+        "do_not_show_authentication_links": true
+    });
 });
 
 session_router.post('/register', (req, res) => {
@@ -81,5 +91,9 @@ session_router.post('/register', (req, res) => {
         }
     })
 });
+
+session_router.get('/company/register', (req, res) => {
+
+})
 
 module.exports = session_router;

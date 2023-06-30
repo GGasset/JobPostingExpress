@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <div>
+    <div class="centered">
         <form method="post" autocomplete="on">
             <div>
                 <input required type="email" name="email" placeholder="email">
@@ -20,5 +20,9 @@
             </div>
             <input type="submit" value="Register">
         </form>
+        <hr>
+        <div class="centered">
+            Already have an account? <a href="/session/login">Login</a>
+        </div>
     </div>
 {% endblock %}
