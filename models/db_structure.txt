@@ -4,7 +4,7 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
-    image_url TEXT,
+    image_url TEXT DEFAULT '/public/Blank_profile_picture.jpg',
     has_deactivated_comments INTEGER DEFAULT FALSE NOT NULL
 );
 
@@ -32,6 +32,7 @@ CREATE TABLE saved_jobs (
 CREATE TABLE posts (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     poster_id INTEGER NOT NULL,
+    is_company INTEGER NOT NULL,
     text TEXT NOT NULL
 );
 
