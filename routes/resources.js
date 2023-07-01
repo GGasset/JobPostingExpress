@@ -21,7 +21,7 @@ resources_router.get('/:resource', (req, res) => {
             throw "file not found";
 
         const path_separated_by_dots = path.split('.');
-        const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`
+        const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`;
         
         return path, extension;
     }).then((path, extension) => {
