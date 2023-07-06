@@ -25,6 +25,8 @@ const require_authentication = (req, res) => {
 }
 
 const get_user_email = (req) => {
+    if (!req.session.authorization)
+        return false;
     return req.session.authorization.email;
 }
 

@@ -16,14 +16,6 @@ CREATE TABLE comments (
     content_name TEXT NOT NULL
 );
 
-CREATE TABLE profile_comments (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    account_id INTEGER NOT NULL,
-    poster_id INTEGER NOT NULL,
-    comment TEXT NOT NULL,
-    content_name TEXT NOT NULL
-);
-
 CREATE TABLE saved_jobs (
     user_id INTEGER PRIMARY KEY NOT NULL,
     job_id INTEGER NOT NULL
@@ -45,7 +37,8 @@ CREATE TABLE likes (
 CREATE TABLE follows (
     follower_id INTEGER PRIMARY KEY NOT NULL,
     followed_id INTEGER NOT NULL,
-    is_company INTEGER NOT NULL
+    follower_is_company INTEGER NOT NULL,
+    followed_is_company INTEGER NOT NULL
 );
 
 CREATE TABLE user_experience (
@@ -61,11 +54,15 @@ CREATE TABLE messages (
 
 CREATE TABLE companies (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     company_name TEXT NOT NULL,
     company_size TEXT NOT NULL
 );
+
+CREATE TABLE company_focus (
+    company_id INTEGER NOT NULL PRIMARY KEY,
+    role INTEGER NOT NULL
+)
 
 CREATE TABLE users_from_company (
     user_id INTEGER PRIMARY KEY NOT NULL,
