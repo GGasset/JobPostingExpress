@@ -19,6 +19,8 @@ resources_router.get('/:resource', (req, res) => {
     }).then((path) => {
         if (!fs.existsSync(path))
             throw "file not found";
+        if (path.contains('server_side'))
+            throw "content forbidden for users"
 
         const path_separated_by_dots = path.split('.');
         const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`;
@@ -41,6 +43,10 @@ resources_router.get('/:resource', (req, res) => {
         {
             console.log(`resource extension not found. requested path: ${req.url}`);
             res.status(500).send();
+        }
+        else if (reason === "content forbidden for users")
+        {
+            res.status(403).send();
         }
     });
 });
