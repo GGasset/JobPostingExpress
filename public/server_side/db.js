@@ -144,7 +144,7 @@ const get_user_follows = (user_id, is_company) => {
         [user_id, is_company], function (err, rows) {
             if (err)
             {
-                console.log(`${err} while getting user follows -> parameters: user_id = ${user_id}, is_company = ${is_company}`);
+                console.log(`${err} while getting user follows -> user_id = ${user_id}, is_company = ${is_company}`);
                 return output;
             }
             output = rows;
@@ -160,7 +160,7 @@ const get_user_posts = (user_id, is_company) => {
         [user_id, is_company], function (err, rows) {
             if (err)
             {
-                console.log(`Error while getting user posts -> params: user_id=${user_id}, is_company=${is_company}`)
+                console.log(`Error while getting user posts -> user_id=${user_id}, is_company=${is_company}`)
                 output = [];
                 return output;
             }
@@ -187,7 +187,7 @@ const get_post_comments = function(post_id, is_company) {
         [post_id, is_company], function(err, rows) {
             if (err)
             {
-                console.log(`${err} while getting post comments -> parameters: post_id=${post_id}, is_company=${is_company}`)
+                console.log(`${err} while getting post comments -> post_id=${post_id}, is_company=${is_company}`)
                 output = [];
                 return output;
             }
@@ -202,7 +202,7 @@ const get_post_comment_count = function(post_id, is_company) {
     [post_id, is_company], function(err, row) {
         if (err)
         {
-            console.log(`${err} while getting comments for post -> parameters: post_id=${post_id}`);
+            console.log(`${err} while getting comments for post -> post_id=${post_id}`);
             output = 'error';
             return output;
         }
@@ -219,7 +219,7 @@ const get_latest_posts = function(max_posts=100) {
     db.all(`SELECT * FROM posts ORDER BY id DESC LIMIT ${max_posts}`, function(err, rows) {
         if (err)
         {
-            console.log()
+            console.log(`${err} while getting latest posts! -> max_posts=${max_posts}`)
             return posts;
         }
         rows.forEach(post => {
@@ -266,7 +266,24 @@ const get_relevant_posts = function(req, res, max_posts=100) {
 module.exports.get_latest_posts = get_latest_posts;
 module.exports.get_relevant_posts = get_relevant_posts;
 
-const post = function(user_id, is_company, text) {
+const get_post = function(post_id)
+{
+    let post = new Object();
+    db.get('SELECT * FROM posts WHERE post_id = ?;',
+    [post_id], function(err, row) {
+        if (err)
+        {
+            console.log(`${err} while getting post -> post_id=${post_id}`);
+            return post;
+        }
+        post = row;
+    });
+    post['user'] = get_user_info_by_id(post.poster_id, post.is_company);
+    post['comments'] = get_post_comments(post.poster_id, post.is_company);
+    return post;
+}
+
+const insert_post = function(user_id, is_company, text) {
     return new Promise(function(resolve, reject) {
         const sanitized_text = sanitizer(text);
         resolve(sanitized_text);
@@ -285,4 +302,4 @@ const post = function(user_id, is_company, text) {
     });
 }
 
-module.exports.post = post;
+module.exports.insert_post = insert_post;
