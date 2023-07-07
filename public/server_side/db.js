@@ -1,3 +1,5 @@
+const sanitizer = require('sanitize-html');
+
 const authentication = require('./authentication');
 
 const dbFile = './models/db.db';
@@ -261,3 +263,20 @@ const get_relevant_posts = function(req, res, max_posts=100) {
 
 module.exports.get_latest_posts = get_latest_posts;
 module.exports.get_relevant_posts = get_relevant_posts;
+
+const post = function(user_id, is_company, text) {
+    return new Promise(function(resolve, reject) {
+        const sanitized_text = sanitizer(text);
+        resolve(sanitized_text);
+    }).then(function(post_text) {
+        db.run('INSERT INTO posts (poster_id, is_company, text) VALUES (?, ?, ?);',
+        [user_id, is_company, post_text], function(err) {
+            if (err)
+            {
+                throw "Error while inserting post";
+            }
+        });
+    });
+}
+
+module.exports.post = post;
