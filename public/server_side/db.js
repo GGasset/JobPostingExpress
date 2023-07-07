@@ -83,28 +83,24 @@ const get_user_id = (email) => {
 
 module.exports.get_user_id = get_user_id;
 
-const get_user_info_by_email = (email) => {
-    let user_info;
+const get_user_info_by_email = (email, is_company) => {
+    let user_info = new Object();
     db.get('SELECT id, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE email = ?;', [email], (err, row) => {
         if (err)
         {
-            console.log(`${err} while getting data for user with email ${email}`);
+            console.log(`${err} while getting data for user -> email=${email}, is_company=${is_company}`);
             return;
-        }
-        if (!row)
-        {
-            user_info = undefined;
-            return user_info;
         }
 
         user_info = row;
         user_info.email = email;
+        user_info.is_company = false;
     })
     return user_info;
 };
 
 const get_user_info_by_id = (id, is_company) => {
-    let user_info;
+    let user_info = new Object();
     if (!is_company)
         db.get('SELECT email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', [id], (err, row) => {
             if (err)
@@ -114,7 +110,6 @@ const get_user_info_by_id = (id, is_company) => {
             }
             if (!row)
             {
-                user_info = undefined;
                 return user_info;
             }
 
@@ -127,11 +122,11 @@ const get_user_info_by_id = (id, is_company) => {
             if (err)
             {
                 console.log(`${err} while getting basic data for company with id ${id}`);
-                user_info = undefined;
                 return user_info;
             }
             user_info = row;
         });
+    user_info['is_company'] = is_company;
     return user_info;
 };
 
