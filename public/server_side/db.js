@@ -177,18 +177,21 @@ const get_user_posts = (user_id, is_company) => {
 module.exports.get_user_posts = get_user_posts;
 
 const get_post_comments = function(post_id, is_company) {
-    let output;
-    db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND is_company = ?;',
+    let comments = [];
+    db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
         [post_id, is_company], function(err, rows) {
             if (err)
             {
-                console.log(`${err} while getting post comments -> post_id=${post_id}, is_company=${is_company}`)
-                output = [];
-                return output;
+                console.log(`${err} while getting post comments -> post_id=${post_id}, poster_is_company=${is_company}`)
+                comments = [];
+                return comments;
             }
-            output = rows;
+            comments = rows;
     });
-    return output;
+    comments.forEach((comment) => {
+        comment['user'] = get_user_info_by_id(comment.poster_id, comment.poster_is_company);
+    });
+    return comments;
 };
 
 const get_post_comment_count = function(post_id, is_company) {
