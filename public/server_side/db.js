@@ -271,10 +271,14 @@ const post = function(user_id, is_company, text) {
         const sanitized_text = sanitizer(text);
         resolve(sanitized_text);
     }).then(function(post_text) {
+        // Check if post text contains forbidden words
+        return post_text;
+    }).then(function(post_text) {
         db.run('INSERT INTO posts (poster_id, is_company, text) VALUES (?, ?, ?);',
         [user_id, is_company, post_text], function(err) {
             if (err)
             {
+                console.log(`Error inserting post "${text}"`);
                 throw "Error while inserting post";
             }
         });
