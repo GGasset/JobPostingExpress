@@ -302,4 +302,5 @@ const insert_post = function(user_id, is_company, text) {
     });
 }
 
+module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
