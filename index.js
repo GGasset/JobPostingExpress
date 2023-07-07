@@ -20,7 +20,7 @@ nunjucks.configure('views', {
 app.use(express.urlencoded({ extended: true }))
 
 // Session configuration (Credentials
-app.use(session({secret:"fingerpint", resave: true, saveUninitialized: true}));
+app.use(session({secret: process.env.session_secret, resave: true, saveUninitialized: true}));
 
 // Middleware
 app.use((req, res, next) => {
@@ -61,36 +61,26 @@ app.get('/', (req, res) => {
 
 app.post('/post', (req, res) => {
 	// Create post
-	if (!authentication_functions.require_authentication(req, res)) {
-		res.status(403).send();
-		return;
-	}
 	new Promise((resolve, reject) => {
-		const post_text = req.body.text;
-		const sanitized_text = sanitize(post_text);
-		const user_email = authentication_functions.get_user_email(req);
-		const user_id = db.get_user_id(user_email);
-		if (!user_id)
-			reject('email does not exist');
-		db.database.prepare('INSERT INTO posts (poster_id, text) VAlUES (?, ?)')
-			.run([user_id, sanitized_text], (err) => {
-				if (err)
-				{
-					console.log(err)
-					res.status(500).send();
-				}
-				else
-				{
-					res.status(201).send();
-				}
-			});
-	}).catch((reason) => {
-		res.status(500).send();
+		if (!authentication_functions.require_authentication(req, res)) {
+			res.status(403).send();
+			reject();
+		}	
+		db.post(db.get_user_id(req.session.authentication.email))
+		.catch((reason) => {
+			if (reason === "Error while inserting post")
+				res.status(500).send();
+		});
 	});
 });
 
 app.get('/post/:post_id', (req, res) => {
-
+	new Promise((resolve, reject) => {
+		const post_id = req.params.post_id;
+		resolve(post_id);
+	}).then(function(post_id) {
+		
+	})
 });
 
 app.post('/post/:post_id', (req, res) => {
