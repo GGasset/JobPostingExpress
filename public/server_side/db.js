@@ -238,7 +238,9 @@ const get_relevant_posts = function(req, res, max_posts=100) {
     let posts = [];
     if (!authentication.require_authentication(req, res))
         return false;
-    let follows = get_user_follows(get_user_id(email), false);
+    const user_id = get_user_id(email);
+    posts += get_user_posts(user_id, false);
+    let follows = get_user_follows(user_id, false);
     follows.forEach(follow => {
         posts += get_user_posts(follow.followed_id, follow.followed_is_company);
     });
