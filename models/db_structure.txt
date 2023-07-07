@@ -12,6 +12,7 @@ CREATE TABLE comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     to_id INTEGER NOT NULL,
     poster_id INTEGER NOT NULL,
+    poster_is_company INTEGER NOT NULL,
     comment TEXT NOT NULL,
     content_name TEXT NOT NULL
 );
