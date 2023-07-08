@@ -19,22 +19,19 @@ resources_router.get('/:resource', (req, res) => {
     }).then((path) => {
         if (!fs.existsSync(path))
             throw "file not found";
-        if (path.contains('server_side'))
-            throw "content forbidden for users"
 
         const path_separated_by_dots = path.split('.');
         const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`;
-        
-        return path, extension;
-    }).then((path, extension) => {
-    const file_contents = fs.readFileSync(path);
-    const content_type = extension_dict[extension];
+        return {"path":path, "extension": extension};
+    }).then((path_extension) => {
+    const file_contents = fs.readFileSync(path_extension['path']);
+    const content_type = extension_dict[path_extension['extension']];
     if (content_type === undefined)
         throw "content_type not found";
 
-    return file_contents, content_type;
-    }).then((file_contents, content_type) => {
-        res.status(200).contentType(content_type).send(file_contents)
+    return {"file_contents":file_contents, "content_type": content_type};
+    }).then((file_contents_content_type) => {
+        res.status(200).contentType(file_contents_content_type.content_type).send(file_contents_content_type.file_contents)
 
     }).catch((reason) => {
         if (reason === "file not found")
