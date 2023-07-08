@@ -4,7 +4,7 @@ const authentication = require('./authentication');
 
 const dbFile = './models/db.db';
 
-const sqlite = require('sqlite3').verbose();
+const sqlite = require('sqlite');
 
 const db = new sqlite.Database(dbFile);
 
@@ -17,17 +17,8 @@ const comment_content_names = [
 
 module.exports.database = db;
 
-const is_registered_email = (email) => {
-    let output;
-    db.all('SELECT id FROM users WHERE email = ?;', [email], (err, rows) => {
-        if (err)
-        {
-            console.log(`${err} while checking if email ${email} exists`);
-            output = true;
-            return true;
-        }
-        output = rows.length > 0;
-    });
+const is_registered_email = async (email) => {
+    let output = await db.all('SELECT id FROM users WHERE email = ?;', [email]);
     return output;
 };
 
@@ -38,69 +29,45 @@ const bcrypt = require('bcrypt');
 /*
 * Returns false if email/password don't match or the hashed password if they do
 */
-const verify_credentials_with_database = (email, password) => {
-    const promise = new Promise((resolve, reject) => {
-        db.get('SELECT password_hash FROM users WHERE email = ?;', [email], (err, row) => {
-            if (err)
-            {
-                console.log(`${err} while trying to get password_hash for email ${email}`);
-                reject(err);
-            }
-            resolve(row);
-        })
-    }).then((row) => {
-
+const verify_credentials_with_database = function(email, password) {
+    return db.get('SELECT password_hash FROM users WHERE email = ?;', [email])
+    .then(function(row) {
         if (row === undefined)
             throw 'Email not found';
 
         credential = row["password_hash"];
         return credential;
     }).then((hashed_password) => {
-        if (hashed_password === false)
-            return false;
-
         if (bcrypt.compareSync(password, hashed_password))
             return hashed_password;
         else
             throw 'Incorrect password';
     });
-
-    return promise;
 };
 
 module.exports.verify_credentials = verify_credentials_with_database;
 
-const get_user_id = (email) => {
-    let user_id = undefined;
-    db.get('SELECT id FROM users WHERE email = ?;', [email], (err, row) => {
-        if (err)
-            console.log(`${err} while getting user id with email (${email})`)
-        else
-            user_id = row.id;
-    })
-    return user_id;
+const get_user_id = async (email) => {
+    let user_id = await db.get('SELECT id FROM users WHERE email = ?;', [email]);
+    return user_id.id;
 };
 
 module.exports.get_user_id = get_user_id;
 
-const get_user_info_by_email = (email, is_company) => {
-    let user_info = new Object();
-    db.get('SELECT id, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE email = ?;', [email], (err, row) => {
-        if (err)
-        {
-            console.log(`${err} while getting data for user -> email=${email}, is_company=${is_company}`);
-            return;
-        }
+const get_user_info_by_email = async (email) => {
+    let user_info = 
+        await db.get('SELECT id, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE email = ?;', 
+            [email]);
+    user_info.email = email;
+    user_info.is_company = false;
 
-        user_info = row;
-        user_info.email = email;
-        user_info.is_company = false;
-    })
     return user_info;
 };
 
 const get_user_info_by_id = (id, is_company) => {
-    let user_info = new Object();
+    let user_info;
+    if (is_company)
+        
     if (!is_company)
         db.get('SELECT email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', [id], (err, row) => {
             if (err)
@@ -234,9 +201,10 @@ const get_latest_posts = function(max_posts=100) {
 */
 const get_relevant_posts = function(req, res, max_posts=100) {
     let posts = [];
-    if (!authentication.require_authentication(req, res))
+    if (!authentication.require_authentication(req, res)) {
         return false;
-    const user_id = get_user_id(email);
+    }
+    const user_id = req.session.credentials.user.id;
     posts += get_user_posts(user_id, false);
     let follows = get_user_follows(user_id, false);
     follows.forEach(follow => {
