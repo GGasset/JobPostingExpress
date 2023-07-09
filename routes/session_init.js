@@ -21,26 +21,38 @@ session_router.post('/login', (req, res) => {
                 "message": "Provide your credentials to login",
                 "message_color": "red"
             });
-            return;
+            throw "Credentials not provided";
         }
-        
-
-        db.verify_credentials(email, password).then((hashed_password) => {
-            const accessToken = jwt.sign({data: hashed_password}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
-    
-            req.session.authorization = {
-                "email": email,
-                "accessToken": accessToken
-            };
-            res.redirect('/');
-        })
+        resolve({"email": email, "password": password});
+    }).then(async function(email_password) {
+        let correct_credentials = true;
+        let hashed_password = await db.verify_credentials(email_password.email, email_password.password)
         .catch((reason) => {
+            correct_credentials = false;
             return res.status(200).render("login.html", {
                 "message": reason,
                 "message_color": "red"
             })
         });
+        if (!correct_credentials)
+            throw "Incorrect credentials";
+        let user = await db.get_user_info_by_email(email_password.email);
+
+        return {"user": user, "password_hash": hashed_password};
+
+    }).then(function(credentials) {
+        const accessToken = jwt.sign({data: credentials.password_hash}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
+
+        req.session.credentials = {
+            "user": credentials.user,
+            "accessToken": accessToken
+        };
+
+        res.redirect('/');
+    }).catch(function(reason) {
+        // Do nothing
     })
+
 });
 
 session_router.get('/register', (req, res) => {
@@ -50,12 +62,12 @@ session_router.get('/register', (req, res) => {
 });
 
 session_router.post('/register', (req, res) => {
-    new Promise((resolve, reject) => {
+    new Promise(async (resolve, reject) => {
         const email = req.body.email;
         const first_name = req.body.first_name;
         const last_name = req.body.last_name;
     
-        if (db.is_registered_email(email)) {
+        if (await db.is_registered_email(email)) {
             res.status(200).render('register.html', {
                 'message': "Email already exists",
                 "message_color": "red"
@@ -76,15 +88,10 @@ session_router.post('/register', (req, res) => {
         }
     
         try {
-            db.database.prepare(
+            await db.database.prepare(
                 'INSERT INTO users (email, first_name, last_name, password_hash) VALUES (?, ?, ?, ?);'
-            ).run([email, first_name, last_name, hashed_password], (err) => {
-                if (err)
-                {
-                    console.log(err)
-                    throw err;
-                }
-            });
+            ).run([email, first_name, last_name, hashed_password]);
+
             res.redirect('/session/login');
         } catch (err) {
             res.status(500).contentType('text/plain').send('Try again later');

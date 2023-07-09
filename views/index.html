@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    {% if req.session.authorization.accessToken %}
+    {% if req.session.credentials.accessToken %}
         <!-- Let the user post -->
         <form action="/post" method="post">
             <div class="centered">

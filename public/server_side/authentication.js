@@ -24,12 +24,5 @@ const require_authentication = (req, res) => {
     return true
 }
 
-const get_user_email = (req) => {
-    if (!req.session.authorization)
-        return false;
-    return req.session.authorization.email;
-}
-
 module.exports.is_authenticated = is_authenticated;
 module.exports.require_authentication = require_authentication;
-module.exports.get_user_email = get_user_email;

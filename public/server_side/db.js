@@ -4,9 +4,20 @@ const authentication = require('./authentication');
 
 const dbFile = './models/db.db';
 
-const sqlite = require('sqlite');
+const sqlite3 = require('sqlite3');
+const open = require('sqlite').open;
 
-const db = new sqlite.Database(dbFile);
+// For easier debugging
+sqlite3.verbose();
+
+// Open database
+let db;
+open({
+  filename: './models/db.db',
+  driver: sqlite3.Database
+}).then((database) => {
+    db = database;
+});
 
 const comment_content_names = [
     'post',

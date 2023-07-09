@@ -9,6 +9,12 @@ const extension_dict = {
     ".css": "text/css"
 };
 
+const encoding_dict = {
+    '.js': 'utf-8',
+    '.css': 'utf-8',
+    '.jpg': 'base64'
+}
+
 resources_router.get('/:resource', (req, res) => {
     new Promise((resolve, reject) => {
         const resource = req.params.resource;
@@ -24,15 +30,16 @@ resources_router.get('/:resource', (req, res) => {
         const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`;
         return {"path":path, "extension": extension};
     }).then((path_extension) => {
-    const file_contents = fs.readFileSync(path_extension['path']);
     const content_type = extension_dict[path_extension['extension']];
     if (content_type === undefined)
         throw "content_type not found";
 
-    return {"file_contents":file_contents, "content_type": content_type};
-    }).then((file_contents_content_type) => {
-        res.status(200).contentType(file_contents_content_type.content_type).send(file_contents_content_type.file_contents)
-
+    fs.readFile(path_extension['path'], function(err, data) {
+        if (err)
+            throw err;
+        
+        res.status(200).contentType(content_type).end(data);
+    });
     }).catch((reason) => {
         if (reason === "file not found")
             res.status(404).send();

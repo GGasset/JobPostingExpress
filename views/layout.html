@@ -2,25 +2,29 @@
 <html lang="en">
     <head>
         <title>{% block title %}Contacted{% endblock %}</title>
+        <link rel="stylesheet" href="/public/layout.css">
 
-        <script>
-            // On mouse hover for header icons
-
-            
-        </script>
         {% block head %}
         {% endblock %}
     </head>
     <body>
-        <header>
-            <div class="on_right">
-                {% if req.session.authorization.accessToken %}
-                    <img id="profile_photo" onclick="">
+        {% if message %}
+            <div>
+
+            </div>
+        {% endif %}
+        <header class="no_margin">
+            {% if message %}
+                {{ message }}
+            {% endif %}
+            <div class="no_margin">
+                {% if req.session.credentials.accessToken %}
+                    <img src="{{ req.session.credentials.user.image_url }}" onclick="" alt="Profile picture" class="profile_picture float_right">
                 {% else %}
-                    {% if don_not_show_session_links %}
+                    {% if do_not_show_session_links %}
                     {% else %}
-                        <a href="/session/login">Login</a>
-                        <a href="/session/register">Register</a>
+                        <a href="/session/login" class="float_right header_text">Sign-in</a>
+                        <a id="login_link" href="/session/register" class="float_right header_text">Register</a>
                     {% endif %}
                 {% endif %}
             </div>

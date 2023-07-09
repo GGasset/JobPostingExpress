@@ -40,6 +40,7 @@ app.use('/public', resources_router);
 // Main pages
 const rendered_posts = 100;
 app.get('/', (req, res) => {
+	console.log(req.session.credentials)
 	new Promise((resolve, reject) => {
 		let posts = [];
 		if (!authentication_functions.is_authenticated(req))
@@ -50,8 +51,9 @@ app.get('/', (req, res) => {
 		{
 			posts = db.get_relevant_posts(req, res, rendered_posts);
 		}
+		resolve(posts);
 	})
-	.then((posts, user) => {
+	.then((posts) => {
 		res.status(200).render('index.html', {
 			"posts": posts,
 			"req": req,
@@ -79,8 +81,14 @@ app.get('/post/:post_id', (req, res) => {
 		const post_id = req.params.post_id;
 		resolve(post_id);
 	}).then(function(post_id) {
-		
-	})
+		let post = db.get_post(post_id);
+		return post;
+	}).then(function(post) {
+		res.status(200).render('post.html', {
+			'req': req,
+			'post': post
+		});
+	});
 });
 
 app.post('/post/:post_id', (req, res) => {
