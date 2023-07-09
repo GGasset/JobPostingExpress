@@ -12,11 +12,14 @@ sqlite3.verbose();
 
 // Open database
 let db;
+
 open({
-  filename: './models/db.db',
+  filename: dbFile,
   driver: sqlite3.Database
 }).then((database) => {
     db = database;
+}).then(() => {
+    module.exports.database = db;
 });
 
 const comment_content_names = [
@@ -26,11 +29,9 @@ const comment_content_names = [
     'jobPost'
 ]
 
-module.exports.database = db;
-
 const is_registered_email = async (email) => {
     let output = await db.all('SELECT id FROM users WHERE email = ?;', [email]);
-    return output;
+    return output.length > 0;
 };
 
 module.exports.is_registered_email = is_registered_email;
@@ -104,16 +105,16 @@ module.exports.get_user_follows = get_user_follows;
 
 const get_user_posts = async (user_id, is_company) => {
     let posts = 
-    await db.all('SELECT id, poster_id, is_company, text FROM posts WHERE poster_id = ? AND is_company = ?;',
+    await db.all('SELECT id, poster_id, poster_is_company, text FROM posts WHERE poster_id = ? AND poster_is_company = ?;',
     [user_id, is_company]);
 
     const user_info = await get_user_info_by_id(user_id, is_company);
-    posts.forEach(post => {
+    for (let post of posts) {
         post['user'] = user_info;
-        post['comment_count'] = get_post_comment_count(post.id);
-    });
+        post['comment_count'] = await get_post_comment_count(post.id);
+    };
 
-    return output;
+    return posts;
 };
 
 module.exports.get_user_posts = get_user_posts;
@@ -123,16 +124,16 @@ const get_post_comments = async function(post_id, is_company) {
     await db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
         [post_id, is_company]);
 
-    comments.forEach((comment) => {
-        comment['user'] = get_user_info_by_id(comment.poster_id, comment.poster_is_company);
-    });
+    for (let comment of comments) {
+        comment['user'] = await get_user_info_by_id(comment.poster_id, comment.poster_is_company);
+    };
     return comments;
 };
 
-const get_post_comment_count = async function(post_id, is_company) {
+const get_post_comment_count = async function(post_id) {
     let comment_count = 
-        await db.get('SELECT COUNT(id) FROM comments WHERE content_name = "post" AND to_id = ? AND is_company = ?;',
-            [post_id, is_company]);
+        await db.get('SELECT COUNT(id) FROM comments WHERE content_name = "post" AND to_id = ?;',
+            [post_id]);
     
     return comment_count;
 };
@@ -144,6 +145,10 @@ const get_latest_posts = async function(max_posts=100) {
     let posts = 
         await db.all(`SELECT * FROM posts ORDER BY id DESC LIMIT ${max_posts}`);
 
+    for (const post of posts) {
+        post['user'] = await get_user_info_by_id(post.poster_id, post.poster_is_company);
+    }
+
     return posts;
 };
 
@@ -151,18 +156,18 @@ const get_latest_posts = async function(max_posts=100) {
 * Returns false if user isn't properly authenticated
 * If there aren't enough posts from following latest posts are retrieved
 */
-const get_relevant_posts = function(req, res, max_posts=100) {
+const get_relevant_posts = async function(req, res, max_posts=100) {
     let posts = [];
     if (!authentication.require_authentication(req, res)) {
         return false;
     }
     const user_id = req.session.credentials.user.id;
-    posts += get_user_posts(user_id, false);
-    let follows = get_user_follows(user_id, false);
-    follows.forEach(follow => {
-        posts += get_user_posts(follow.followed_id, follow.followed_is_company);
-    });
-    
+    posts = posts.concat(await get_user_posts(user_id, false));
+    let follows = await get_user_follows(user_id, false);
+    for (const follow of follows) {
+        posts = posts.concat(await get_user_posts(follow.followed_id, follow.followed_is_company));
+    };
+
     // Sort in descending (if the id is higher the post has been created recently)
     posts.sort((post_a, post_b) => post_b.id - post_a.id);
 
@@ -176,7 +181,11 @@ const get_relevant_posts = function(req, res, max_posts=100) {
     }
     else if (posts.length < max_posts)
     {
-        posts += get_latest_posts(max_posts=max_posts - posts.length);
+        let latest_posts = await get_latest_posts(max_posts=max_posts - posts.length);
+        latest_posts = latest_posts.filter(new_post => {
+            posts.findIndex((post) => new_post.id == post.id) == -1;
+        });
+        posts = posts.concat(latest_posts);
     }
     return posts;
 };
@@ -190,8 +199,8 @@ const get_post = async function(post_id)
         await db.get('SELECT * FROM posts WHERE post_id = ?;',
             [post_id]);
 
-    post['user'] = get_user_info_by_id(post.poster_id, post.is_company);
-    post['comments'] = get_post_comments(post.poster_id, post.is_company);
+    post['user'] = await get_user_info_by_id(post.poster_id, post.is_company);
+    post['comments'] = await get_post_comments(post.poster_id, post.is_company);
     return post;
 }
 
@@ -202,9 +211,12 @@ const insert_post = function(user_id, is_company, text) {
     }).then(function(post_text) {
         // Check if post text contains forbidden words
         return post_text;
-    }).then(function(post_text) {
-        db.run('INSERT INTO posts (poster_id, is_company, text) VALUES (?, ?, ?);',
-            [user_id, is_company, post_text]);
+    }).then(async function(post_text) {
+        await db.run('INSERT INTO posts (poster_id, poster_is_company, text) VALUES (?, ?, ?);',
+            [user_id, is_company, post_text])
+            .catch((reason) => {
+                console.log(reason);
+            });
     });
 }
 
