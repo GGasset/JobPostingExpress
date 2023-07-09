@@ -8,7 +8,7 @@
                 <table>
                     <tr>
                         <td>
-                            <textarea name="text" placeholder="Post something" cols="60" rows="5" style="resize: none;" maxlength="10000"></textarea>
+                            <textarea name="text" placeholder="Post something" cols="90" rows="5" style="resize: none;" maxlength="10000"></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -26,13 +26,15 @@
         <div class="post">
             <table>
                 <tr>
-                    <td></td>
+                    <td>
+                        <img class="profile_picture no_margin_top" src="{{ post.user.image_url }}" alt="Profile photo">
+                    </td>
                     <td>
                         <a href="/users/{{ post.user.id }}">{{ post.user.first_name }} {{ post.user.last_name }}</a>
                     </td>
                 </tr>
                 <tr>
-                    <td><img class="profile_picture" src="{{ post.user.image_url }}" alt="Profile photo"></td>
+                    <td></td>
                     <td>{{ post.text }}</td>
                 </tr>
                 <tr>
@@ -41,9 +43,13 @@
                         <a href="/post/{{ post.id }}">
                             <img class="post_icon" alt="Comments" src="/public/comment_icon.jpg">
                         </a>
+                        <a>
+                            <img src="/public/like_icon.jpg" alt="like_icon">
+                        </a>
                     </td>
                 </tr>
             </table>
         </div>
+        <br>
     {% endfor %}
 {% endblock %}
