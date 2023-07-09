@@ -64,35 +64,17 @@ const get_user_info_by_email = async (email) => {
     return user_info;
 };
 
-const get_user_info_by_id = (id, is_company) => {
+const get_user_info_by_id = async (id, is_company) => {
     let user_info;
     if (is_company)
-        
-    if (!is_company)
-        db.get('SELECT email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', [id], (err, row) => {
-            if (err)
-            {
-                console.log(`${err} while getting data for user with id ${id}`);
-                return;
-            }
-            if (!row)
-            {
-                return user_info;
-            }
-
-            user_info = row;
-            user_info.id = id;
-        });
+        user_info = 
+        await db.get('SELECT id, company_name, company_size FROM companies WHERE id = ?',
+            [id]);
     else
-        db.get('SELECT id, company_name, company_size FROM companies WHERE id = ?',
-        [id], function(err, row) {
-            if (err)
-            {
-                console.log(`${err} while getting basic data for company with id ${id}`);
-                return user_info;
-            }
-            user_info = row;
-        });
+        user_info = 
+        await db.get('SELECT id, email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', 
+            [id]);
+
     user_info['is_company'] = is_company;
     return user_info;
 };
@@ -100,40 +82,22 @@ const get_user_info_by_id = (id, is_company) => {
 module.exports.get_user_info_by_id = get_user_info_by_id;
 module.exports.get_user_info_by_email = get_user_info_by_email;
 
-const get_user_follows = (user_id, is_company) => {
-    let output = [];
-    db.all('SELECT follower_id, followed_is_company FROM follows WHERE follower_id = ? AND follower_is_company = ?;',
-        [user_id, is_company], function (err, rows) {
-            if (err)
-            {
-                console.log(`${err} while getting user follows -> user_id = ${user_id}, is_company = ${is_company}`);
-                return output;
-            }
-            output = rows;
-        });
+const get_user_follows = async (user_id, is_company) => {
+    let output = 
+    await db.all('SELECT follower_id, followed_is_company FROM follows WHERE follower_id = ? AND follower_is_company = ?;',
+    [user_id, is_company]);
     return output;
 };
 
 module.exports.get_user_follows = get_user_follows;
 
-const get_user_posts = (user_id, is_company) => {
-    let output;
-    db.all('SELECT id, poster_id, is_company, text FROM posts WHERE poster_id = ? AND is_company = ?;',
-        [user_id, is_company], function (err, rows) {
-            if (err)
-            {
-                console.log(`Error while getting user posts -> user_id=${user_id}, is_company=${is_company}`)
-                output = [];
-                return output;
-            }
+const get_user_posts = async (user_id, is_company) => {
+    let posts = 
+    await db.all('SELECT id, poster_id, is_company, text FROM posts WHERE poster_id = ? AND is_company = ?;',
+    [user_id, is_company]);
 
-            output = rows;
-    });
-    if (output.length == 0)
-        return output;
-
-    const user_info = get_user_info_by_id(user_id, is_company);
-    output.forEach(post => {
+    const user_info = await get_user_info_by_id(user_id, is_company);
+    posts.forEach(post => {
         post['user'] = user_info;
         post['comment_count'] = get_post_comment_count(post.id);
     });
@@ -143,61 +107,38 @@ const get_user_posts = (user_id, is_company) => {
 
 module.exports.get_user_posts = get_user_posts;
 
-const get_post_comments = function(post_id, is_company) {
-    let comments = [];
-    db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
-        [post_id, is_company], function(err, rows) {
-            if (err)
-            {
-                console.log(`${err} while getting post comments -> post_id=${post_id}, poster_is_company=${is_company}`)
-                comments = [];
-                return comments;
-            }
-            comments = rows;
-    });
+const get_post_comments = async function(post_id, is_company) {
+    let comments = 
+    await db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
+        [post_id, is_company]);
+
     comments.forEach((comment) => {
         comment['user'] = get_user_info_by_id(comment.poster_id, comment.poster_is_company);
     });
     return comments;
 };
 
-const get_post_comment_count = function(post_id, is_company) {
-    let output;
-    db.get('SELECT COUNT(id) FROM comments WHERE content_name = "post" AND to_id = ? AND is_company = ?;',
-    [post_id, is_company], function(err, row) {
-        if (err)
-        {
-            console.log(`${err} while getting comments for post -> post_id=${post_id}`);
-            output = 'error';
-            return output;
-        }
-        output = row['COUNT(id)'];
-    });
-    return output;
+const get_post_comment_count = async function(post_id, is_company) {
+    let comment_count = 
+        await db.get('SELECT COUNT(id) FROM comments WHERE content_name = "post" AND to_id = ? AND is_company = ?;',
+            [post_id, is_company]);
+    
+    return comment_count;
 };
 
 module.exports.get_post_comments = get_post_comments;
 module.exports.get_post_comment_count = get_post_comment_count;
 
-const get_latest_posts = function(max_posts=100) {
-    let posts = [];
-    db.all(`SELECT * FROM posts ORDER BY id DESC LIMIT ${max_posts}`, function(err, rows) {
-        if (err)
-        {
-            console.log(`${err} while getting latest posts! -> max_posts=${max_posts}`)
-            return posts;
-        }
-        rows.forEach(post => {
-            post['user'] = get_user_info_by_id(post['poster_id'], post['is_company']);
-            post['comment_count'] = get_post_comment_count(post['id'], post['is_company']);
-        });
-    });
+const get_latest_posts = async function(max_posts=100) {
+    let posts = 
+        await db.all(`SELECT * FROM posts ORDER BY id DESC LIMIT ${max_posts}`);
+
     return posts;
 };
 
 /*
 * Returns false if user isn't properly authenticated
-* If there aren't enough posts from following 
+* If there aren't enough posts from following latest posts are retrieved
 */
 const get_relevant_posts = function(req, res, max_posts=100) {
     let posts = [];
@@ -232,18 +173,12 @@ const get_relevant_posts = function(req, res, max_posts=100) {
 module.exports.get_latest_posts = get_latest_posts;
 module.exports.get_relevant_posts = get_relevant_posts;
 
-const get_post = function(post_id)
+const get_post = async function(post_id)
 {
-    let post = new Object();
-    db.get('SELECT * FROM posts WHERE post_id = ?;',
-    [post_id], function(err, row) {
-        if (err)
-        {
-            console.log(`${err} while getting post -> post_id=${post_id}`);
-            return post;
-        }
-        post = row;
-    });
+    let post = 
+        await db.get('SELECT * FROM posts WHERE post_id = ?;',
+            [post_id]);
+
     post['user'] = get_user_info_by_id(post.poster_id, post.is_company);
     post['comments'] = get_post_comments(post.poster_id, post.is_company);
     return post;
@@ -258,13 +193,7 @@ const insert_post = function(user_id, is_company, text) {
         return post_text;
     }).then(function(post_text) {
         db.run('INSERT INTO posts (poster_id, is_company, text) VALUES (?, ?, ?);',
-        [user_id, is_company, post_text], function(err) {
-            if (err)
-            {
-                console.log(`Error inserting post "${text}"`);
-                throw "Error while inserting post";
-            }
-        });
+            [user_id, is_company, post_text]);
     });
 }
 
