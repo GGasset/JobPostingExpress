@@ -6,14 +6,9 @@ const resources_router = express.Router();
 const extension_dict = {
     ".js": "application/javascript",
     ".jpg": "image/jpeg",
+    ".png": "image/png",
     ".css": "text/css"
 };
-
-const encoding_dict = {
-    '.js': 'utf-8',
-    '.css': 'utf-8',
-    '.jpg': 'base64'
-}
 
 resources_router.get('/:resource', (req, res) => {
     new Promise((resolve, reject) => {
