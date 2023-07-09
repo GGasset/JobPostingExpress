@@ -24,8 +24,9 @@ app.use(session({secret: process.env.session_secret, resave: true, saveUninitial
 
 // Middleware
 app.use((req, res, next) => {
+	//console.log(`Requested "${req.url}" ${req.method}`)
 	res.on('finish', () => {
-		console.log(`${res.statusCode} "${req.url}"`)
+		console.log(`${res.statusCode} "${req.url}" ${req.method}`)
 	})
 	next();
 });
@@ -40,16 +41,15 @@ app.use('/public', resources_router);
 // Main pages
 const rendered_posts = 100;
 app.get('/', (req, res) => {
-	console.log(req.session.credentials)
-	new Promise((resolve, reject) => {
+	new Promise(async (resolve, reject) => {
 		let posts = [];
 		if (!authentication_functions.is_authenticated(req))
 		{
-			posts = db.get_latest_posts(rendered_posts);
+			posts = await db.get_latest_posts(rendered_posts);
 		}
 		else
 		{
-			posts = db.get_relevant_posts(req, res, rendered_posts);
+			posts = await db.get_relevant_posts(req, res, rendered_posts);
 		}
 		resolve(posts);
 	})
@@ -63,16 +63,22 @@ app.get('/', (req, res) => {
 
 app.post('/post', (req, res) => {
 	// Create post
-	new Promise((resolve, reject) => {
+	new Promise(async (resolve, reject) => {
 		if (!authentication_functions.require_authentication(req, res)) {
-			res.status(403).send();
 			reject();
-		}	
-		db.post(db.get_user_id(req.session.authentication.email))
+			return;
+		}
+
+		const text = req.body.text;
+		db.insert_post(req.session.credentials.user.id, false, text)
 		.catch((reason) => {
 			if (reason === "Error while inserting post")
 				res.status(500).send();
+		}).then(function(value) {
+			res.redirect('/');
 		});
+	}).catch(function (reason) {
+
 	});
 });
 
