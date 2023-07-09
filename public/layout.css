@@ -31,7 +31,7 @@ header {
 
 }
 
-#header_icon {
+.header_icon {
     background-color: tomato;
     border-radius: 10px;
 }
@@ -43,12 +43,27 @@ header {
     right: 0px;*/
 }
 
-#header_icon:hover {
+.header_icon:hover {
     background-color: rgb(110, 44, 32);
 }
 
-#header_icon::after {
+.header_icon::after {
     background-color: tomato;
+}
+
+.post {
+    padding: 1.5rem;
+    padding-bottom: 5px;
+    width: 20%;
+    background-color: rgb(167, 67, 117);
+    /*border-width: 1px;
+    border-style: ;
+    border-color: gray;*/
+    border-radius: 5px;
+}
+
+.post_icon {
+    height: 1rem;
 }
 
 .red {

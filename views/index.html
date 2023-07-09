@@ -19,18 +19,31 @@
                 </table>
             </div>
         </form>
+        <hr>
     {% endif %}
 
     {% for post in posts %}
-        <div>
-            <a href="/users/{{ post.user.id }}">{{ post.user.username }}</a>
+        <div class="post">
             <table>
                 <tr>
-                    <td><img id="profile_photo" src="{{ post.user.image_url }}" alt="Profile photo"></td>
+                    <td></td>
+                    <td>
+                        <a href="/users/{{ post.user.id }}">{{ post.user.first_name }} {{ post.user.last_name }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><img class="profile_picture" src="{{ post.user.image_url }}" alt="Profile photo"></td>
                     <td>{{ post.text }}</td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a href="/post/{{ post.id }}">
+                            <img class="post_icon" alt="Comments" src="/public/comment_icon.jpg">
+                        </a>
+                    </td>
+                </tr>
             </table>
-            <a href="/post/{{ post.id }}"><img alt="Comments" src="{{ post.user.image_url }}"></a>
         </div>
     {% endfor %}
 {% endblock %}
