@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const db = require('../public/server_side/db.js');
+const db = require('../public/server_side/db');
 
 const session_router = express.Router()
 
@@ -72,13 +72,14 @@ session_router.post('/register', (req, res) => {
                 'message': "Email already exists",
                 "message_color": "red"
             })
+            return;
         }
     
         const salt = bcrypt.genSaltSync();
         const hashed_password = bcrypt.hashSync(req.body.password, salt);
         const repeated_hashed_password = bcrypt.hashSync(req.body.repeated_password, salt);
-        const password_math = hashed_password == repeated_hashed_password;
-        if (!password_math)
+        const password_match = hashed_password == repeated_hashed_password;
+        if (!password_match)
         {
             res.status(200).render('register.html', {
                 'message': "Passwords don't match",
@@ -88,12 +89,13 @@ session_router.post('/register', (req, res) => {
         }
     
         try {
-            await db.database.prepare(
-                'INSERT INTO users (email, first_name, last_name, password_hash) VALUES (?, ?, ?, ?);'
-            ).run([email, first_name, last_name, hashed_password]);
+            await db.database.run(
+                'INSERT INTO users (email, first_name, last_name, password_hash) VALUES (?, ?, ?, ?);',
+                    [email, first_name, last_name, hashed_password]);
 
             res.redirect('/session/login');
         } catch (err) {
+            console.log(`error "${err}" while registering user`)
             res.status(500).contentType('text/plain').send('Try again later');
         }
     })
