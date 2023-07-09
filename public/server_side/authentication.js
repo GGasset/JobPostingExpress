@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const is_authenticated = (req) => {
     let result = false;
-    if (!req.session.authorization)
+    if (!req.session.credentials)
         return false
 
-    jwt.verify(req.session.authorization.accessToken, process.env.JWTSecret, (err, user) => {
+    jwt.verify(req.session.credentials.accessToken, process.env.JWTSecret, (err, user) => {
         if (err)
             result = false;
         else
