@@ -30,7 +30,7 @@
                     <td>{{ post.text }}</td>
                 </tr>
             </table>
-            <a href="/post/{{ post.id }}"><img alt="Comments" href="{{ post.user.image_url }}"></a>
+            <a href="/post/{{ post.id }}"><img alt="Comments" src="{{ post.user.image_url }}"></a>
         </div>
     {% endfor %}
 {% endblock %}
