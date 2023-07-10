@@ -86,8 +86,8 @@ app.get('/post/:post_id', (req, res) => {
 	new Promise((resolve, reject) => {
 		const post_id = req.params.post_id;
 		resolve(post_id);
-	}).then(function(post_id) {
-		let post = db.get_post(post_id);
+	}).then(async function(post_id) {
+		let post = await db.get_post(post_id);
 		return post;
 	}).then(function(post) {
 		res.status(200).render('post.html', {
@@ -97,7 +97,7 @@ app.get('/post/:post_id', (req, res) => {
 	});
 });
 
-app.post('/post/:post_id', (req, res) => {
+app.post('/post/:post_id', async (req, res) => {
 
 });
 
