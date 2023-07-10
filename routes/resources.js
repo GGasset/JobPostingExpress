@@ -10,12 +10,23 @@ const extension_dict = {
     ".css": "text/css"
 };
 
+resources_router.get('/static/:resource', (req, res) => {
+    const resource = req.params.resource;
+    respond_with_resource(req, res, resource, "./public/static/");
+}) 
+
 resources_router.get('/:resource', (req, res) => {
+    const resource = req.params.resource;
+    respond_with_resource(req, res, resource, "./public/");
+});
+
+
+function respond_with_resource(req, res, resource, dir_path)
+{
     new Promise((resolve, reject) => {
-        const resource = req.params.resource;
         while (resource.includes('..'))
-            resource.replace('..', '');
-        const resource_path = `./public/${resource}`;
+            resource = resource.replace('..', '');
+        const resource_path = `${dir_path}/${resource}`;
         resolve(resource_path);
     }).then((path) => {
         if (!fs.existsSync(path))
@@ -25,16 +36,16 @@ resources_router.get('/:resource', (req, res) => {
         const extension = `.${path_separated_by_dots[path_separated_by_dots.length - 1]}`;
         return {"path":path, "extension": extension};
     }).then((path_extension) => {
-    const content_type = extension_dict[path_extension['extension']];
-    if (content_type === undefined)
-        throw "content_type not found";
+        const content_type = extension_dict[path_extension['extension']];
+        if (content_type === undefined)
+            throw "content_type not found";
 
-    fs.readFile(path_extension['path'], function(err, data) {
-        if (err)
-            throw err;
-        
-        res.status(200).contentType(content_type).end(data);
-    });
+        fs.readFile(path_extension['path'], function(err, data) {
+            if (err)
+                throw err;
+
+            res.status(200).contentType(content_type).end(data);
+        });
     }).catch((reason) => {
         if (reason === "file not found")
             res.status(404).send();
@@ -48,6 +59,8 @@ resources_router.get('/:resource', (req, res) => {
             res.status(403).send();
         }
     });
-});
+
+}
+
 
 module.exports = resources_router;

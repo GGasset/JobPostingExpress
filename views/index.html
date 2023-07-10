@@ -40,11 +40,14 @@
                 <tr>
                     <td></td>
                     <td>
+                        {% if post.user.has_deactivated_comments %}
+                        {% else %}
                         <a href="/post/{{ post.id }}">
                             <img class="post_icon" alt="Comments" src="/public/comment_icon.png">
                         </a>
+                        {% endif %}
                         <a>
-                            <img src="/public/like_icon.png" alt="like_icon">
+                            <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
                         </a>
                     </td>
                 </tr>

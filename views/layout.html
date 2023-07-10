@@ -2,21 +2,19 @@
 <html lang="en">
     <head>
         <title>{% block title %}Contacted{% endblock %}</title>
-        <link rel="stylesheet" href="/public/layout.css">
+        <link rel="stylesheet" href="/public/static/layout.css">
 
         {% block head %}
         {% endblock %}
     </head>
     <body>
         {% if message %}
-            <div>
-
+            <div id="message_div" class="{{ message_color }}">
+                {{ message }}
             </div>
         {% endif %}
+
         <header class="no_margin">
-            {% if message %}
-                {{ message }}
-            {% endif %}
             <div class="no_margin">
                 {% if req.session.credentials.accessToken %}
                     <img src="{{ req.session.credentials.user.image_url }}" onclick="" alt="Profile picture" class="profile_picture float_right">
