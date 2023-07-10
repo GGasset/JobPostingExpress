@@ -223,7 +223,7 @@ const insert_post = function(user_id, is_company, text) {
 module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
 
-const is_liked = async function(user_id, post_id, is_comment) {
+const is_liked = async function(user_id, user_is_company, post_id, is_comment) {
     let content_name;
     if (is_comment)
         content_name = 'comment';
