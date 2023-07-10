@@ -222,3 +222,26 @@ const insert_post = function(user_id, is_company, text) {
 
 module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
+
+const is_liked = async function(user_id, post_id, is_comment) {
+    let content_name;
+    if (is_comment)
+        content_name = 'comment';
+    else
+        content_name = 'post';
+
+    let like =
+    await db.get(`SELECT * FROM likes WHERE user_id=? AND content_id=? AND content_name=${content_name};`, 
+        [user_id, post_id]);
+
+    if (like)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+module.exports.is_liked = is_liked;
