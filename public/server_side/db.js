@@ -196,7 +196,7 @@ module.exports.get_relevant_posts = get_relevant_posts;
 const get_post = async function(post_id)
 {
     let post = 
-        await db.get('SELECT * FROM posts WHERE post_id = ?;',
+        await db.get('SELECT * FROM posts WHERE id = ?;',
             [post_id]);
 
     post['user'] = await get_user_info_by_id(post.poster_id, post.is_company);
