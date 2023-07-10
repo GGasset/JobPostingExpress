@@ -100,7 +100,14 @@ app.get('/post/:post_id', (req, res) => {
 });
 
 app.post('/post/:post_id', async (req, res) => {
+	const post_id = req.params.post_id;
+	const text = req.body.text;
 
+	await db.comment_on_post(req.session.credentials.user.id,
+		false, post_id, text);
+	
+
+	res.redirect(`post/${post_id}`);
 });
 
 const PORT = 3000;
