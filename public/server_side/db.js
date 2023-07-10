@@ -231,8 +231,8 @@ const is_liked = async function(user_id, post_id, is_comment) {
         content_name = 'post';
 
     let like =
-    await db.get(`SELECT * FROM likes WHERE user_id=? AND content_id=? AND content_name=${content_name};`, 
-        [user_id, post_id]);
+    await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=${content_name};`, 
+        [user_id, user_is_company, post_id]);
 
     if (like)
     {
