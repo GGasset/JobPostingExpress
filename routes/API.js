@@ -27,3 +27,5 @@ API_router.get('/is_liked', async function(req, res) {
         "is_liked": is_liked
     }));
 });
+
+module.exports = API_router;
