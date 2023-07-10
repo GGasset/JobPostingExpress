@@ -41,7 +41,7 @@ session_router.post('/login', (req, res) => {
         return {"user": user, "password_hash": hashed_password};
 
     }).then(function(credentials) {
-        const accessToken = jwt.sign({data: credentials.password_hash}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
+        const accessToken = jwt.sign({user_id: credentials.user.id, password_hash: credentials.password_hash}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
 
         req.session.credentials = {
             "user": credentials.user,
