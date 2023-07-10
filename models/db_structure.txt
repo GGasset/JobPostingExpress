@@ -31,6 +31,7 @@ CREATE TABLE posts (
 
 CREATE TABLE likes (
     user_id INTEGER PRIMARY KEY NOT NULL,
+    user_is_company,
     content_id INTEGER NOT NULL,
     content_name TEXT NOT NULL
 );
