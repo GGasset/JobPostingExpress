@@ -123,10 +123,10 @@ const comment_on_post = async function(user_id, is_company, post_id, text) {
                                 [post_id, user_id, is_company, text, "post"]);
 }
 
-const get_post_comments = async function(post_id, is_company) {
+const get_post_comments = async function(post_id, poster_is_company) {
     let comments = 
     await db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
-        [post_id, is_company]);
+        [post_id, poster_is_company]);
 
     for (let comment of comments) {
         comment['user'] = await get_user_info_by_id(comment.poster_id, comment.poster_is_company);
