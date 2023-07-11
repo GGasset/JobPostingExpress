@@ -26,7 +26,6 @@ const comment_content_names = [
     'post',
     'profile/company',
     'profile/user',
-    'jobPost'
 ]
 
 const is_registered_email = async (email) => {
@@ -119,6 +118,11 @@ const get_user_posts = async (user_id, is_company) => {
 
 module.exports.get_user_posts = get_user_posts;
 
+const comment_on_post = async function(user_id, is_company, post_id, text) {
+    await db.run(`INSERT INTO comments(to_id, poster_id, poster_is_company, comment, content_name) VALUES (?, ?, ?, ?, ?);`,
+                                [post_id, user_id, is_company, text, "post"]);
+}
+
 const get_post_comments = async function(post_id, is_company) {
     let comments = 
     await db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ? AND poster_is_company = ?;',
@@ -140,6 +144,7 @@ const get_post_comment_count = async function(post_id) {
 
 module.exports.get_post_comments = get_post_comments;
 module.exports.get_post_comment_count = get_post_comment_count;
+module.exports.comment_on_post = comment_on_post;
 
 const get_latest_posts = async function(max_posts=100) {
     let posts = 
@@ -199,12 +204,12 @@ const get_post = async function(post_id)
         await db.get('SELECT * FROM posts WHERE id = ?;',
             [post_id]);
 
-    post['user'] = await get_user_info_by_id(post.poster_id, post.is_company);
-    post['comments'] = await get_post_comments(post.poster_id, post.is_company);
+    post['user'] = await get_user_info_by_id(post.poster_id, post.poster_is_company);
+    post['comments'] = await get_post_comments(post.id, post.poster_is_company);
     return post;
 }
 
-const insert_post = function(user_id, is_company, text) {
+const insert_post = async function(user_id, is_company, text) {
     return new Promise(function(resolve, reject) {
         const sanitized_text = sanitizer(text);
         resolve(sanitized_text);
