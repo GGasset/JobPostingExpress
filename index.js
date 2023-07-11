@@ -107,7 +107,7 @@ app.post('/post/:post_id', async (req, res) => {
 		false, post_id, text);
 	
 
-	res.redirect(`post/${post_id}`);
+	res.redirect(`/post/${post_id}`);
 });
 
 const PORT = 3000;
