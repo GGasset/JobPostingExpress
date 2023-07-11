@@ -239,16 +239,10 @@ const insert_post = async function(user_id, is_company, text) {
 module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
 
-const is_liked = async function(user_id, user_is_company, post_id, is_comment) {
-    let content_name;
-    if (is_comment)
-        content_name = 'comment';
-    else
-        content_name = 'post';
-
+const is_liked = async function(user_id, user_is_company, post_id, content_name) {
     let like =
-    await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=${content_name};`, 
-        [user_id, user_is_company, post_id]);
+    await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=?;`, 
+        [user_id, user_is_company, post_id, content_name]);
 
     if (like)
     {
