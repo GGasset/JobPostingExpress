@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="post">
+        <table>
+            <tr>
+                <td>
+                    <img class="profile_picture no_margin_top" src="{{ post.user.image_url }}" alt="Profile photo">
+                </td>
+                <td>
+                    <a href="/users/{{ post.user.id }}">{{ post.user.first_name }} {{ post.user.last_name }}</a>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{ post.text }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a>
+                        <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    {% if req.session.credentials.accessToken %}
+        <hr>
+        <form action="" method="post">
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="text" placeholder="Comment something" cols="90" rows="5" style="resize: none;" maxlength="10000"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="on_right" type="submit">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    {% endif %}
+    <hr>
+    {% for comment in post.comments %}
+        <div class="post">
+            <table>
+                <tr>
+                    <td>
+                        <img class="profile_picture no_margin_top" src="{{ comment.user.image_url }}" alt="Profile photo">
+                    </td>
+                    <td>
+                        <a href="/users/{{ comment.user.id }}">{{ comment.user.first_name }} {{ comment.user.last_name }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{{ comment.comment }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a>
+                            <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br>
+    {% endfor %}
+{% endblock %}

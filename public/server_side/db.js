@@ -41,7 +41,7 @@ const is_registered_email = async (email) => {
 module.exports.is_registered_email = is_registered_email;
 
 const bcrypt = require('bcrypt');
-const { post } = require('../../routes/resources');
+const { post, use } = require('../../routes/resources');
 
 /*
 * Returns false if email/password don't match or the hashed password if they do
@@ -119,11 +119,19 @@ const get_user_posts = async (user_id, is_company) => {
         post['comment_count'] = await get_post_comment_count(post.id);
         post['like_count'] = await get_like_count_of_post(post.id);
     };
-    console.log(posts)
     return posts;
 };
 
+const post_exists = async function(post_id)
+{
+    let post = await db.get('SELECT COUNT(id) FROM posts WHERE id = ?;', 
+        [post_id]);
+
+    return post['COUNT(id)'] != 0;
+}
+
 module.exports.get_user_posts = get_user_posts;
+module.exports.post_exists = post_exists;
 
 const comment_on_post = async function(user_id, is_company, post_id, text) {
     await db.run(`INSERT INTO comments(to_id, poster_id, poster_is_company, comment, content_name) VALUES (?, ?, ?, ?, ?);`,
@@ -150,9 +158,17 @@ const get_post_comment_count = async function(post_id) {
     return comment_count['COUNT(id)'];
 };
 
+const comment_exists = async function(comment_id) {
+    let comment_count = 
+        (await db.get('SELECT COUNT(id) FROM comments WHERE id = ?;',
+            [comment_id]))['COUNT(id)'];
+    return comment_count != 0
+}
+
 module.exports.get_post_comments = get_post_comments;
 module.exports.get_post_comment_count = get_post_comment_count;
 module.exports.comment_on_post = comment_on_post;
+module.exports.comment_exists = comment_exists;
 
 const get_latest_posts = async function(max_posts=100) {
     let posts = 
@@ -176,12 +192,13 @@ const get_relevant_posts = async function(req, res, max_posts=100) {
     if (!authentication.require_authentication(req, res)) {
         return false;
     }
-    const user_id = req.session.credentials.user.id;
+    const user_info = req.session.credentials.user;
+    const user_id = user_info.id;
     posts = posts.concat(await get_user_posts(user_id, false));
     let follows = await get_user_follows(user_id, false);
     for (const follow of follows) {
         posts = posts.concat(await get_user_posts(follow.followed_id, follow.followed_is_company));
-    };
+    }
 
     // Sort in descending (if the id is higher the post has been created recently)
     posts.sort((post_a, post_b) => post_b.id - post_a.id);
@@ -201,6 +218,10 @@ const get_relevant_posts = async function(req, res, max_posts=100) {
             posts.findIndex((post) => new_post.id == post.id) == -1;
         });
         posts = posts.concat(latest_posts);
+    }
+
+    for (const post of posts) {
+        post.is_liked = await is_liked(user_id, user_info.is_company, post.id, "post");
     }
     return posts;
 };
@@ -268,13 +289,20 @@ const get_like_count_of_comment = async function(comment_id)
     return like_count;
 }
 
-const like_post = async function(user_info, post_id)
+const like = async function(user_info, post_id, content_name)
 {
     await db.run('INSERT INTO likes(user_id, user_is_company, content_id, content_name) VALUES (?, ?, ?, ?);',
-        [user_info.id, user_info.is_company, post_id, "post"]);
+        [user_info.id, user_info.is_company, post_id, content_name]);
+}
+
+const unlike = async function(user_info, post_id, content_name)
+{
+    await db.run('DELETE FROM likes WHERE user_id = ? AND user_is_company = ? AND content_id = ? AND content_name = ?;',
+        [user_info.id, user_info.is_company, post_id, content_name]);
 }
 
 module.exports.is_liked = is_liked;
 module.exports.get_like_count_of_post = get_like_count_of_post;
 module.exports.get_like_count_of_comment = get_like_count_of_comment;
-module.exports.like_post = like_post;
+module.exports.like = like;
+module.exports.unlike = unlike;

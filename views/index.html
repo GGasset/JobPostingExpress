@@ -4,7 +4,7 @@
     {% if req.session.credentials.accessToken %}
         <!-- Let the user post -->
         <form action="/post" method="post">
-            <div class="centered">
+            <div>
                 <table>
                     <tr>
                         <td>
@@ -40,15 +40,31 @@
                 <tr>
                     <td></td>
                     <td>
-                        {% if post.user.has_deactivated_comments %}
-                        {% else %}
-                        <a href="/post/{{ post.id }}">
-                            <img class="post_icon" alt="Comments" src="/public/comment_icon.png">
-                        </a>
-                        {% endif %}
-                        <a>
-                            <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
-                        </a>
+                        <table>
+                            <tr>
+                                <td>
+                                    {% if post.user.has_deactivated_comments %}
+                                    {% else %}
+                                        <a href="/post/{{ post.id }}">
+                                            <img class="post_icon" alt="Comments" src="/public/comment_icon.png">
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <img onclick="like_post(this)" id="{{ post.id }}" class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ post.comment_count }}
+                                </td>
+                                <td>
+                                    <div id="like_count_{{ post.id }}">
+                                        {{ post.like_count }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>

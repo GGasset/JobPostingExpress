@@ -18,6 +18,7 @@ nunjucks.configure('views', {
 
 // Form configuration
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
 
 // Session configuration (Credentials
 app.use(session({secret: process.env.session_secret, resave: true, saveUninitialized: true}));
@@ -102,6 +103,9 @@ app.get('/post/:post_id', (req, res) => {
 app.post('/post/:post_id', async (req, res) => {
 	const post_id = req.params.post_id;
 	const text = req.body.text;
+
+	if (!authentication_functions.require_authentication(req, res))
+		return;
 
 	await db.comment_on_post(req.session.credentials.user.id,
 		false, post_id, text);

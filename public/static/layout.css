@@ -72,8 +72,19 @@ header {
 }
 
 .post_icon {
+    border-radius: 40%;
+    padding: .3rem;
     margin-top: 1.5rem;
     height: 1rem;
+}
+
+.post_icon:hover {
+    background-color: rgb(144, 138, 235);
+    cursor: pointer;
+}
+
+.activated_icon {
+    background-color: rgb(235, 140, 206);
 }
 
 .no_margin_top {
