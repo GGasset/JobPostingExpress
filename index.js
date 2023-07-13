@@ -63,7 +63,7 @@ app.get('/', (req, res) => {
 		}
 		else
 		{
-			posts = await db.get_relevant_posts(req, res, rendered_posts);
+			posts = await db.get_relevant_posts(req, rendered_posts);
 		}
 		resolve(posts);
 	})

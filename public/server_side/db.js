@@ -190,7 +190,7 @@ const get_latest_posts = async function(max_posts=100) {
 * Returns false if user isn't properly authenticated
 * If there aren't enough posts from following latest posts are retrieved
 */
-const get_relevant_posts = async function(req, res, max_posts=100) {
+const get_relevant_posts = async function(req, max_posts=100) {
     let posts = [];
 
     const user_info = req.session.credentials.user;
