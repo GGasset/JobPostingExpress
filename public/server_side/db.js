@@ -194,9 +194,10 @@ const get_relevant_posts = async function(req, max_posts=100) {
     let posts = [];
 
     const user_info = req.session.credentials.user;
+    const is_company = user_info.is_company;
     const user_id = user_info.id;
-    posts = posts.concat(await get_user_posts(user_id, false));
-    let follows = await get_user_follows(user_id, false);
+    posts = posts.concat(await get_user_posts(user_id, is_company));
+    let follows = await get_user_follows(user_id, is_company);
     for (const follow of follows) {
         posts = posts.concat(await get_user_posts(follow.followed_id, follow.followed_is_company));
     }
@@ -310,3 +311,14 @@ module.exports.get_like_count_of_post = get_like_count_of_post;
 module.exports.get_like_count_of_comment = get_like_count_of_comment;
 module.exports.like = like;
 module.exports.unlike = unlike;
+
+// Companies
+
+const get_company_info = async function(company_id) {
+    let company_info = await db.get('SELECT id, company_name, company_size, image_url FROM companies WHERE id = ?;',
+        [company_id]);
+    
+    return company_info;
+}
+
+module.exports.get_company_info = get_company_info;
