@@ -192,9 +192,7 @@ const get_latest_posts = async function(max_posts=100) {
 */
 const get_relevant_posts = async function(req, res, max_posts=100) {
     let posts = [];
-    if (!authentication.require_authentication(req, res)) {
-        return false;
-    }
+
     const user_info = req.session.credentials.user;
     const user_id = user_info.id;
     posts = posts.concat(await get_user_posts(user_id, false));
