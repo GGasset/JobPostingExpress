@@ -23,7 +23,13 @@ company_router.use(function(req, res, next) {
 });
 
 company_router.get('/', function(req, res) {
-    new Promise(function(resolve, reject) {
-        const posts = db.get_relevant_posts(req);
+    new Promise(async function(resolve, reject) {
+        const posts = await db.get_relevant_posts(req);
+        resolve(posts);
+    }).then(function(posts) {
+        res.status(200).render('index.html', {
+			"posts": posts,
+			"req": req,
+		});
     })
 })
