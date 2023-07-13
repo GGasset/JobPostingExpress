@@ -18,9 +18,20 @@
             <tr>
                 <td></td>
                 <td>
-                    <a>
-                        <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
-                    </a>
+                    <table>
+                        <tr>
+                            <td>
+                                <img class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ post.like_count }}
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    
                 </td>
             </tr>
         </table>
@@ -65,8 +76,16 @@
                     <td></td>
                     <td>
                         <a>
-                            <img class="post_icon" src="/public/like_icon.png" alt="like_icon">
+                            <img onclick="like_post(this, 'comment')" id="{{ comment.id }}" class="post_icon {% if comment.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
                         </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="comment_like_count_{{ comment.id }}">
+                            {{ comment.like_count }}
+                        </div>
                     </td>
                 </tr>
             </table>

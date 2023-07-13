@@ -1,4 +1,4 @@
-async function like_post(element) {
+async function like_post(element, content_name) {
     const post_id = element.id;
     let is_liked;
     let status;
@@ -7,26 +7,27 @@ async function like_post(element) {
         credentials: "include",
         headers: {
             content_id: post_id,
-            content_name: "post"
+            content_name: content_name
         }
     }).then(async function(response) {
         status = response.status;
         is_liked = await response.json();
     });
-    if (is_liked.status == 403)
+    if (status != 200)
         return false;
 
-    const like_count = document.querySelector(`#like_count_${post_id}`)
+    const id_prefix = `${content_name}_like_count_`
+    const element_id = `#${id_prefix}${post_id}`;
+    const like_count = document.querySelector(element_id);
+
     if (is_liked)
     {
         element.classList.add("activated_icon");
-        //element.style.background = 'rgb(238, 118, 202)';
         like_count.innerHTML = parseInt(like_count.innerHTML) + 1;
     }
     else
     {
         element.classList.remove("activated_icon");
-        //element.style.background = 'unset';
         like_count.innerHTML = parseInt(like_count.innerHTML) - 1;
     }
 

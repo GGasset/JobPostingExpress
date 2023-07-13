@@ -90,7 +90,10 @@ app.get('/post/:post_id', (req, res) => {
 		const post_id = req.params.post_id;
 		resolve(post_id);
 	}).then(async function(post_id) {
-		let post = await db.get_post(post_id);
+		let user_info = undefined;
+		if (authentication_functions.is_authenticated(req))
+			user_info = req.session.credentials.user;
+		let post = await db.get_post(post_id, user_info);
 		return post;
 	}).then(function(post) {
 		res.status(200).render('post.html', {

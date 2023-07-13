@@ -51,7 +51,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <img onclick="like_post(this)" id="{{ post.id }}" class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
+                                    <img onclick="like_post(this, 'post')" id="{{ post.id }}" class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
                                 </td>
                             </tr>
                             <tr>
@@ -59,7 +59,7 @@
                                     {{ post.comment_count }}
                                 </td>
                                 <td>
-                                    <div id="like_count_{{ post.id }}">
+                                    <div id="post_like_count_{{ post.id }}">
                                         {{ post.like_count }}
                                     </div>
                                 </td>
