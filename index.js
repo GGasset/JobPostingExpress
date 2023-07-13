@@ -32,6 +32,17 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use(function(req, res, next) {
+	if (!authentication_functions.is_authenticated(req))
+	{
+		next();
+		return;
+	}
+
+	req.session.credentials.user.is_company = false;
+	next();
+})
+
 // Routers
 const session_router = require('./routes/session_init');
 const resources_router = require('./routes/resources');
