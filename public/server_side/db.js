@@ -318,6 +318,7 @@ const get_company_info = async function(company_id) {
     let company_info = await db.get('SELECT id, company_name, company_size, image_url FROM companies WHERE id = ?;',
         [company_id]);
     
+    company_info['is_company'] = true;
     return company_info;
 }
 
