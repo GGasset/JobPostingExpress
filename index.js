@@ -2,6 +2,8 @@ const express = require("express");
 const session = require('express-session');
 const nunjucks = require("nunjucks");
 const sanitize = require("sanitize-html");
+const jwt = require('jsonwebtoken');
+
 const authentication_functions = require('./public/server_side/authentication');
 const db = require('./public/server_side/db');
 
@@ -33,14 +35,26 @@ app.use((req, res, next) => {
 });
 
 app.use(function(req, res, next) {
-	if (!authentication_functions.is_authenticated(req))
-	{
-		next();
-		return;
-	}
+	new Promise(async function(resolve, reject) {
+		if (!authentication_functions.is_authenticated(req))
+		{
+			next();
+			return;
+		}
+		else if (!req.session.credentials.user.is_company)
+		{
+			next();
+			return;
+		}
+	
+		let user_id;
+		jwt.verify(req.session.credentials.accessToken, process.env.JWTSecret, function(err, user) {
+			user_id = user.user_id;
+		});
 
-	req.session.credentials.user.is_company = false;
-	next();
+		req.session.credentials.user = await db.get_user_info_by_id(user_id);
+		next();
+	});
 })
 
 // Routers
