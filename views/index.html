@@ -31,7 +31,7 @@
                     </td>
                     <td>
                         {% if post.user.is_company %}
-                            <a href="/companies/{{ post.user.id }}">{{ post.user.company_name }}</a>
+                            <a href="/companies/{{ post.user.id }}">{{ post.user.company_name }}</a> (Company)
                         {% else %}
                             <a href="/users/{{ post.user.id }}">{{ post.user.first_name }} {{ post.user.last_name }}</a>
                         {% endif %}
