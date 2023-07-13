@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 			user_id = user.user_id;
 		});
 
-		req.session.credentials.user = await db.get_user_info_by_id(user_id);
+		req.session.credentials.user = await db.get_user_info_by_id(user_id, false);
 		next();
 	});
 })
