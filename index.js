@@ -135,8 +135,9 @@ app.post('/post/:post_id', async (req, res) => {
 	if (!authentication_functions.require_authentication(req, res))
 		return;
 
-	await db.comment_on_post(req.session.credentials.user.id,
-		false, post_id, text);
+	let user_info = req.session.credentials.user;
+	await db.comment_on_post(user_info.id,
+		user_info.is_company, post_id, text);
 	
 
 	res.redirect(`/post/${post_id}`);
