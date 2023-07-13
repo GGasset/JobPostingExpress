@@ -80,8 +80,10 @@ API_router.post('/like', function(req, res) {
     }).then(function(is_liked) {
         res.status(200).send(is_liked);
     }).catch(function(reason) {
-        console.log(reason)
-        res.status(403).send();
+        if (reason == 'Forbidden')
+            res.status(403).send();
+        else
+            res.status(400).send();
     });
 });
 
