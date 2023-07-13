@@ -22,6 +22,7 @@ company_router.use(function(req, res, next) {
     })
 });
 
+// Routes
 company_router.get('/', function(req, res) {
     new Promise(async function(resolve, reject) {
         const posts = await db.get_relevant_posts(req);
