@@ -336,6 +336,13 @@ const is_user_company_admin = async function(user_id) {
     return is_admin != 0;
 }
 
+const register_company = async function(password_hash, company_name, company_size)
+{
+    await db.run('INSERT INTO companies(password_hash, company_name, company_size) VALUES (?, ?, ?);',
+        [password_hash, company_name, company_size]);
+}
+
 module.exports.get_company_info = get_company_info;
 module.exports.get_user_company = get_user_company;
 module.exports.is_user_company_admin = is_user_company_admin;
+module.exports.register_company = register_company;

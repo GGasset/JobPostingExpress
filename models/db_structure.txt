@@ -57,8 +57,9 @@ CREATE TABLE messages (
 CREATE TABLE companies (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     password_hash TEXT NOT NULL,
-    company_name TEXT UNIQUE NOT NULL,
+    company_name TEXT NOT NULL,
     company_size TEXT NOT NULL,
+    company_description TEXT,
     company_web_url TEXT,
     image_url TEXT DEFAULT '/public/Blank_company_profile_picture',
 );
