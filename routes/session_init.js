@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+
+const authentication = require('../public/server_side/authentication');
 const db = require('../public/server_side/db');
 
 const session_router = express.Router()
@@ -48,6 +50,16 @@ session_router.post('/login', (req, res) => {
             "accessToken": accessToken
         };
 
+    }).then(async function() {
+        // Sign user to company if its from the company
+        const user = req.session.credentials.user;
+        if (user.company === undefined)
+            return;
+
+        req.session.credentials.companyAccessToken = jwt.sign({id: user.company.id, password_hash: user.company.password_hash},
+            process.env.JWTSecret);
+        return;
+    }).then(function() {
         res.redirect('/');
     }).catch(function(reason) {
         // Do nothing
@@ -102,7 +114,16 @@ session_router.post('/register', (req, res) => {
 });
 
 session_router.get('/company/register', (req, res) => {
+    if (!authentication.require_authentication(req, res))
+    {
+        return false;
+    }
 
-})
+    res.render('company_register.html')
+});
+
+session_router.post('/company/register', function(req, res) {
+
+});
 
 module.exports = session_router;
