@@ -333,7 +333,7 @@ const is_user_company_admin = async function(user_id) {
     const is_admin = (await db.get('SELECT is_admin FROM users_from_company WHERE user_id = ?;'),
         [user_id])['is_admin'];
 
-    return is_admin;
+    return is_admin != 0;
 }
 
 module.exports.get_company_info = get_company_info;
