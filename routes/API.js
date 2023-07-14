@@ -2,7 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const authentication = require('../public/server_side/authentication');
-const db = require('../public/server_side/db');
+const db = require('../models/db');
 
 const API_router = express.Router();
 

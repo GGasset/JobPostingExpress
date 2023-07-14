@@ -1,6 +1,6 @@
 const sanitizer = require('sanitize-html');
 
-const authentication = require('./authentication');
+const authentication = require('../public/server_side/authentication');
 
 const dbFile = './models/db.db';
 
@@ -41,7 +41,7 @@ const is_registered_email = async (email) => {
 module.exports.is_registered_email = is_registered_email;
 
 const bcrypt = require('bcrypt');
-const { post, use } = require('../../routes/resources');
+const { post, use } = require('../routes/resources');
 
 /*
 * Returns false if email/password don't match or the hashed password if they do

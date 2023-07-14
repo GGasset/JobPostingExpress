@@ -5,7 +5,7 @@ const sanitize = require("sanitize-html");
 const jwt = require('jsonwebtoken');
 
 const authentication_functions = require('./public/server_side/authentication');
-const db = require('./public/server_side/db');
+const db = require('./models/db');
 
 // Configure .env
 require('dotenv').config({path: "./config/.env"});
