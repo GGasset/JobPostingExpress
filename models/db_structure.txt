@@ -72,7 +72,7 @@ CREATE TABLE company_focus (
 CREATE TABLE users_from_company (
     user_id INTEGER PRIMARY KEY NOT NULL,
     company_id INTEGER NOT NULL,
-    is_admin INTEGER NOT NULL
+    is_admin INTEGER DEFAULT 0
 );
 
 CREATE TABLE jobs (
