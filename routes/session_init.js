@@ -56,6 +56,7 @@ session_router.post('/login', (req, res) => {
         if (user.company === undefined)
             return;
 
+        req.session.credentials.company.is_admin = await db.is_user_company_admin(user.id);
         req.session.credentials.companyAccessToken = jwt.sign({id: user.company.id, password_hash: user.company.password_hash},
             process.env.JWTSecret);
         return;
