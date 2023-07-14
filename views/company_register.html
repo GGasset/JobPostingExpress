@@ -2,6 +2,18 @@
 
 {% block body %}
     <form method="post">
-
+        <div>
+            <input name="company_name" type="text" placeholder="Company name">
+        </div>
+        <div>
+            <input name="company_size" type="text" placeholder="Company size (Small [0-50], Medium [51-250], Large [250-...])">
+        </div>
+        <div>
+            <input name="password" type="password" placeholder="Repeat password">
+        </div>
+        <div>
+            <input name="repeated_password" type="password" placeholder="Repeat password">
+        </div>
+        <input type="submit" value="Register">
     </form>
 {% endblock %}
