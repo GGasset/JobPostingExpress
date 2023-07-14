@@ -75,23 +75,20 @@ const get_user_info_by_email = async (email) => {
     let user_info = 
         await db.get('SELECT id, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE email = ?;', 
             [email]);
+
     user_info.email = email;
     user_info.is_company = false;
+    user_info.company = await db.get_user_company(user_info.id);
 
     return user_info;
 };
 
-const get_user_info_by_id = async (id, is_company) => {
-    let user_info;
-    if (is_company)
-        user_info = 
-        await db.get('SELECT id, company_name, company_size FROM companies WHERE id = ?',
-            [id]);
-    else
-        user_info = 
+const get_user_info_by_id = async (id) => {
+    let user_info = 
         await db.get('SELECT id, email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', 
             [id]);
 
+    user_info.company = await db.get_user_company(user_info.id);
     user_info['is_company'] = is_company;
     return user_info;
 };
@@ -322,4 +319,15 @@ const get_company_info = async function(company_id) {
     return company_info;
 }
 
+const get_user_company = async function(user_id) {
+    const company_id = await db.get('SELECT company_id FROM users_from_company WHERE user_id = ?;',
+        [user_id]);
+    
+    if (!company_id)
+        return null;
+
+    return company_id;
+}
+
 module.exports.get_company_info = get_company_info;
+module.exports.get_user_company = get_user_company;;

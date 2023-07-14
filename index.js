@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 			user_id = user.user_id;
 		});
 
-		req.session.credentials.user = await db.get_user_info_by_id(user_id, false);
+		req.session.credentials.user = await db.get_user_info_by_id(user_id);
 		next();
 	});
 })
@@ -137,7 +137,8 @@ app.post('/post/:post_id', async (req, res) => {
 
 	let user_info = req.session.credentials.user;
 	await db.comment_on_post(user_info.id,
-		user_info.is_company, post_id, text);
+		user_info.is_company
+		, post_id, text);
 	
 
 	res.redirect(`/post/${post_id}`);
