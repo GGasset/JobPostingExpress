@@ -78,7 +78,7 @@ const get_user_info_by_email = async (email) => {
 
     user_info.email = email;
     user_info.is_company = false;
-    user_info.company = await db.get_user_company(user_info.id);
+    user_info.company = await get_user_company(user_info.id);
 
     return user_info;
 };
@@ -88,7 +88,7 @@ const get_user_info_by_id = async (id) => {
         await db.get('SELECT id, email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', 
             [id]);
 
-    user_info.company = await db.get_user_company(user_info.id);
+    user_info.company = await get_user_company(user_info.id);
     user_info['is_company'] = is_company;
     return user_info;
 };
@@ -320,8 +320,8 @@ const get_company_info = async function(company_id) {
 }
 
 const get_user_company = async function(user_id) {
-    const company_id = await db.get('SELECT company_id FROM users_from_company WHERE user_id = ?;',
-        [user_id]);
+    const company_id = (await db.get('SELECT company_id FROM users_from_company WHERE user_id = ?;',
+        [user_id]))['company_id'];
     
     if (!company_id)
         return null;
@@ -329,5 +329,13 @@ const get_user_company = async function(user_id) {
     return company_id;
 }
 
+const is_user_company_admin = async function(user_id) {
+    const is_admin = (await db.get('SELECT is_admin FROM users_from_company WHERE user_id = ?;'),
+        [user_id])['is_admin'];
+
+    return is_admin;
+}
+
 module.exports.get_company_info = get_company_info;
-module.exports.get_user_company = get_user_company;;
+module.exports.get_user_company = get_user_company;
+module.exports.is_user_company_admin = is_user_company_admin;
