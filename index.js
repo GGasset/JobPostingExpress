@@ -35,6 +35,7 @@ app.use((req, res, next) => {
 });
 
 app.use(function(req, res, next) {
+	// If user.is_company get user data
 	new Promise(async function(resolve, reject) {
 		if (!authentication_functions.is_authenticated(req))
 		{
