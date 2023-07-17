@@ -42,14 +42,15 @@ session_router.post('/login', (req, res) => {
 
         return {"user": user, "password_hash": hashed_password};
 
-    }).then(function(credentials) {
+    }).then(async function(credentials) {
         const accessToken = jwt.sign({user_id: credentials.user.id, password_hash: credentials.password_hash}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
 
-        req.session.credentials = {
-            "user": credentials.user,
-            "accessToken": accessToken
-        };
-
+        req.session.credentials['accessToken'] = accessToken;
+        req.session.user = credentials.user;
+        if (req.session.user.company_id)
+        {
+            req.session.company = await db.get_company_info(req.session.user.company_id);
+        }
     }).then(function() {
         res.redirect('/');
     }).catch(function(reason) {
