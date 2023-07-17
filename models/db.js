@@ -78,7 +78,7 @@ const get_user_info_by_email = async (email) => {
 
     user_info.email = email;
     user_info.is_company = false;
-    user_info.company = await get_user_company(user_info.id);
+    user_info.company = await get_user_company_id(user_info.id);
 
     return user_info;
 };
@@ -88,8 +88,8 @@ const get_user_info_by_id = async (id) => {
         await db.get('SELECT id, email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', 
             [id]);
 
-    user_info.company = await get_user_company(user_info.id);
-    user_info['is_company'] = is_company;
+    user_info.company = await get_user_company_id(user_info.id);
+    user_info['is_company'] = false;
     return user_info;
 };
 
@@ -319,7 +319,7 @@ const get_company_info = async function(company_id) {
     return company_info;
 }
 
-const get_user_company = async function(user_id) {
+const get_user_company_id = async function(user_id) {
     const company_id = (await db.get('SELECT company_id FROM users_from_company WHERE user_id = ?;',
         [user_id]))['company_id'];
     
@@ -336,13 +336,18 @@ const is_user_company_admin = async function(user_id) {
     return is_admin != 0;
 }
 
-const register_company = async function(password_hash, company_name, company_size)
+const register_company = async function(password_hash, company_name, company_size, creator_id)
 {
-    await db.run('INSERT INTO companies(password_hash, company_name, company_size) VALUES (?, ?, ?);',
-        [password_hash, company_name, company_size]);
+    const company_id = (await db.get('SELECT MAX(id) FROM companies;'))['Max(id)'] + 1;
+
+    await db.run('INSERT INTO companies(id, password_hash, company_name, company_size) VALUES (?, ?, ?, ?);',
+        [company_id, password_hash, company_name, company_size]);
+
+    await db.run('INSERT INTO users_from_company(user_id, company_id, is_admin) VALUES (?, ?, ?)',
+        [creator_id, company_id, 1]);
 }
 
 module.exports.get_company_info = get_company_info;
-module.exports.get_user_company = get_user_company;
+module.exports.get_user_company_id = get_user_company_id;
 module.exports.is_user_company_admin = is_user_company_admin;
 module.exports.register_company = register_company;
