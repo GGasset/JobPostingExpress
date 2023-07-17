@@ -50,16 +50,6 @@ session_router.post('/login', (req, res) => {
             "accessToken": accessToken
         };
 
-    }).then(async function() {
-        // Sign user to company if its from the company
-        const user = req.session.credentials.user;
-        if (user.company === undefined)
-            return;
-
-        req.session.credentials.company.is_admin = await db.is_user_company_admin(user.id);
-        req.session.credentials.companyAccessToken = jwt.sign({id: user.company.id, password_hash: user.company.password_hash},
-            process.env.JWTSecret);
-        return;
     }).then(function() {
         res.redirect('/');
     }).catch(function(reason) {
@@ -115,16 +105,73 @@ session_router.post('/register', (req, res) => {
 });
 
 session_router.get('/company/register', (req, res) => {
-    if (!authentication.require_authentication(req, res))
-    {
-        return false;
-    }
+    new Promise(function(resolve, reject) {
+        if (!authentication.require_authentication(req, res))
+        {
+            reject();
+        }
+    
+        res.render('company_register.html', {
+            req: req
+        })
+    }).catch(function(reason) {
 
-    res.render('company_register.html')
+    })
 });
 
 session_router.post('/company/register', function(req, res) {
+    new Promise(function(resolve, reject) {
+        if (!authentication.require_authentication(req, res))
+        {
+            reject('Sign in as user required')
+            return;
+        }
+        if (authentication.is_authenticated_as_company(req))
+        {
+            reject('User is already part of a company')
+            return;
+        }
 
+        const form_data = {
+            name: req.body.company_name,
+            company_size: req.body.company_size,
+            password: req.body.password,
+            repeated_password: req.body.repeated_password
+        }
+        return form_data;
+    }).then(function(form_data) {
+        const company_info = {
+            company_name: form_data.name,
+            company_size: form_data.company_size
+        }
+
+        const salt = bcrypt.genSaltSync()
+        const hashed_password = bcrypt.hashSync(form_data.password, salt);
+        const repeated_hashed_password = bcrypt.hashSync(form_data.repeated_password, salt);
+        const password_match = hashed_password === repeated_hashed_password;
+
+        if (!password_match)
+        {
+            throw ("Passwords doesn't match");
+        }
+        company_info.password_hash = hashed_password;
+        return company_info;
+    }).then(function(company_info) {
+        // Log the user to the company
+        
+        req.session.credentials.companyAccessToken = jwt.sign({
+            id: company_info.id,
+            password_hash: user.company.password_hash
+        },  process.env.JWTSecret);
+    }).then(function() {
+        // Redirect to company main page
+        res.redirect('/company')
+    }).catch(function(reason) {
+        res.status(200).render('company_register.html', {
+            "message": reason,
+            "color": "red"
+        });
+    });
 });
 
 module.exports = session_router;
