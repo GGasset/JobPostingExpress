@@ -13,12 +13,9 @@ company_router.use(function(req, res, next) {
         if (!authentication.require_company_authentication(req, res)) {
             return false;
         }
+
+        req.session.as_company = true;
     
-        let company_id;
-        jwt.verify(req.session.credentials.companyAccessToken, process.env.JWTSecret, function(err, company_info) {
-            company_id = company_info.company_id;
-        })
-        req.session.credentials.user = await db.get_company_info(company_id);
         next();
     })
 });

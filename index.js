@@ -35,25 +35,16 @@ app.use((req, res, next) => {
 });
 
 app.use(function(req, res, next) {
-	// If user.is_company get user data
+	// If as_company get user data
 	new Promise(async function(resolve, reject) {
 		if (!authentication_functions.is_authenticated(req))
 		{
 			next();
 			return;
 		}
-		else if (!req.session.credentials.user.is_company)
-		{
-			next();
-			return;
-		}
+		
+		req.session.as_company = false;
 	
-		let user_id;
-		jwt.verify(req.session.credentials.accessToken, process.env.JWTSecret, function(err, user) {
-			user_id = user.user_id;
-		});
-
-		req.session.credentials.user = await db.get_user_info_by_id(user_id);
 		next();
 	});
 })
