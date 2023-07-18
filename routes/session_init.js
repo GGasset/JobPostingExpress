@@ -106,6 +106,9 @@ session_router.post('/register', (req, res) => {
 });
 
 session_router.get('/company/register', (req, res) => {
+    // https://rapidapi.com/collection/company-information-apis/
+    // To check whether a company exists
+    // if so you should add a way to file a complaint if someone took your company name
     new Promise(function(resolve, reject) {
         if (!authentication.require_authentication(req, res))
         {
