@@ -1,11 +1,6 @@
 const express = require("express");
 const session = require('express-session');
 const nunjucks = require("nunjucks");
-const sanitize = require("sanitize-html");
-const jwt = require('jsonwebtoken');
-
-const authentication_functions = require('./public/server_side/authentication');
-const db = require('./models/db');
 
 // Configure .env
 require('dotenv').config({path: "./config/.env"});

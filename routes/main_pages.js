@@ -1,4 +1,8 @@
 const express = require('express');
+const sanitize = require("sanitize-html");
+
+const authentication = require('./public/server_side/authentication');
+const db = require('./models/db');
 
 const main_router = express.Router();
 
@@ -55,7 +59,7 @@ main_router.get('/post/:post_id', (req, res) => {
 		resolve(post_id);
 	}).then(async function(post_id) {
 		let user_info = undefined;
-		if (authentication_functions.is_authenticated(req))
+		if (authentication.is_authenticated(req))
 			user_info = req.session.user;
 
 		let post = await db.get_post(post_id, req);
@@ -73,7 +77,7 @@ main_router.post('/post/:post_id', async (req, res) => {
 	const post_id = req.params.post_id;
 	const text = req.body.text;
 
-	if (!authentication_functions.require_authentication(req, res))
+	if (!authentication.require_authentication(req, res))
 		return;
 
 	const as_company = req.session.as_company;
