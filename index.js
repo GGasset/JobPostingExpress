@@ -50,96 +50,15 @@ app.use(function(req, res, next) {
 })
 
 // Routers
+const main_router = require('./routes/main_pages');
 const session_router = require('./routes/session_init');
 const resources_router = require('./routes/resources');
 const API_router = require('./routes/API');
 
+app.use('/', main_router);
 app.use('/session', session_router);
 app.use('/public', resources_router);
 app.use('/API', API_router);
-
-// Main pages
-const rendered_posts = 100;
-app.get('/', (req, res) => {
-	new Promise(async (resolve, reject) => {
-		let posts = [];
-		if (!authentication_functions.is_authenticated(req))
-		{
-			posts = await db.get_latest_posts(rendered_posts);
-		}
-		else
-		{
-			posts = await db.get_relevant_posts(req, rendered_posts);
-		}
-		resolve(posts);
-	})
-	.then((posts) => {
-		res.status(200).render('index.html', {
-			"posts": posts,
-			"req": req,
-		});
-	});
-});
-
-app.post('/post', (req, res) => {
-	// Create post
-	new Promise(async (resolve, reject) => {
-		if (!authentication_functions.require_authentication(req, res)) {
-			reject();
-			return;
-		}
-
-		const text = req.body.text;
-
-		const as_company = req.session.as_company;
-		const user_id = as_company ? req.session.company.id : req.session.user.id;
-
-		db.insert_post(user_id, as_company, text)
-		.catch((reason) => {
-			if (reason === "Error while inserting post")
-				res.status(500).send();
-		}).then(function(value) {
-			res.redirect('/');
-		});
-	}).catch(function (reason) {
-
-	});
-});
-
-app.get('/post/:post_id', (req, res) => {
-	new Promise((resolve, reject) => {
-		const post_id = req.params.post_id;
-		resolve(post_id);
-	}).then(async function(post_id) {
-		let user_info = undefined;
-		if (authentication_functions.is_authenticated(req))
-			user_info = req.session.user;
-
-		let post = await db.get_post(post_id, req);
-		return post;
-
-	}).then(function(post) {
-		res.status(200).render('post.html', {
-			'req': req,
-			'post': post
-		});
-	});
-});
-
-app.post('/post/:post_id', async (req, res) => {
-	const post_id = req.params.post_id;
-	const text = req.body.text;
-
-	if (!authentication_functions.require_authentication(req, res))
-		return;
-
-	const as_company = req.session.as_company;
-	let user_info = as_company ? req.session.company : req.session.user;
-	await db.comment_on_post(user_info.id, as_company, post_id, text);
-	
-
-	res.redirect(`/post/${post_id}`);
-});
 
 const PORT = 3000;
 app.listen(PORT, () => {
