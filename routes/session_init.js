@@ -159,11 +159,15 @@ session_router.post('/company/register', function(req, res) {
         return company_info;
     }).then(function(company_info) {
         // Log the user to the company
-        
         req.session.credentials.companyAccessToken = jwt.sign({
             id: company_info.id,
             password_hash: user.company.password_hash
         },  process.env.JWTSecret);
+
+        return company_info.id;
+    }).then(async function(company_id) {
+        req.session.user = await db.get_user_info_by_id(req.session.user.id);
+        req.session.company = await db.get_company_info(company_id);
     }).then(function() {
         // Redirect to company main page
         res.redirect('/company')
