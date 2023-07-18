@@ -1,8 +1,8 @@
 const express = require('express');
 const sanitize = require("sanitize-html");
 
-const authentication = require('./public/server_side/authentication');
-const db = require('./models/db');
+const authentication = require('../public/server_side/authentication');
+const db = require('../models/db');
 
 const main_router = express.Router();
 
@@ -10,7 +10,7 @@ const rendered_posts = 100;
 main_router.get('/', (req, res) => {
 	new Promise(async (resolve, reject) => {
 		let posts = [];
-		if (!authentication_functions.is_authenticated(req))
+		if (!authentication.is_authenticated(req))
 		{
 			posts = await db.get_latest_posts(rendered_posts);
 		}
@@ -31,7 +31,7 @@ main_router.get('/', (req, res) => {
 main_router.post('/post', (req, res) => {
 	// Create post
 	new Promise(async (resolve, reject) => {
-		if (!authentication_functions.require_authentication(req, res)) {
+		if (!authentication.require_authentication(req, res)) {
 			reject();
 			return;
 		}

@@ -2,6 +2,8 @@ const express = require("express");
 const session = require('express-session');
 const nunjucks = require("nunjucks");
 
+const authentication = require('./public/server_side/authentication');
+
 // Configure .env
 require('dotenv').config({path: "./config/.env"});
 
@@ -32,7 +34,7 @@ app.use((req, res, next) => {
 app.use(function(req, res, next) {
 	// If as_company get user data
 	new Promise(async function(resolve, reject) {
-		if (!authentication_functions.is_authenticated(req))
+		if (!authentication.is_authenticated(req))
 		{
 			next();
 			return;
