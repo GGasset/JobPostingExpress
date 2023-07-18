@@ -79,6 +79,7 @@ const get_user_info_by_email = async (email) => {
     user_info.email = email;
     user_info.is_company = false;
     user_info.company_id = await get_user_company_id(user_info.id);
+    user_info.is_company_admin = await is_user_company_admin(user_info.id);
 
     return user_info;
 };
@@ -88,7 +89,8 @@ const get_user_info_by_id = async (id) => {
         await db.get('SELECT id, email, first_name, last_name, image_url, has_deactivated_comments FROM users WHERE id = ?;', 
             [id]);
 
-    user_info.company_ID = await get_user_company_id(user_info.id);
+    user_info.company_id = await get_user_company_id(user_info.id);
+    user_info.is_company_admin = await is_user_company_admin(user_info.id);
     user_info['is_company'] = false;
     return user_info;
 };
