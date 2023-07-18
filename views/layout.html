@@ -18,7 +18,19 @@
         <header class="no_margin">
             <div class="no_margin">
                 {% if req.session.credentials.accessToken %}
-                    <img src="{{ req.session.credentials.user.image_url }}" onclick="" alt="Profile picture" class="profile_picture float_right">
+                    {% if req.session.as_company %}
+                        {% if req.session.user.is_company_admin %}
+                        <a href="/profiles/me/company/">
+                            <img src="{{ req.session.company.image_url }}" alt="Company profile picture" class="profile_picture float_right">
+                        </a>
+                        {% else %}
+                            <img src="{{ req.session.company.image_url }}" alt="Company profile picture" class="profile_picture float_right">
+                        {% endif %}
+                    {% else %}
+                        <a href="/profiles/me">
+                            <img src="{{ req.session.user.image_url }}" alt="Profile picture" class="profile_picture float_right">
+                        </a>
+                    {% endif %}
                 {% else %}
                     {% if do_not_show_session_links %}
                     {% else %}
