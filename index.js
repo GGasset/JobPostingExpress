@@ -90,7 +90,11 @@ app.post('/post', (req, res) => {
 		}
 
 		const text = req.body.text;
-		db.insert_post(req.session.credentials.user.id, false, text)
+
+		const as_company = req.session.as_company;
+		const user_id = as_company ? req.session.company.id : req.session.user.id;
+
+		db.insert_post(user_id, as_company, text)
 		.catch((reason) => {
 			if (reason === "Error while inserting post")
 				res.status(500).send();
@@ -109,9 +113,11 @@ app.get('/post/:post_id', (req, res) => {
 	}).then(async function(post_id) {
 		let user_info = undefined;
 		if (authentication_functions.is_authenticated(req))
-			user_info = req.session.credentials.user;
-		let post = await db.get_post(post_id, user_info);
+			user_info = req.session.user;
+
+		let post = await db.get_post(post_id, req);
 		return post;
+
 	}).then(function(post) {
 		res.status(200).render('post.html', {
 			'req': req,
@@ -127,10 +133,9 @@ app.post('/post/:post_id', async (req, res) => {
 	if (!authentication_functions.require_authentication(req, res))
 		return;
 
-	let user_info = req.session.credentials.user;
-	await db.comment_on_post(user_info.id,
-		user_info.is_company
-		, post_id, text);
+	const as_company = req.session.as_company;
+	let user_info = as_company ? req.session.company : req.session.user;
+	await db.comment_on_post(user_info.id, as_company, post_id, text);
 	
 
 	res.redirect(`/post/${post_id}`);
