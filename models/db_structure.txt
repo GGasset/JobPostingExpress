@@ -68,7 +68,7 @@ CREATE TABLE companies (
 CREATE TABLE company_focus (
     company_id INTEGER NOT NULL PRIMARY KEY,
     role INTEGER NOT NULL
-)
+);
 
 CREATE TABLE users_from_company (
     user_id INTEGER PRIMARY KEY NOT NULL,
