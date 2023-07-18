@@ -20,15 +20,6 @@ company_router.use(function(req, res, next) {
     })
 });
 
-// Routes
-company_router.get('/', function(req, res) {
-    new Promise(async function(resolve, reject) {
-        const posts = await db.get_relevant_posts(req);
-        resolve(posts);
-    }).then(function(posts) {
-        res.status(200).render('index.html', {
-			"posts": posts,
-			"req": req,
-		});
-    })
-})
+// Main pages router
+const main_pages = require('./main_pages');
+company_router.use('/', main_pages)
