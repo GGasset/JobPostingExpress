@@ -30,7 +30,7 @@
                         <img class="profile_picture no_margin_top" src="{{ post.user.image_url }}" alt="Profile photo">
                     </td>
                     <td>
-                        {% if post.user.is_company %}
+                        {% if post.poster_is_company %}
                             <a href="/companies/{{ post.user.id }}">{{ post.user.company_name }}</a> (Company)
                         {% else %}
                             <a href="/users/{{ post.user.id }}">{{ post.user.first_name }} {{ post.user.last_name }}</a>
