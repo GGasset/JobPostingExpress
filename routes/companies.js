@@ -1,7 +1,5 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 
-const db = require('../models/db');
 const authentication = require('../public/server_side/authentication');
 
 const company_router = express.Router();
