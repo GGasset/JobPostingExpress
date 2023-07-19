@@ -209,7 +209,7 @@ const get_relevant_posts = async function(req, max_posts=100) {
     const as_company = req.session.as_company;
     const user_id = as_company?
         company_info.id:
-        user_id = user_info.id;
+        user_info.id;
 
     posts = posts.concat(await get_user_posts(user_id, as_company));
     let follows = await get_user_follows(user_id, as_company);
