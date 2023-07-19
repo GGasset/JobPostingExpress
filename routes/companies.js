@@ -8,6 +8,7 @@ const company_router = express.Router();
 
 // Middleware
 company_router.use(function(req, res, next) {
+    // Future update - check if user is still on company
     // If user is from company change its user credential to the ones of the company
     new Promise(async function(resolve, reject) {
         if (!authentication.require_company_authentication(req, res)) {
