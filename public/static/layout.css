@@ -26,6 +26,7 @@ header {
     left: 0px;
     background-color: aquamarine;
     width: 100%;
+    min-height: 3.6rem;
     height: fit-content;
 }
 
