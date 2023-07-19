@@ -30,7 +30,7 @@ main_router.get('/', (req, res) => {
 
 main_router.post('/post', (req, res) => {
 	// Create post
-	new Promise(async (resolve, reject) => {
+	new Promise((resolve, reject) => {
 		if (!authentication.require_authentication(req, res)) {
 			reject();
 			return;
@@ -46,7 +46,7 @@ main_router.post('/post', (req, res) => {
 			if (reason === "Error while inserting post")
 				res.status(500).send();
 		}).then(function(value) {
-			res.redirect('/');
+			res.redirect(req.session.as_company ? '/company' : '/');
 		});
 	}).catch(function (reason) {
 
