@@ -3,7 +3,7 @@
 {% block body %}
     {% if req.session.credentials.accessToken %}
         <!-- Let the user post -->
-        <form action="/post" method="post">
+        <form action="{% if req.session.as_company %}/company{% endif %}/post" method="post">
             <div>
                 <table>
                     <tr>
