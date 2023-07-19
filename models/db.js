@@ -384,7 +384,9 @@ const is_user_company_admin = async function(user_id) {
 
 const register_company = async function(password_hash, company_name, company_size, creator_id)
 {
-    const company_id = (await db.get('SELECT MAX(id) FROM companies;'))['Max(id)'] + 1;
+    let company_id = (await db.get('SELECT MAX(id) FROM companies;'))['Max(id)'] + 1;
+    if (!company_id)
+        company_id = 1;
 
     await db.run('INSERT INTO companies(id, password_hash, company_name, company_size) VALUES (?, ?, ?, ?);',
         [company_id, password_hash, company_name, company_size]);
