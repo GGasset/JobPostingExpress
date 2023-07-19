@@ -145,7 +145,7 @@ session_router.post('/company/register', function(req, res) {
             password: req.body.password,
             repeated_password: req.body.repeated_password
         }
-        return form_data;
+        resolve(form_data);
     }).then(function(form_data) {
         const company_info = {
             company_name: form_data.name,
@@ -164,6 +164,14 @@ session_router.post('/company/register', function(req, res) {
         company_info.password_hash = hashed_password;
         return company_info;
     }).then(async function(company_info) {
+        await db.register_company(
+            company_info.password_hash,
+            company_info.company_name, 
+            company_info.company_size,
+            req.session.user.id
+        );
+        return company_info;
+    }).then(async function(company_info) {
         // Log the user to the company
         req.session.credentials.companyAccessToken = jwt.sign(
             await db.get_company_access_token_data(company_info.id),  process.env.JWTSecret);
@@ -176,9 +184,10 @@ session_router.post('/company/register', function(req, res) {
         // Redirect to company main page
         res.redirect('/company')
     }).catch(function(reason) {
-        res.status(200).render('company_register.html', {
+        console.log(reason)
+        res.render('company_register.html', {
             "message": reason,
-            "color": "red"
+            "message_color": "red"
         });
     });
 });
