@@ -186,6 +186,7 @@ session_router.post('/company/register', function(req, res) {
     }).catch(function(reason) {
         console.log(reason)
         res.render('company_register.html', {
+            req: req,
             "message": reason,
             "message_color": "red"
         });
