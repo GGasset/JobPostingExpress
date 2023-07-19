@@ -215,6 +215,7 @@ const get_relevant_posts = async function(req, max_posts=100) {
         user_info.id;
 
     posts = posts.concat(await get_user_posts(user_id, as_company));
+
     let follows = await get_user_follows(user_id, as_company);
     for (const follow of follows) {
         posts = posts.concat(await get_user_posts(follow.followed_id, follow.followed_is_company));
@@ -234,9 +235,13 @@ const get_relevant_posts = async function(req, max_posts=100) {
     else if (posts.length < max_posts)
     {
         let latest_posts = await get_latest_posts(max_posts=max_posts - posts.length);
-        latest_posts = latest_posts.filter(new_post => {
-            posts.findIndex((post) => new_post.id == post.id) == -1;
-        });
+        
+        if (posts.length > 0)
+        {
+            latest_posts = latest_posts.filter(new_post => {
+                posts.findIndex((post) => new_post.id == post.id) == -1;
+            });
+        }
         posts = posts.concat(latest_posts);
     }
 
