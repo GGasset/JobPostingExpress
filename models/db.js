@@ -122,7 +122,9 @@ const get_user_posts = async (user_id, is_company) => {
     await db.all('SELECT id, poster_id, poster_is_company, text FROM posts WHERE poster_id = ? AND poster_is_company = ?;',
     [user_id, is_company]);
 
-    const user_info = await get_user_info_by_id(user_id, is_company);
+    const user_info = is_company ? 
+        await get_company_info(user_id) :
+        await get_user_info_by_id(user_id);
     for (let post of posts) {
         post['user'] = user_info;
         post['comment_count'] = await get_post_comment_count(post.id);
