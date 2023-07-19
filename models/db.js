@@ -204,8 +204,8 @@ const get_latest_posts = async function(max_posts=100) {
 const get_relevant_posts = async function(req, max_posts=100) {
     let posts = [];
 
-    const user_info = req.session.credentials.user;
-    const company_info = req.session.credentials.company;
+    const user_info = req.session.user;
+    const company_info = req.session.company;
     const as_company = req.session.as_company;
     const user_id = as_company?
         company_info.id:
