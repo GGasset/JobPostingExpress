@@ -53,7 +53,7 @@ app.use('/', main_router);
 app.use('/session', session_router);
 app.use('/public', resources_router);
 app.use('/API', API_router);
-app.use('/', profiles_router)
+app.use('/profiles', profiles_router)
 
 const PORT = 3000;
 app.listen(PORT, () => {
