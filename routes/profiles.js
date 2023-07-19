@@ -13,7 +13,9 @@ profile_router.use('/me', function(req, res, next) {
 })
 
 profile_router.get('/me', function(req, res) {
-    res.render('user_settings.html');
+    res.render('user_settings.html', {
+        req: req
+    });
 })
 
 profile_router.use('/me/company', function(req, res, next) {
@@ -30,7 +32,9 @@ profile_router.use('/me/company', function(req, res, next) {
 })
 
 profile_router.get('/me/company', function(req, res) {
-    res.render('company_settings.html');
+    res.render('company_settings.html', {
+        req: req
+    });
 })
 
 module.exports = profile_router;
