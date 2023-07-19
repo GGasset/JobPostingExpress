@@ -19,8 +19,11 @@ company_router.use(function(req, res, next) {
     })
 });
 
-// Main pages router
-const main_pages = require('./main_pages');
-company_router.use('/', main_pages)
+// Routers
+const main_pages_router = require('./main_pages');
+const API_router = require('./API');
+
+company_router.use('/', main_pages_router);
+company_router.use('/API', API_router)
 
 module.exports = company_router;
