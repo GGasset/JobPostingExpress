@@ -241,7 +241,7 @@ const get_relevant_posts = async function(req, max_posts=100) {
     }
 
     for (const post of posts) {
-        post.is_liked = await is_liked(user_id, as_company, post.id, "post");
+        post.is_liked = await is_liked(req, post.id, "post");
     }
     return posts;
 };
@@ -299,11 +299,14 @@ const insert_post = async function(user_id, is_company, text) {
 module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
 
-const is_liked = async function(user_id, user_is_company, post_id, content_name) {
-    
+const is_liked = async function(req, post_id, content_name) {
+    const as_company = req.session.as_company;
+    const user_id = as_company ? 
+        req.session.company.id : 
+        req.session.user.id;
     let like =
     await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=?;`, 
-        [user_id, user_is_company, post_id, content_name]);
+        [user_id, as_company, post_id, content_name]);
 
     return like ? true : false;
 }
@@ -325,7 +328,7 @@ const get_like_count_of_comment = async function(comment_id)
 const like = async function(req, post_id, content_name)
 {
     const as_company = req.session.as_company;
-    const user_id = as_company ? req.session.user.id : req.session.company.id;
+    const user_id = as_company ? req.session.company.id :  req.session.user.id;
     await db.run('INSERT INTO likes(user_id, user_is_company, content_id, content_name) VALUES (?, ?, ?, ?);',
         [user_id, as_company, post_id, content_name]);
 }
@@ -333,7 +336,7 @@ const like = async function(req, post_id, content_name)
 const unlike = async function(req, post_id, content_name)
 {
     const as_company = req.session.as_company;
-    const user_id = as_company ? req.session.user.id : req.session.company.id;
+    const user_id = as_company ? req.session.company.id :  req.session.user.id;
 
     await db.run('DELETE FROM likes WHERE user_id = ? AND user_is_company = ? AND content_id = ? AND content_name = ?;',
         [user_id, as_company, post_id, content_name]);

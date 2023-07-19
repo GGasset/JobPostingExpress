@@ -58,23 +58,21 @@ API_router.post('/like', function(req, res) {
             return;
         }
 
-        const user_info = req.session.user;
         resolve({
             "content_id": content_id,
             "content_name": content_name,
-            "user": user_info
         });
     }).then(async function(data) {
-        data['is_liked'] = await db.is_liked(data.user.id, data.user.is_company, data.content_id, data.content_name);
+        data['is_liked'] = await db.is_liked(req, data.content_id, data.content_name);
         return data
     }).then(async function(data) {
         if (data.is_liked)
         {
-            await db.unlike(data.user, data.content_id, data.content_name);
+            await db.unlike(req, data.content_id, data.content_name);
         }
         else
         {
-            await db.like(data.user, data.content_id, data.content_name);
+            await db.like(req, data.content_id, data.content_name);
         }
         return !data.is_liked;
     }).then(function(is_liked) {
@@ -84,6 +82,7 @@ API_router.post('/like', function(req, res) {
             res.status(403).send();
         else
             res.status(400).send();
+        console.log(reason)
     });
 });
 
