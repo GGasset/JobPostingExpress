@@ -191,8 +191,8 @@ const get_latest_posts = async function(max_posts=100) {
 
     for (const post of posts) {
         post['user'] = post.poster_is_company ?
-            await get_user_info_by_id(post.poster_id):
-            await get_company_info(post.poster_id);
+            await get_company_info(post.poster_id):
+            await get_user_info_by_id(post.poster_id);
         post['like_count'] = await get_like_count_of_post(post.id);
         post['comment_count'] = await get_post_comment_count(post.id);
     }
