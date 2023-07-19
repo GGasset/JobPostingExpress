@@ -39,13 +39,14 @@ session_router.post('/login', (req, res) => {
         if (!correct_credentials)
             throw "Incorrect credentials";
         let user = await db.get_user_info_by_email(email_password.email);
-
         return {"user": user, "password_hash": hashed_password};
 
     }).then(async function(credentials) {
         const accessToken = jwt.sign({user_id: credentials.user.id, password_hash: credentials.password_hash}, process.env.JWTSecret, { expiresIn: 60 * 60 * 24 * 70 });
 
-        req.session.credentials['accessToken'] = accessToken;
+        req.session.credentials = new Object();
+        req.session.credentials.accessToken = accessToken;
+
         req.session.user = credentials.user;
         if (req.session.user.company_id)
         {
