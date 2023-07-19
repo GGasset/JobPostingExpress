@@ -44,12 +44,14 @@ app.use(function(req, res, next) {
 
 // Routers
 const main_router = require('./routes/main_pages');
+const companies_router = require('./routes/companies');
 const session_router = require('./routes/session_init');
 const resources_router = require('./routes/resources');
 const API_router = require('./routes/API');
 const profiles_router = require('./routes/profiles');
 
 app.use('/', main_router);
+app.use('/company', companies_router);
 app.use('/session', session_router);
 app.use('/public', resources_router);
 app.use('/API', API_router);

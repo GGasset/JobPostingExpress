@@ -24,3 +24,5 @@ company_router.use(function(req, res, next) {
 // Main pages router
 const main_pages = require('./main_pages');
 company_router.use('/', main_pages)
+
+module.exports = company_router;
