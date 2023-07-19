@@ -51,6 +51,8 @@ session_router.post('/login', (req, res) => {
         if (req.session.user.company_id)
         {
             req.session.company = await db.get_company_info(req.session.user.company_id);
+            req.session.credentials.companyAccessToken = jwt.sign(
+                await db.get_company_access_token_data(req.session.user.company_id), process.env.JWTSecret);
         }
     }).then(function() {
         res.redirect('/');
@@ -161,12 +163,10 @@ session_router.post('/company/register', function(req, res) {
         }
         company_info.password_hash = hashed_password;
         return company_info;
-    }).then(function(company_info) {
+    }).then(async function(company_info) {
         // Log the user to the company
-        req.session.credentials.companyAccessToken = jwt.sign({
-            id: company_info.id,
-            password_hash: user.company.password_hash
-        },  process.env.JWTSecret);
+        req.session.credentials.companyAccessToken = jwt.sign(
+            await db.get_company_access_token_data(company_info.id),  process.env.JWTSecret);
 
         return company_info.id;
     }).then(async function(company_id) {
