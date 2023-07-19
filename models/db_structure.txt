@@ -56,7 +56,7 @@ CREATE TABLE messages (
 
 CREATE TABLE companies (
     id INTEGER NOT NULL PRIMARY KEY,
-    access_username TEXT NOT NULL,
+    access_username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     company_name TEXT NOT NULL,
     company_size TEXT NOT NULL,
