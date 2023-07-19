@@ -58,7 +58,7 @@ API_router.post('/like', function(req, res) {
             return;
         }
 
-        const user_info = req.session.credentials.user;
+        const user_info = req.session.user;
         resolve({
             "content_id": content_id,
             "content_name": content_name,
