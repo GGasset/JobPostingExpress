@@ -390,8 +390,14 @@ const register_company = async function(password_hash, company_name, company_siz
         [creator_id, company_id, 1]);
 }
 
+const get_company_access_token_data = async function(company_id) {
+    return await db.get('SELECT id, password_hash FROM companies WHERE id = ?;',
+        [company_id]);
+}
+
 module.exports.is_user_in_company = is_user_in_company;
 module.exports.get_company_info = get_company_info;
 module.exports.get_user_company_id = get_user_company_id;
 module.exports.is_user_company_admin = is_user_company_admin;
 module.exports.register_company = register_company;
+module.exports.get_company_access_token_data = get_company_access_token_data;
