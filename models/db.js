@@ -7,6 +7,11 @@ const dbFile = './models/db.db';
 const sqlite3 = require('sqlite3');
 const open = require('sqlite').open;
 
+// sqlite Notes
+/*
+* db.get must return a value for proper execution or you must use a .then() function
+*/
+
 // For easier debugging
 sqlite3.verbose();
 
@@ -78,9 +83,11 @@ const get_user_info_by_email = async (email) => {
 
     user_info.email = email;
     user_info.is_company = false;
-    user_info.company_id = await get_user_company_id(user_info.id);
-    user_info.is_company_admin = await is_user_company_admin(user_info.id);
-
+    if (await is_user_in_company(user_info.id))
+    {
+        user_info.company_id = await get_user_company_id(user_info.id);
+        user_info.is_company_admin = await is_user_company_admin(user_info.id);
+    }
     return user_info;
 };
 
@@ -332,6 +339,12 @@ module.exports.unlike = unlike;
 
 // Companies
 
+const is_user_in_company = async function(user_id) {
+    const is_user_in_company = (await db.get('SELECT COUNT(user_id) FROM users_from_company WHERE user_id = ?;',
+        [user_id]))['COUNT(user_id)'];
+    return is_user_in_company != 0;
+}
+
 const get_company_info = async function(company_id) {
     let company_info = await db.get('SELECT id, company_name, company_size, image_url FROM companies WHERE id = ?;',
         [company_id]);
@@ -369,6 +382,7 @@ const register_company = async function(password_hash, company_name, company_siz
         [creator_id, company_id, 1]);
 }
 
+module.exports.is_user_in_company = is_user_in_company;
 module.exports.get_company_info = get_company_info;
 module.exports.get_user_company_id = get_user_company_id;
 module.exports.is_user_company_admin = is_user_company_admin;
