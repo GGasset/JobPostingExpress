@@ -184,7 +184,10 @@ session_router.post('/company/register', function(req, res) {
         // Redirect to company main page
         res.redirect('/company')
     }).catch(function(reason) {
-        console.log(reason)
+        if (reason === 'User is already part of a company') {
+            res.redirect('/company/');
+            return;
+        }
         res.render('company_register.html', {
             req: req,
             "message": reason,
