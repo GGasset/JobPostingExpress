@@ -343,7 +343,7 @@ const like = async function(req, post_id, content_name)
 const unlike = async function(req, post_id, content_name)
 {
     const as_company = req.session.as_company;
-    const user_id = as_company ? req.session.company.id :  req.session.user.id;
+    const user_id = as_company ? req.session.company.id : req.session.user.id;
 
     await db.run('DELETE FROM likes WHERE user_id = ? AND user_is_company = ? AND content_id = ? AND content_name = ?;',
         [user_id, as_company, post_id, content_name]);
