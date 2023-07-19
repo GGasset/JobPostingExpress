@@ -7,7 +7,9 @@ const profile_router = express.Router();
 profile_router.use('/me', function(req, res, next) {
     if (!authentication.is_authenticated(req)) {
         res.redirect('/session/login');
+        return;
     }
+    next();
 })
 
 profile_router.get('/me', function(req, res) {
