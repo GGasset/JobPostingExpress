@@ -82,7 +82,6 @@ API_router.post('/like', function(req, res) {
             res.status(403).send();
         else
             res.status(400).send();
-        console.log(reason)
     });
 });
 
