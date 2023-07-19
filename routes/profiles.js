@@ -30,3 +30,5 @@ profile_router.use('/me/company', function(req, res, next) {
 profile_router.get('/me/company', function(req, res) {
     res.render('company_settings.html');
 })
+
+module.exports = profile_router;
