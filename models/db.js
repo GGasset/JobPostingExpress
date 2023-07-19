@@ -241,7 +241,7 @@ const get_relevant_posts = async function(req, max_posts=100) {
         if (posts.length > 0)
         {
             latest_posts = latest_posts.filter(new_post => {
-                posts.findIndex((post) => new_post.id == post.id) == -1;
+                return posts.findIndex((post) => new_post.id == post.id) == -1;
             });
         }
         posts = posts.concat(latest_posts);
