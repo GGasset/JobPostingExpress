@@ -1,19 +1,15 @@
 async function user_as_company() {
-    let as_company;
-    await fetch(`/API/user_as_company`, {
-        method: "GET",
-        credentials: "include"
-    }).then(function(response) {
-        as_company = response.json();
-    });
-    return as_company;
+    return window.location.href.includes('company');
 }
 
 async function like_post(element, content_name) {
     const post_id = element.id;
     let is_liked;
     let status;
-    await fetch(`${await user_as_company() ? '/company' : ''}/API/like`, {
+    const as_company = await user_as_company();
+    const url = `${as_company ? '/company' : ''}/API/like`;
+    console.log(url)
+    await fetch(url, {
         method: "POST",
         credentials: "include",
         headers: {

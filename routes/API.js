@@ -6,15 +6,6 @@ const db = require('../models/db');
 
 const API_router = express.Router();
 
-// Session info
-API_router.get('/user_as_company', function(req, res) {
-    if (!authentication.require_authentication(req, res)) {
-        return false;
-    }
-
-    res.status(200).send(req.session.as_company);
-})
-
 // DB actions
 API_router.get('/is_liked', function(req, res) {
     new Promise(async function(resolve, reject) {
