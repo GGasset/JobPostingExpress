@@ -49,7 +49,7 @@
                                 <td>
                                     {% if post.user.has_deactivated_comments %}
                                     {% else %}
-                                        <a href="/post/{{ post.id }}">
+                                        <a href="{% if req.session.as_company %}/company{% endif %}/post/{{ post.id }}">
                                             <img class="post_icon" alt="Comments" src="/public/comment_icon.png">
                                         </a>
                                     {% endif %}
