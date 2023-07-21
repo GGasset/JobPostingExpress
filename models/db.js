@@ -272,13 +272,14 @@ const get_post = async function(post_id, req)
     }
     if (!req.session.credentials.accessToken)
     {
-        if (req.session.as_company) {
-            post['is_liked'] = await is_liked(req, post_id, 'post')
-        }
-        else {
-            post['is_liked'] = await is_liked(req, post_id, 'post');
-        }
-    } 
+        return post;
+    }
+    if (req.session.as_company) {
+        post['is_liked'] = await is_liked(req, post_id, 'post')
+    }
+    else {
+        post['is_liked'] = await is_liked(req, post_id, 'post');
+    }
     return post;
 }
 
@@ -310,7 +311,9 @@ const is_liked = async function(req, content_id, content_name) {
     await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=?;`, 
         [user_id, as_company, content_id, content_name]);
 
-    return like ? true : false;
+    if (content_name == 'post')
+        console.log(like)
+    return like !== undefined;
 }
 
 const get_like_count_of_post = async function(post_id)

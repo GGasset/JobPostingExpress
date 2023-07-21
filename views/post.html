@@ -25,7 +25,7 @@
                     <table>
                         <tr>
                             <td>
-                                <img class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
+                                <img onclick="like_post(this, 'post')" id="{{ post.id }}" class="post_icon {% if post.is_liked %}activated_icon{% endif %}" src="/public/like_icon.png" alt="like_icon">
                             </td>
                         </tr>
                         <tr>
