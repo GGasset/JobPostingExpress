@@ -256,7 +256,7 @@ const get_relevant_posts = async function(req, max_posts=100) {
 module.exports.get_latest_posts = get_latest_posts;
 module.exports.get_relevant_posts = get_relevant_posts;
 
-const get_post = async function(post_id, req = undefined)
+const get_post = async function(post_id, req)
 {
     let post = 
         await db.get('SELECT * FROM posts WHERE id = ?;',
@@ -266,22 +266,22 @@ const get_post = async function(post_id, req = undefined)
     post['user'] = await get_user_info_by_id(post.poster_id, post.poster_is_company);
     
     let user_info = undefined;
-    if (req) {
+    if (re.session.credentials) {
         user_info = req.session.as_company ? req.session.company : req.session.user;
     }
     post['comments'] = await get_post_comments(post.id, user_info);
         
-    if (!req)
+    if (!req.session.credentials)
     {
         return post;
     }
     if (!req.session.credentials.accessToken)
     {
         if (req.session.as_company && !req.session.credentials.companyAccessToken) {
-            post['is_liked'] = await is_liked(req.session.company.id, true, post_id, 'post')
+            post['is_liked'] = await is_liked(req, true, post_id, 'post')
         }
         else {
-            post['is_liked'] = await is_liked(req.session.user.id, false, post_id, 'post');
+            post['is_liked'] = await is_liked(req, false, post_id, 'post');
         }
     } 
     return post;
