@@ -61,7 +61,7 @@ CREATE TABLE companies (
     company_size TEXT NOT NULL,
     company_description TEXT,
     company_web_url TEXT,
-    image_url TEXT DEFAULT '/public/Blank_company_profile_picture'
+    image_url TEXT DEFAULT '/public/Blank_company_profile_picture.jpg'
 );
 
 CREATE TABLE company_focus (
