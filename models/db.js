@@ -272,11 +272,11 @@ const get_post = async function(post_id, req)
     }
     if (!req.session.credentials.accessToken)
     {
-        if (req.session.as_company && !req.session.credentials.companyAccessToken) {
-            post['is_liked'] = await is_liked(req, true, post_id, 'post')
+        if (req.session.as_company) {
+            post['is_liked'] = await is_liked(req, post_id, 'post')
         }
         else {
-            post['is_liked'] = await is_liked(req, false, post_id, 'post');
+            post['is_liked'] = await is_liked(req, post_id, 'post');
         }
     } 
     return post;
