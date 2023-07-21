@@ -149,7 +149,7 @@ const comment_on_post = async function(user_id, is_company, post_id, text) {
                                 [post_id, user_id, is_company, text, "post"]);
 }
 
-const get_post_comments = async function(post_id, user_info = undefined) {
+const get_post_comments = async function(post_id, req) {
     let comments = 
     await db.all('SELECT * FROM comments WHERE content_name = "post" AND to_id = ?;',
         [post_id]);
@@ -160,8 +160,8 @@ const get_post_comments = async function(post_id, user_info = undefined) {
             await get_user_info_by_id(comment.poster_id, comment.poster_is_company);
 
         comment['like_count'] = await get_like_count_of_comment(comment.id);
-        if (user_info) {
-            comment['is_liked'] = await is_liked(user_info.id, user_info.is_company, comment.id, 'comment')
+        if (req.session.credentials) {
+            comment['is_liked'] = await is_liked(req, comment.id, 'comment')
         }
     };
     return comments;
@@ -264,12 +264,7 @@ const get_post = async function(post_id, req)
 
     post['like_count'] = await get_like_count_of_post(post.id);
     post['user'] = await get_user_info_by_id(post.poster_id, post.poster_is_company);
-    
-    let user_info = undefined;
-    if (re.session.credentials) {
-        user_info = req.session.as_company ? req.session.company : req.session.user;
-    }
-    post['comments'] = await get_post_comments(post.id, user_info);
+    post['comments'] = await get_post_comments(post.id, req);
         
     if (!req.session.credentials)
     {
@@ -306,14 +301,14 @@ const insert_post = async function(user_id, is_company, text) {
 module.exports.get_post = get_post;
 module.exports.insert_post = insert_post;
 
-const is_liked = async function(req, post_id, content_name) {
+const is_liked = async function(req, content_id, content_name) {
     const as_company = req.session.as_company;
     const user_id = as_company ? 
         req.session.company.id : 
         req.session.user.id;
     let like =
     await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=?;`, 
-        [user_id, as_company, post_id, content_name]);
+        [user_id, as_company, content_id, content_name]);
 
     return like ? true : false;
 }
