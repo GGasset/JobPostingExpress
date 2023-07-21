@@ -58,10 +58,6 @@ main_router.get('/post/:post_id', (req, res) => {
 		const post_id = req.params.post_id;
 		resolve(post_id);
 	}).then(async function(post_id) {
-		let user_info = undefined;
-		if (authentication.is_authenticated(req))
-			user_info = req.session.user;
-
 		let post = await db.get_post(post_id, req);
 		return post;
 
