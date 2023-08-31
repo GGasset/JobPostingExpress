@@ -26,13 +26,16 @@
                         {% else %}
                             <img src="{{ req.session.company.image_url }}" alt="Company profile picture" class="profile_picture float_right">
                         {% endif %}
+                        <a href="/" class="float_right header_text">
+                            Search with personal account
+                        </a>
                     {% else %}
                         <a href="/profiles/me">
                             <img src="{{ req.session.user.image_url }}" alt="Profile picture" class="profile_picture float_right">
                         </a>
                         {% if req.session.credentials.companyAccessToken %}
                             <a href="/company" class="float_right header_text">
-                                Search as company
+                                Search as company account
                             </a>
                         {% endif %}
                     {% endif %}
