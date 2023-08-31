@@ -263,7 +263,7 @@ const get_post = async function(post_id, req)
             [post_id]);
 
     post['like_count'] = await get_like_count_of_post(post.id);
-    post['user'] = await get_user_info_by_id(post.poster_id, post.poster_is_company);
+    post['user'] = post.poster_is_company ? await get_company_info(post.poster_id) : await get_user_info_by_id(post.poster_id);
     post['comments'] = await get_post_comments(post.id, req);
         
     if (!req.session.credentials)
