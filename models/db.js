@@ -311,8 +311,6 @@ const is_liked = async function(req, content_id, content_name) {
     await db.get(`SELECT * FROM likes WHERE user_id=? AND user_is_company=? AND content_id=? AND content_name=?;`, 
         [user_id, as_company, content_id, content_name]);
 
-    if (content_name == 'post')
-        console.log(like)
     return like !== undefined;
 }
 
