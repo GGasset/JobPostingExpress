@@ -3,8 +3,15 @@
 {% block body %}
     <hr>
     <br>
-    Want to form part of a company?
+    Visit your profile here:
+    <div>
+        <a href="/users/{{ req.session.user.id }}">
+            Your profile
+        </a>
+    </div>
     <br>
+    <br>
+    Want to form part of a company?
     <div>
         <a href="">
             Suggest a company to invite you to the company
