@@ -10,13 +10,21 @@
     </head>
     <body>
         <header class="no_margin">
-            {% if message %}
-                <div id="message_div" class="{{ message_color }}">
-                    {{ message }}
-                </div>
-            {% endif %}
 
+            
             <div class="no_margin">
+                <!--Elements starting from the left-->
+                {% if message %}
+                    <div id="message_div" class="{{ message_color }}">
+                        {{ message }}
+                    </div>
+                {% endif %}
+                <a href="">
+                    <img src="/public/job-icon.png" alt="Jobs" class="header_icon" id="first_header_icon">
+                </a>
+                
+                
+                <!--Float right elements-->
                 {% if req.session.credentials.accessToken %}
                     {% if req.session.as_company %}
                         {% if req.session.user.is_company_admin %}
