@@ -1,3 +1,12 @@
+let message_disappear_time_s = 2.71 * 2;
+window.onload = () => {
+    let message_div = document.querySelector('#message_div');
+    if (message_div)
+        setTimeout(() => {
+            message_div.remove();
+        }, message_disappear_time_s * 1000);
+}
+
 async function user_as_company() {
     return window.location.href.includes('company');
 }
