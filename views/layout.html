@@ -9,16 +9,20 @@
         {% endblock %}
     </head>
     <body>
-        <header class="no_margin">
+        {% if message %}
+            <div id="message_div" class="{{ message_color }}">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <header id="header" class="no_margin">
 
             
             <div class="no_margin">
                 <!--Elements starting from the left-->
-                {% if message %}
-                    <div id="message_div" class="{{ message_color }}">
-                        {{ message }}
-                    </div>
-                {% endif %}
+                <a {% if req.session.as_company %}href="/company/"{% else %}href="/"{% endif %} id="logo">
+                    <img src="/public/company_logo.png" alt="Company logo" id="logo_image">
+                </a>
                 <a href="">
                     <img src="/public/job-icon.png" alt="Jobs" class="header_icon" id="first_header_icon">
                 </a>

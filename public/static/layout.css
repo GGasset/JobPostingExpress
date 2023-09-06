@@ -30,6 +30,15 @@ header {
     height: fit-content;
 }
 
+#logo {
+    margin-top: .5rem;
+    margin-right: 27.1%;
+}
+
+#logo_image {
+    height: 3rem;
+}
+
 .header_text {
     margin-top: 1.2rem;
 }
@@ -47,16 +56,12 @@ header {
     float: right;
 }
 
-#first_header_icon {
-    margin-left: 43.5rem;
-}
-
 .header_icon {
     background-color: rgb(169, 255, 226);
     border-radius: 10px;
     height: 2rem;
-    margin-top: 1rem;
-    margin-right: .5rem;
+    margin-top: 0rem;
+    margin-right: .1rem;
 }
 
 .header_icon:hover {
