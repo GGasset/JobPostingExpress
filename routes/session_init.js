@@ -21,7 +21,8 @@ session_router.post('/login', (req, res) => {
         {
             res.status(200).render('login.html', {
                 "message": "Provide your credentials to login",
-                "message_color": "red"
+                "message_color": "red",
+                "do_not_show_session_links": true
             });
             throw "Credentials not provided";
         }
@@ -33,7 +34,8 @@ session_router.post('/login', (req, res) => {
             correct_credentials = false;
             return res.status(200).render("login.html", {
                 "message": reason,
-                "message_color": "red"
+                "message_color": "red",
+                "do_not_show_session_links": true
             })
         });
         if (!correct_credentials)
@@ -64,7 +66,7 @@ session_router.post('/login', (req, res) => {
 
 session_router.get('/register', (req, res) => {
     res.render('register.html', {
-        "do_not_show_authentication_links": true
+        "do_not_show_session_links": true
     });
 });
 
@@ -77,7 +79,8 @@ session_router.post('/register', (req, res) => {
         if (await db.is_registered_email(email)) {
             res.status(200).render('register.html', {
                 'message': "Email already exists",
-                "message_color": "red"
+                "message_color": "red",
+                "do_not_show_session_links": true
             })
             return;
         }
@@ -90,7 +93,8 @@ session_router.post('/register', (req, res) => {
         {
             res.status(200).render('register.html', {
                 'message': "Passwords don't match",
-                "message_color": "red"
+                "message_color": "red",
+                "do_not_show_session_links": true
             });
             return;
         }
