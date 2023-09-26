@@ -413,7 +413,11 @@ module.exports.get_company_access_token_data = get_company_access_token_data;
 let jobs_per_page = 20;
 
 const insert_job = async function(specifications) {
-
+    for (let i = 0; i < specifications.keys.length; i++) {
+        const key = specifications.keys[i];
+        if (key === undefined)
+            specifications.keys[i] = "NULL";
+    }
 }
 
 const get_jobs_for_location_without_specifications = async function(location) {
@@ -421,9 +425,12 @@ const get_jobs_for_location_without_specifications = async function(location) {
 
 }
 
+const get_latest_jobs = async function() {
+    
+}
 
 const get_jobs_per_specifications = async function(specifications) {
-
+  
 }
 
 module.exports.insert_job = insert_job;

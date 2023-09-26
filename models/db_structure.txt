@@ -81,7 +81,12 @@ CREATE TABLE jobs (
     poster_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
+    opening_date TEXT NOT NULL, /*A job can open inmediatly or in the future*/
     is_closed INTEGER NOT NULL
+);
+
+CREATE TABLE job_characteristics (
+
 );
 
 CREATE TABLE possible_job_benefits (
