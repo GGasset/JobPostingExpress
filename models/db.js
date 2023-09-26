@@ -409,3 +409,23 @@ module.exports.get_user_company_id = get_user_company_id;
 module.exports.is_user_company_admin = is_user_company_admin;
 module.exports.register_company = register_company;
 module.exports.get_company_access_token_data = get_company_access_token_data;
+
+let jobs_per_page = 20;
+
+const insert_job = async function(specifications) {
+
+}
+
+const get_jobs_for_location_without_specifications = async function(location) {
+
+
+}
+
+
+const get_jobs_per_specifications = async function(specifications) {
+
+}
+
+module.exports.insert_job = insert_job;
+module.exports.get_jobs_for_location_without_specifications = get_jobs_for_location_without_specifications;
+module.exports.get_jobs_per_specifications = get_jobs_per_specifications;
