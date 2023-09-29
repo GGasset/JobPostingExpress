@@ -58,7 +58,7 @@ CREATE TABLE companies (
     id INTEGER NOT NULL PRIMARY KEY,
     password_hash TEXT NOT NULL,
     company_name TEXT NOT NULL,
-    company_size TEXT NOT NULL,
+    company_size INTEGER NOT NULL,
     company_description TEXT,
     company_web_url TEXT,
     image_url TEXT DEFAULT '/public/Blank_company_profile_picture.jpg'
@@ -86,7 +86,22 @@ CREATE TABLE jobs (
 );
 
 CREATE TABLE job_characteristics (
+    job_id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
+    job_remoteness INTEGER NOT NULL, /*0 On_site, 1 Hybrid, 2 remote*/
+    location_id INTEGER NOT NULL,
+    skills TEXT NOT NULL, /*CSVs of keys to skills table*/
+    
 
+);
+
+CREATE TABLE skills (
+    id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
+    skill TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE locations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    location TEXT NOT NULL
 );
 
 CREATE TABLE possible_job_benefits (
