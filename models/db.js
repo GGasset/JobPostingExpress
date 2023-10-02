@@ -1,6 +1,7 @@
 const sanitizer = require('sanitize-html');
 
 const authentication = require('../public/server_side/authentication');
+const functionality = require("../functionality");
 
 const dbFile = './models/db.db';
 
@@ -425,8 +426,8 @@ const get_jobs_for_location_without_specifications = async function(location) {
 
 }
 
-const get_latest_jobs = async function() {
-    
+const get_latest_jobs = async function(n_page) {
+    jobs = await db.all("SELECT jobs.id, jobs.title, companies.company_size, companies.company_web_url, companies.image_url FROM jobs JOIN job_characteristics ON jobs.id = job_characteristics.job_id JOIN companies ON jobs.company_id = companies.id WHERE jobs.opening_date > ? AND is_closed = 0 LIMIT ? OFFSET ?;");
 }
 
 const get_jobs_per_specifications = async function(specifications) {
