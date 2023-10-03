@@ -432,26 +432,21 @@ const insert_job = async function(specifications) {
 
         const skill_id = await db.get('SELECT id FROM skills WHERE skill = ?;', skill).id;
 
-        skills += `${skill_id} `;
+        skills += ` ${skill_id} `;
     }
-    skills = skills.trimEnd();
 
     await db.run('INSERT INTO job_characteristics (job_id, job_remoteness, location_id, skills) VALUES (?, ?, ?, ?);')
-}
-
-const get_jobs_for_location_without_specifications = async function(location) {
-
 }
 
 const get_latest_jobs = async function(n_page) {
     date = functionality.get_date();
     jobs = await db.all(
         "SELECT jobs.id, jobs.title, companies.company_size, companies.company_web_url, companies.image_url FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.opening_date > ? AND is_closed = 0 LIMIT ? OFFSET ?;",
-        (date, jobs_per_page, n_page * jobs_per_page)
+        [date, jobs_per_page, n_page * jobs_per_page]
     );
 }
 
-const get_jobs_per_specifications = async function(specifications) {
+const get_jobs_per_specifications = async function(specifications, n_page) {
     const remoteness = specifications.job_remoteness;
     const location = specifications.location;
 
@@ -480,7 +475,7 @@ const get_jobs_per_specifications = async function(specifications) {
 
     let params = [functionality.get_date()];
 
-    let jobs_query = "SELECT company_id, poster_id, title, description, opening_date FROM jobs WHERE (";
+    let jobs_query = "SELECT id FROM jobs WHERE (";
     jobs_query += "is_closed = 0 AND opening_date > ?";
     jobs_query += " AND id IN (SELECT job_id FROM job_characteristics WHERE ";
     if (remoteness !== undefined) {
@@ -492,12 +487,37 @@ const get_jobs_per_specifications = async function(specifications) {
         params.push(location_id);
     }
     skills_ids.forEach(skill_id => {
-        jobs_query += " AND "
+        jobs_query += "skill LIKE '% ? %' AND ";
+        params.push(skill_id);
     });
     jobs_query += "));";
-    jobs_query = jobs_query.replace(" WHERE ));", "));").replace(" AND ));", "));");
+    jobs_query = jobs_query.replace(" WHERE ));", "));").replace(" AND ));", "));").replace(" ));", "));");
+    jobs_query = jobs_query.replace("));", ")) LIMIT ? OFFSET ?;");
+    params.push(jobs_per_page);
+    params.push(jobs_per_page * n_page);
+
+    let jobs_ids = db.all(jobs_query, params);
+    let jobs = [];
+    await jobs_ids.forEach(async id => {
+        id = id.id;
+        jobs.push(await get_job_details(id));
+    });
+    return jobs;
+}
+
+async function get_job_details(id) {
+    let job = await db.get("SELECT * FROM jobs WHERE id = ?;", [id]);
+    job.characteristics = await get_job_characteristics(id);
+    job.company = await get_company_info(job.company_id);
+    job.poster = await get_user_info_by_id(job.poster_id);
+
+    return job;
+}
+
+async function get_job_characteristics(id) {
+    return await db.get("SELECT * FROM job_characteristics WHERE job_id = ?;", [id]);
 }
 
 module.exports.insert_job = insert_job;
-module.exports.get_jobs_for_location_without_specifications = get_jobs_for_location_without_specifications;
 module.exports.get_jobs_per_specifications = get_jobs_per_specifications;
+module.exports.get_job_details = get_job_details;
