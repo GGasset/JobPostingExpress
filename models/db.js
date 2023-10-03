@@ -411,25 +411,44 @@ module.exports.is_user_company_admin = is_user_company_admin;
 module.exports.register_company = register_company;
 module.exports.get_company_access_token_data = get_company_access_token_data;
 
-let jobs_per_page = 20;
+const jobs_per_page = 20;
 
 const insert_job = async function(specifications) {
-    for (let i = 0; i < specifications.keys.length; i++) {
-        const key = specifications.keys[i];
-        if (key === undefined)
-            specifications.keys[i] = "NULL";
+    let missing_specification = specifications.remoteness === undefined;
+    missing_specification = missing_specification || specifications.location_id === undefined;
+    missing_specification = missing_specification || specifications.skills.length == 0;
+    if (missing_specification)
+        return false;
+
+    let skills = "";
+    for (let i = 0; i < specifications.skills.length; i++) {
+        const skill = specifications.skills[i];
+        const skill_exists = await db.get('SELECT COUNT(skill) FROM skills WHERE skill = ?;', skill)['COUNT(skill)'];
+        if (skill_exists == 0)
+        {
+            // Check spelling with dictionary
+            await db.run('INSERT INTO skills (skill) VALUES (?);', skill);
+        }
+
+        const skill_id = await db.get('SELECT id FROM skills WHERE skill = ?;', skill).id;
+
+        skills += `${skill_id} `;
     }
+    skills = skills.trimEnd();
+
+    await db.run('INSERT INTO job_characteristics (job_id, job_remoteness, location_id, skills) VALUES (?, ?, ?, ?);')
 }
 
 const get_jobs_for_location_without_specifications = async function(location) {
-
 
 }
 
 const get_latest_jobs = async function(n_page) {
     date = functionality.get_date();
-    jobs = await db.all("SELECT jobs.id, jobs.title, companies.company_size, companies.company_web_url, companies.image_url FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.opening_date > ? AND is_closed = 0 LIMIT ? OFFSET ?;",
-        (date, jobs_per_page, n_page * jobs_per_page));
+    jobs = await db.all(
+        "SELECT jobs.id, jobs.title, companies.company_size, companies.company_web_url, companies.image_url FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.opening_date > ? AND is_closed = 0 LIMIT ? OFFSET ?;",
+        (date, jobs_per_page, n_page * jobs_per_page)
+    );
 }
 
 const get_jobs_per_specifications = async function(specifications) {
