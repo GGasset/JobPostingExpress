@@ -47,7 +47,7 @@ const is_registered_email = async (email) => {
 module.exports.is_registered_email = is_registered_email;
 
 const bcrypt = require('bcrypt');
-const { post, use } = require('../routes/resources');
+const { post, use, param } = require('../routes/resources');
 
 /*
 * Returns false if email/password don't match or the hashed password if they do
@@ -433,7 +433,50 @@ const get_latest_jobs = async function(n_page) {
 }
 
 const get_jobs_per_specifications = async function(specifications) {
-  
+    const remoteness = specifications.job_remoteness;
+    const location = specifications.location;
+
+    let location_id;
+    if (location !== "undefined") {
+        // Check location spelling with dictionary of cities
+        // Make a relation to check if a place like a city is inside a country
+
+        // Check if location exists in database
+        location_id = await db.get("SELECT id FROM locations WHERE location = ?;", location).id;
+    }
+
+    const skills = specifications.skills.split(" ");
+
+    let skills_ids = [];
+    await skills.forEach(async skill => {
+        const skill_exists = await db.get("SELECT COUNT(skill) FROM skills WHERE skill = ?;", skill)["COUNT(skill)"];
+        
+        // Check spelling of skill with a dictionary
+        if (skill_exists == 0)
+            "".split();
+
+        const skill_id = await db.get("SELECT id FROM skills WHERE skill = ?;", skill).id;
+        skills_ids.push(skill_id);
+    });
+
+    let params = [functionality.get_date()];
+
+    let jobs_query = "SELECT company_id, poster_id, title, description, opening_date FROM jobs WHERE (";
+    jobs_query += "is_closed = 0 AND opening_date > ?";
+    jobs_query += " AND id IN (SELECT job_id FROM job_characteristics WHERE ";
+    if (remoteness !== undefined) {
+        jobs_query += "job_remoteness = ? AND ";
+        params.push(remoteness);
+    }
+    if (location !== undefined) {
+        jobs_query += "location_id = ? AND ";
+        params.push(location_id);
+    }
+    skills_ids.forEach(skill_id => {
+        jobs_query += " AND "
+    });
+    jobs_query += "));";
+    jobs_query = jobs_query.replace(" WHERE ));", "));").replace(" AND ));", "));");
 }
 
 module.exports.insert_job = insert_job;
