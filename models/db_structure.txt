@@ -86,7 +86,7 @@ CREATE TABLE jobs (
 );
 
 CREATE TABLE job_characteristics (
-    job_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_id INTEGER PRIMARY KEY NOT NULL,
     job_remoteness INTEGER NOT NULL, /*0 On_site, 1 Hybrid, 2 remote*/
     location_id INTEGER NOT NULL,
     skills TEXT NOT NULL /*CSVs of keys to skills table*/
