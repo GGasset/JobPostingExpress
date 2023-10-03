@@ -476,7 +476,7 @@ const get_jobs_per_specifications = async function(specifications, n_page) {
     let params = [functionality.get_date()];
 
     let jobs_query = "SELECT id FROM jobs WHERE (";
-    jobs_query += "is_closed = 0 AND opening_date > ?";
+    jobs_query += "is_closed = 0 AND opening_date >= ?";
     jobs_query += " AND id IN (SELECT job_id FROM job_characteristics WHERE ";
     if (remoteness !== undefined) {
         jobs_query += "job_remoteness = ? AND ";
