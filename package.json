@@ -1,7 +1,8 @@
 {
   "scripts": {
     "doc": "jsdoc -c jsdoc.json",
-    "start": "nodemon ./index.js"
+    "start": "nodemon ./index.js",
+    "messaging_server_start": "nodemon ./messaging_server.js"
   },
   "main": "./index.js",
   "dependencies": {
