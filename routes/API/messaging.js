@@ -1,6 +1,23 @@
 const express = require("express");
 
+const authentication = require("../../public/server_side/authentication");
+
+
 const messaging_router = express.Router()
+
+messaging_router.get("/get_messages/:is_company/:user_id", (req, res) => {
+    if (!authentication.require_authentication(req, res)) {
+        return;
+    }
+    const requester_as_company = req.session.as_company;
+    const requesting_client_id = requester_as_company ?
+        req.session.company.id : req.session.user.id;
+    
+    const counterpart_as_company = req.params.is_company;
+    const counterpart_id = req.params.user_id;
+
+    
+});
 
 
 module.exports = messaging_router;
