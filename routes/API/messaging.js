@@ -1,11 +1,11 @@
 const express = require("express");
 
 const authentication = require("../../public/server_side/authentication");
-
+const db = require("../../models/db");
 
 const messaging_router = express.Router()
 
-messaging_router.get("/get_messages/:is_company/:user_id", (req, res) => {
+messaging_router.get("/get_messages/:is_company/:user_id/:page_n", async (req, res) => {
     if (!authentication.require_authentication(req, res)) {
         return;
     }
@@ -16,7 +16,10 @@ messaging_router.get("/get_messages/:is_company/:user_id", (req, res) => {
     const counterpart_as_company = req.params.is_company;
     const counterpart_id = req.params.user_id;
 
+    const page_n = req.params.page_n;
+    const messages = await db.get_last_messages(page_n, requesting_client_id, requester_as_company, counterpart_id, counterpart_as_company);
     
+    res.status(200).contentType("application/json").send(JSON.stringify(messages));
 });
 
 
