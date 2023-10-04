@@ -540,7 +540,11 @@ const get_last_messages = async function(page_n, requester_id, requester_as_comp
         const message = messages[i];
 
         messages[i].from_counterpart = message.sender_id == counterpart_id && message.sender_is_company;
-        
+        messages[i].sender = message.sender_is_company ? 
+            await get_company_info(message.sender_id) : await get_user_info_by_id(message.sender_id);
     }
     
+    return messages;
 }
+
+module.exports.get_last_messages = get_last_messages;
