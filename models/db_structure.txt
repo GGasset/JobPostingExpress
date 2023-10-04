@@ -49,8 +49,11 @@ CREATE TABLE user_experience (
 );
 
 CREATE TABLE messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     sender_id INTEGER NOT NULL,
+    sender_is_company INTEGER NOT NULL,
     receiver_id INTEGER NOT NULL,
+    receiver_is_company INTEGER NOT NULL,
     message TEXT NOT NULL
 );
 
