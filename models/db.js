@@ -440,10 +440,16 @@ const insert_job = async function(specifications) {
 
 const get_latest_jobs = async function(n_page) {
     date = functionality.get_date();
-    jobs = await db.all(
-        "SELECT jobs.id, jobs.title, companies.company_size, companies.company_web_url, companies.image_url FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.opening_date > ? AND is_closed = 0 LIMIT ? OFFSET ?;",
-        [date, jobs_per_page, n_page * jobs_per_page]
+    jobs_ids = await db.all(
+        "SELECT id FROM jobs WHERE is_closed = 0 AND opening_date >= ? ORDER BY id DESC LIMIT ? OFFSET ?;"
+        , [date, jobs_per_page, n_page * jobs_per_page]
     );
+
+    let jobs = [];
+    await jobs_ids.forEach(async job_id => {
+        jobs.push(await get_job_details(job_id));
+    });
+    return jobs;
 }
 
 const get_jobs_per_specifications = async function(specifications, n_page) {
