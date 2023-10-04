@@ -413,14 +413,17 @@ module.exports.get_company_access_token_data = get_company_access_token_data;
 
 const jobs_per_page = 20;
 
-const insert_job = async function(specifications) {
+const insert_job = async function(specifications, session) {
     let missing_specification = specifications.remoteness === undefined;
     missing_specification = missing_specification || specifications.location_id === undefined;
     missing_specification = missing_specification || specifications.skills.length == 0;
+    missing_specification = missing_specification || specifications.title !== undefined;
+    missing_specification = missing_specification || specifications.description !== undefined;
+    missing_specification = missing_specification || specifications.opening_date !== undefined;
     if (missing_specification)
         return false;
 
-    let skills = "";
+    let parsed_skills = "";
     for (let i = 0; i < specifications.skills.length; i++) {
         const skill = specifications.skills[i];
         const skill_exists = await db.get('SELECT COUNT(skill) FROM skills WHERE skill = ?;', skill)['COUNT(skill)'];
@@ -432,10 +435,16 @@ const insert_job = async function(specifications) {
 
         const skill_id = await db.get('SELECT id FROM skills WHERE skill = ?;', skill).id;
 
-        skills += ` ${skill_id} `;
+        parsed_skills += ` ${skill_id} `;
     }
 
-    await db.run('INSERT INTO job_characteristics (job_id, job_remoteness, location_id, skills) VALUES (?, ?, ?, ?);')
+    const job_id = await db.get('SELECT MAX(id) FROM jobs')['MAX(id)'] + 1;
+
+    await db.run("INSERT INTO jobs (id, company_id, poster_id, title, description, opening_date, is_closed) VALUES (?, ?, ?, ?, ?, ?, ?);",
+        [job_id, session.company.id, session.user.id, specifications.title, specifications.description, specifications.opening_date, 0]);
+
+    await db.run('INSERT INTO job_characteristics (job_id, job_remoteness, location_id, skills) VALUES (?, ?, ?, ?);',
+        [job_id, specifications.remoteness, specifications.location_id, parsed_skills]);
 }
 
 const get_latest_jobs = async function(n_page) {
@@ -525,5 +534,6 @@ async function get_job_characteristics(id) {
 }
 
 module.exports.insert_job = insert_job;
+module.exports.get_latest_jobs = get_latest_jobs;
 module.exports.get_jobs_per_specifications = get_jobs_per_specifications;
 module.exports.get_job_details = get_job_details;
