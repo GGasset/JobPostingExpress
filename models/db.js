@@ -540,15 +540,15 @@ module.exports.get_job_details = get_job_details;
 
 const messages_per_page = 20;
 
-const get_last_messages = async function(page_n, requester_id, requester_as_company, counterpart_id, counterpart_as_company) {
+const get_last_messages = async function(page_n, requester_id, requester_is_company, counterpart_id, counterpart_is_company) {
     let WHERE_clause = "(sender_id = ? AND sender_is_company = ? AND receiver_id = ? AND receiver_is_company = ?)";
     WHERE_clause += " OR (sender_id = ? AND sender_is_company = ? AND receiver_id = ? AND receiver_is_company = ?)";
 
 
     let messages = await db.all(
         `SELECT * FROM messages WHERE ${WHERE_clause} ORDER BY id LIMIT ? OFFSET ?;`
-        , [requester_id, requester_as_company, counterpart_id, counterpart_as_company, 
-        counterpart_id, counterpart_as_company, requester_id, requester_as_company,
+        , [requester_id, requester_is_company, counterpart_id, counterpart_is_company, 
+        counterpart_id, counterpart_is_company, requester_id, requester_is_company,
         messages_per_page, page_n * messages_per_page]
     );
 
