@@ -521,3 +521,26 @@ async function get_job_characteristics(id) {
 module.exports.insert_job = insert_job;
 module.exports.get_jobs_per_specifications = get_jobs_per_specifications;
 module.exports.get_job_details = get_job_details;
+
+const messages_per_page = 20;
+
+const get_last_messages = async function(page_n, requester_id, requester_as_company, counterpart_id, counterpart_as_company) {
+    let WHERE_clause = "(sender_id = ? AND sender_is_company = ? AND receiver_id = ? AND receiver_is_company = ?)";
+    WHERE_clause += " OR (sender_id = ? AND sender_is_company = ? AND receiver_id = ? AND receiver_is_company = ?)";
+
+
+    let messages = await db.all(
+        `SELECT * FROM messages WHERE ${WHERE_clause} ORDER BY id LIMIT ? OFFSET ?;`
+        , [requester_id, requester_as_company, counterpart_id, counterpart_as_company, 
+        counterpart_id, counterpart_as_company, requester_id, requester_as_company,
+        messages_per_page, page_n * messages_per_page]
+    );
+
+    for (let i = 0; i < messages.length; i++) {
+        const message = messages[i];
+
+        messages[i].from_counterpart = message.sender_id == counterpart_id && message.sender_is_company;
+        
+    }
+    
+}
