@@ -563,4 +563,10 @@ const get_last_messages = async function(page_n, requester_id, requester_is_comp
     return messages;
 }
 
+const store_message = async function(message, sender_id, sender_is_company, receiver_id, receiver_is_company) {
+    await db.run("INSERT INTO messages (message, sender_id, sender_is_company, receiver_id, receiver_is_company) VALUES (?, ?, ?, ?, ?);",
+        [message, sender_id, sender_is_company, receiver_id, receiver_is_company]);
+}
+
 module.exports.get_last_messages = get_last_messages;
+module.exports.store_message = store_message;
