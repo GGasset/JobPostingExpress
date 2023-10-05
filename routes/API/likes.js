@@ -28,6 +28,12 @@ likes_router.get('/is_liked', function(req, res) {
 
 likes_router.post('/like', function(req, res) {
     new Promise(async function(resolve, reject) {
+        if (!authentication.require_authentication(req, res))
+        {
+            reject("Forbidden");
+            return;
+        }
+
         const content_id = req.headers.content_id;
         const content_name = req.headers.content_name;
 
@@ -48,11 +54,6 @@ likes_router.post('/like', function(req, res) {
             return;
         }
 
-        if (!authentication.require_authentication(req, res))
-        {
-            reject("Forbidden");
-            return;
-        }
 
         resolve({
             "content_id": content_id,
