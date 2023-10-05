@@ -26,7 +26,16 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
 });
 
 messaging_router.post("/message/:is_company/:user_id", async (req, res) => {
-    // Add end-to-end encryption. https?
+    // Add end-to-end encryption and https?
+    /*
+     * Public Private key pairs using crypto-js
+     * Store pair in message, sending the decrypted version of the private key
+    */
+
+    new Promise((resolve, reject) => {
+        let message_data = new Object();
+        message_data.message = 
+    });
 });
 
 
