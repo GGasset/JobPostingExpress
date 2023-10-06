@@ -21,6 +21,8 @@ const require_authentication = (req, res) => {
         res.status(403).send();
         return false;
     }
+    if (req.session.as_company)
+        return require_company_authentication(req, res);
     return true
 }
 
