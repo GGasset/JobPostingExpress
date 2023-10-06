@@ -54,7 +54,9 @@ CREATE TABLE messages (
     sender_is_company INTEGER NOT NULL,
     receiver_id INTEGER NOT NULL,
     receiver_is_company INTEGER NOT NULL,
-    message TEXT NOT NULL
+    message TEXT NOT NULL,
+    watched_by_receiver INTEGER NOT NULL DEFAULT 0,
+    encrypted_private_key TEXT NOT NULL
 );
 
 CREATE TABLE companies (
