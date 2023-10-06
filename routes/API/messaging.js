@@ -48,8 +48,17 @@ messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => 
     })
 });
 
-messaging_router.post("/watch_conversation/:counterpart_id", (req, res) => {
-
+messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, res) => {
+    new Promise(async (resolve, reject) => {
+        let requester_as_company = res.session.as_company;
+        let requester_id = requester_as_company ? 
+            req.session.company.id : req.session.user.id;
+        let counterpart_as_company = req.params.is_company;
+        let counterpart_id = req.params.counterpart_id;
+    
+        await db.mark_conversation_as_watched(requester_id, requester_as_company, counterpart_id, counterpart_as_company);
+        res.status(204).send();
+    });
 });
 
 messaging_router.get("/get_private_public_key_pair", (req, res) => {
