@@ -576,6 +576,16 @@ const get_unread_message_count = async function(requester_id, requester_as_compa
     )["COUNT(id)"];
 }
 
+const mark_conversation_as_watched = async function(requester_id, requester_as_company, sender_id, sender_is_company) {
+    await db.run(
+        "UPDATE messages SET watched_by_receiver = 1" + 
+        "WHERE receiver_id = ? AND receiver_is_company = ?" +
+        " AND sender_id = ? AND sender_is_company = ?;",
+        [requester_id, requester_as_company, sender_id, sender_is_company]
+    );
+}
+
 module.exports.get_last_messages = get_last_messages;
 module.exports.store_message = store_message;
 module.exports.get_unread_message_count = get_unread_message_count;
+module.exports.mark_conversation_as_watched = mark_conversation_as_watched;
