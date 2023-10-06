@@ -1,9 +1,13 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+const cryptojs = require("crypto-js");
 
 const authentication = require("../../public/server_side/authentication");
 const db = require("../../models/db");
 
 const messaging_router = express.Router()
+
+const salt = bcrypt.genSaltSync();
 
 messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) => {
     new Promise(async (resolve, reject) => {
@@ -25,16 +29,47 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
     })
 });
 
-messaging_router.post("/message/:is_company/:user_id", async (req, res) => {
+messaging_router.post("/watch_conversation/:counterpart_id", (req, res) => {
+
+});
+
+messaging_router.get("/send_private_public_key_pair", (req, res) => {
+    new Promise((resolve, reject) => {
+        const { privateKey: private_key, publicKey: public_key } = crypto.generateKeyPairSync('rsa', {
+            modulusLength: 2048,
+            publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+            },
+            privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem'
+            }
+        }); 
+        let pair = new Object();
+        pair.private_key = private_key;
+        pair.public_key = public_key;
+
+        res.status(200).send(JSON.stringify(pair));
+    });
+});
+
+messaging_router.post("/message/:is_company/:user_id", (req, res) => {
     // Add end-to-end encryption and https?
     /*
      * Public Private key pairs using crypto-js
-     * Store pair in message, sending the decrypted version of the private key
+     * Store pair in message, 
+     * send the decrypted version of the private key to the receiver
+     * send the public key to the sender
     */
 
     new Promise((resolve, reject) => {
         let message_data = new Object();
-        message_data.message = 
+        //message_data.message = 
+    }).then(message_data => {
+        const encrypted_private_key = bcrypt.hashSync(privateKey, sal)
+        message_data.public_key = publicKey;
+        message_data.private_key = encrypted_private_key
     });
 });
 
