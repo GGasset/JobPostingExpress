@@ -25,7 +25,26 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
         const page_n = req.params.page_n;
         const messages = await db.get_last_messages(page_n, requesting_client_id, requester_as_company, counterpart_id, counterpart_as_company);
         
-        res.status(200).contentType("application/json").send(JSON.stringify(messages));
+        res.status(200).send(JSON.stringify(messages));
+    })
+});
+
+messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => {
+    new Promise(async (resolve, reject) => {
+        if (!authentication.require_authentication(req, res))
+            throw "Not logged in";
+        
+        const requester_as_company = req.session.as_company;
+        const requester_id = requester_as_company ? req.session.company.id : req.session.user_id;
+        const counterpart_as_company = req.params.is_company;
+        const counterpart_id = req.params.user_id;
+
+        let data = {
+            "unread_message_count" : await db.get_unread_message_count(requester_id, requester_as_company, counterpart_id, counterpart_as_company)
+        }
+        res.status(200).send(JSON.stringify(data));
+    }).catch((reason) => {
+
     })
 });
 
@@ -33,7 +52,7 @@ messaging_router.post("/watch_conversation/:counterpart_id", (req, res) => {
 
 });
 
-messaging_router.get("/send_private_public_key_pair", (req, res) => {
+messaging_router.get("/get_private_public_key_pair", (req, res) => {
     new Promise((resolve, reject) => {
         const { privateKey: private_key, publicKey: public_key } = crypto.generateKeyPairSync('rsa', {
             modulusLength: 2048,
