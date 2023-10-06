@@ -47,7 +47,6 @@ const is_registered_email = async (email) => {
 module.exports.is_registered_email = is_registered_email;
 
 const bcrypt = require('bcrypt');
-const { post, use, param } = require('../routes/resources');
 
 /*
 * Returns false if email/password don't match or the hashed password if they do
