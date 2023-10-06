@@ -72,6 +72,19 @@ header {
     background-color: rgb(169, 255, 226);
 }
 
+.inside_icon_counter {
+    margin-left: -20px;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-right: .25rem;
+    padding-left: .25rem;
+    text-align: center;
+    font-size: 75%;
+    background-color: rgb(241, 193, 95);
+    border-radius: 50%;
+    max-width: 1.5rem;
+}
+
 .post {
     padding: 1.5rem;
     padding-bottom: 5px;

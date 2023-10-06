@@ -48,3 +48,7 @@ async function like_post(element, content_name) {
     }
 
 }
+
+async function send_message(input_id) {
+    message = document.querySelector(`#${input_id}`).value;
+}
