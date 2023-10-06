@@ -1,4 +1,6 @@
 const express = require("express");
+const authentication = require('../../public/server_side/authentication');
+const db = require('../../models/db');
 
 const likes_router = express.Router();
 
