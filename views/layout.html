@@ -4,6 +4,9 @@
         <title>{% block title %}Contacted{% endblock %}</title>
         <link rel="stylesheet" href="/public/static/layout.css">
         <script type="text/javascript" src="/public/static/layout.js"></script>
+        {% if req.session.credentials %}
+            <script src="/public/static/messages.js"></script>    
+        {% endif %}
 
         {% block head %}
         {% endblock %}
@@ -30,9 +33,11 @@
                     <img src="/public/message_icon.png" alt="Messages" class="header_icon">
                     
                 </a>
-                <element class="inside_icon_counter" id="unread_message_count">
-                    99+
-                </element>
+                {% if req.session.credentials %}
+                    <element class="inside_icon_counter" id="unread_message_count">
+                        99+
+                    </element>
+                {% endif %}
                 
                 
                 <!--Float right elements-->
