@@ -1,6 +1,5 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const cryptojs = require("crypto-js");
 
 const authentication = require("../../public/server_side/authentication");
 const db = require("../../models/db");
@@ -29,6 +28,23 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
     })
 });
 
+messaging_router.get("/get_unread_messages", (req, res) => {
+    new Promise(async (resolve, reject) => {
+        if (!authentication.require_authentication(req, res))
+            throw "Not logged in";
+
+        const as_company = req.session.as_company;
+        const user_id = as_company ? req.session.company.id : req.session.user.id;
+
+        const data = {
+            "unread_message_count": await db.get_unread_message_count(user_id, as_company)
+        }
+        res.status(200).send(JSON.stringify(data));
+    }).catch((reason) => {
+        
+    })
+});
+
 messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => {
     new Promise(async (resolve, reject) => {
         if (!authentication.require_authentication(req, res))
@@ -40,7 +56,7 @@ messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => 
         const counterpart_id = req.params.user_id;
 
         let data = {
-            "unread_message_count" : await db.get_unread_message_count(requester_id, requester_as_company, counterpart_id, counterpart_as_company)
+            "conversation_unread_message_count" : await db.get_unread_message_count_for_conversation(requester_id, requester_as_company, counterpart_id, counterpart_as_company)
         }
         res.status(200).send(JSON.stringify(data));
     }).catch((reason) => {
