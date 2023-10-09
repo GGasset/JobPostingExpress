@@ -5,6 +5,9 @@ window.onload = () => {
         setTimeout(() => {
             message_div.remove();
         }, message_disappear_time_s * 1000);
+
+    if (document.querySelector("#unread_message_count") !== undefined)
+        set_unread_messages_label();
 }
 
 async function user_as_company() {
@@ -46,9 +49,4 @@ async function like_post(element, content_name) {
         element.classList.remove("activated_icon");
         like_count.innerHTML = parseInt(like_count.innerHTML) - 1;
     }
-
-}
-
-async function send_message(input_id) {
-    message = document.querySelector(`#${input_id}`).value;
 }

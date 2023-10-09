@@ -4,7 +4,9 @@
         <title>{% block title %}Contacted{% endblock %}</title>
         <link rel="stylesheet" href="/public/static/layout.css">
         <script type="text/javascript" src="/public/static/layout.js"></script>
-        <script src="/public/static/messages.js"></script>    
+        {% if req.session.credentials %}
+            <script src="/public/static/messages.js"></script>    
+        {% endif %}
 
         {% block head %}
         {% endblock %}
