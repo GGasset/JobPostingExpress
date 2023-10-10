@@ -426,19 +426,19 @@ const insert_job = async function(specifications, session) {
     let parsed_skills = "";
     for (let i = 0; i < specifications.skills.length; i++) {
         const skill = specifications.skills[i];
-        const skill_exists = await db.get('SELECT COUNT(skill) FROM skills WHERE skill = ?;', skill)['COUNT(skill)'];
+        const skill_exists = (await db.get('SELECT COUNT(skill) FROM skills WHERE skill = ?;', skill))['COUNT(skill)'];
         if (skill_exists == 0)
         {
             // Check spelling with dictionary
             await db.run('INSERT INTO skills (skill) VALUES (?);', skill);
         }
 
-        const skill_id = await db.get('SELECT id FROM skills WHERE skill = ?;', skill).id;
+        const skill_id = (await db.get('SELECT id FROM skills WHERE skill = ?;', skill)).id;
 
         parsed_skills += ` ${skill_id} `;
     }
 
-    const job_id = await db.get('SELECT MAX(id) FROM jobs')['MAX(id)'] + 1;
+    const job_id = (await db.get('SELECT MAX(id) FROM jobs'))['MAX(id)'] + 1;
 
     await db.run("INSERT INTO jobs (id, company_id, poster_id, title, description, opening_date, is_closed) VALUES (?, ?, ?, ?, ?, ?, ?);",
         [job_id, session.company.id, session.user.id, specifications.title, specifications.description, specifications.opening_date, 0]);
@@ -569,20 +569,21 @@ const store_message = async function(message, sender_id, sender_is_company, rece
 }
 
 const get_unread_message_count = async function(requester_id, requester_as_company) {
-    return await db.get(
+    let result = await db.get(
         "SELECT COUNT(id) FROM messages WHERE watched_by_receiver = 0" +
         " AND receiver_id = ? AND receiver_is_company = ?;",
         [requester_id, requester_as_company]
-    )["COUNT(id)"];
+    );
+    return result["COUNT(id)"];
 }
 
 const get_unread_message_count_for_conversation = async function(requester_id, requester_as_company, sender_id, sender_is_company) {
-    return await db.get(
+    return (await db.get(
         "SELECT COUNT(id) FROM messages WHERE watched_by_receiver = 0" +
         " AND receiver_id = ? AND receiver_is_company = ?" +
         " AND sender_id = ? AND sender_is_company = ?;",
         [requester_id, requester_as_company, sender_id, sender_is_company]
-    )["COUNT(id)"];
+    ))["COUNT(id)"];
 }
 
 const mark_conversation_as_watched = async function(requester_id, requester_as_company, sender_id, sender_is_company) {
