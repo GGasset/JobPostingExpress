@@ -1,12 +1,11 @@
 async function set_unread_messages_label() {
-    await user_as_company().then(async (as_company) => {
-        let url = "/API/get_unread_messages";
-        if (as_company)
-            url = "/company" + url;
-        return await fetch(url, {
-            "credentials": "include",
-            method: "GET"
-        });
+    let as_company = user_as_company();
+    let url = "/API/get_unread_messages";
+    if (as_company)
+        url = "/company" + url;
+    fetch(url, {
+        "credentials": "include",
+        method: "GET"
     }).then(async (raw_response) => {
         return await raw_response.json();
     }).then((response) => {
@@ -22,4 +21,9 @@ async function set_unread_messages_label() {
         message_counter.innerHTML = unread_message_count;
         message_counter.hidden = false;
     });
+}
+
+async function send_message() {
+    let as_company = user_as_company();
+    let keys = await fetch("")
 }
