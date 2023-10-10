@@ -168,17 +168,20 @@ session_router.post('/company/register', function(req, res) {
         company_info.password_hash = hashed_password;
         return company_info;
     }).then(async function(company_info) {
-        await db.register_company(
+        let company_id = await db.register_company(
             company_info.password_hash,
             company_info.company_name, 
             company_info.company_size,
             req.session.user.id
         );
+        company_info.id = company_id;
         return company_info;
     }).then(async function(company_info) {
         // Log the user to the company
+        let payload = await db.get_company_access_token_data(company_info.id);
         req.session.credentials.companyAccessToken = jwt.sign(
-            await db.get_company_access_token_data(company_info.id),  process.env.JWTSecret);
+            payload, process.env.JWTSecret
+        );
 
         return company_info.id;
     }).then(async function(company_id) {

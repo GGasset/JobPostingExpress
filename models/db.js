@@ -396,6 +396,7 @@ const register_company = async function(password_hash, company_name, company_siz
 
     await db.run('INSERT INTO users_from_company(user_id, company_id, is_admin) VALUES (?, ?, ?)',
         [creator_id, company_id, 1]);
+    return company_id;
 }
 
 const get_company_access_token_data = async function(company_id) {
