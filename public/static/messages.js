@@ -20,5 +20,6 @@ async function set_unread_messages_label() {
     }).then(unread_message_count => {
         let message_counter = document.querySelector("#unread_message_count");
         message_counter.innerHTML = unread_message_count;
+        message_counter.hidden = false;
     });
 }
