@@ -37,6 +37,7 @@ header {
 
 #logo_image {
     height: 3rem;
+    width: 4rem;
 }
 
 .header_text {
@@ -83,6 +84,15 @@ header {
     background-color: rgb(241, 193, 95);
     border-radius: 50%;
     max-width: 1.5rem;
+}
+
+#DMs_div {
+    height: 60%;
+    width: 40%;
+    position: absolute;
+    margin-left: calc(6rem + 27.1% + .5rem);
+    background-color: rgb(117, 93, 61);
+    border-radius: 1%;
 }
 
 .post {

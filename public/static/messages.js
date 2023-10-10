@@ -23,7 +23,13 @@ async function set_unread_messages_label() {
     });
 }
 
+function open_messages() {
+    let dms_div = document.querySelector("#DMs_div");
+    let is_hidden = dms_div.hidden;
+    dms_div.hidden = !is_hidden;
+}
+
 async function send_message() {
     let as_company = user_as_company();
-    let keys = await fetch("")
+    
 }
