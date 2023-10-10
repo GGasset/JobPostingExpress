@@ -7,9 +7,12 @@ async function set_unread_messages_label() {
             "credentials": "include",
             method: "GET"
         });
-    }).then((raw_response) => {
-        return JSON.parse(raw_response).unread_message_count;
-    }).then((unread_message_count) => {
+    }).then(async (raw_response) => {
+        return await raw_response.json();
+    }).then((response) => {
+        let unread_message_count = response.unread_message_count;
+        return unread_message_count;
+    }).then(unread_message_count => {
         if (unread_message_count > 99)
             unread_message_count = "99+";
 
