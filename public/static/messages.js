@@ -40,6 +40,8 @@ async function get_contacts() {
     }).then(async raw => {
         return await raw.json();
     });
+
+    return contacts;
 }
 
 async function add_contact() {
