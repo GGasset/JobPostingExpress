@@ -658,6 +658,25 @@ const get_contacts = async function(requester_id, requester_as_company) {
         return b - a;
     })
 
+    for (let i = 0; i < contacts.length; i++) {
+        const contact = contacts[i];
+        const contact_id = contact.user.id;
+        const contact_as_company = contact.user.is_company;
+
+        for (let j = i + 1; j < contacts.length; j++) {
+            const to_compare = contacts[j];
+            const compared_id = to_compare.user.id;
+            const compared_as_company = to_compare.user.is_company;
+
+            let is_same_counterpart = contact_id == compared_id;
+            is_same_counterpart = is_same_counterpart && (contact_as_company == compared_as_company);
+            if (is_same_counterpart) {
+                contacts = contacts.splice(j, 1);
+                break;
+            }
+        }
+    }
+
     return contacts;
 }
 
