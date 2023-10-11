@@ -8,6 +8,19 @@ const messaging_router = express.Router()
 
 const salt = bcrypt.genSaltSync();
 
+messaging_router.get("/get_contacts", (req, res) => {
+    new Promise(async (resolve, reject) => {
+        const as_company = req.session.as_company;
+        const id = as_company ? 
+            req.session.company.id :
+            req.session.user.id;
+
+        const contacts = await db.get_contacts(id, as_company);
+        return contacts;
+    }).then((contacts) => {
+    });
+});
+
 messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) => {
     new Promise(async (resolve, reject) => {
         if (!authentication.require_authentication(req, res)) {
