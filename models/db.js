@@ -678,19 +678,6 @@ const get_contacts = async function(requester_id, requester_as_company) {
         }
     }
 
-    // Set if it has unread messages
-    contacts.forEach(async contact => {
-        contact.unread_message_count = await get_unread_message_count_for_conversation(
-            requester_id, requester_as_company, contact.user.id, contact.user.is_company
-        );
-    });
-
-    let current_sort_end = -1;
-    for (let i = contacts.length - 1; i >= 0 && i > current_sort_end; i--) {
-        let contact = contacts[i];
-        const is_unread = false;
-        if (is_unread)
-    }
     return contacts;
 }
 
