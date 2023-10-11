@@ -658,6 +658,7 @@ const get_contacts = async function(requester_id, requester_as_company) {
         return b - a;
     })
 
+    // Remove counterpart duplicates
     for (let i = 0; i < contacts.length; i++) {
         const contact = contacts[i];
         const contact_id = contact.user.id;
