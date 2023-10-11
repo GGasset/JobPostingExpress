@@ -600,3 +600,65 @@ module.exports.store_message = store_message;
 module.exports.get_unread_message_count = get_unread_message_count;
 module.exports.get_unread_message_count_for_conversation = get_unread_message_count_for_conversation;
 module.exports.mark_conversation_as_watched = mark_conversation_as_watched;
+
+const get_contacts = async function(requester_id, requester_as_company) {
+    let contacts_with_received_messages = await db.all(
+        "SELECT DISTINCT receiver_id, receiver_is_company " +
+        "FROM messages WHERE sender_id = ? AND sender_is_company = ?;",
+        [requester_id, requester_as_company]
+    );
+
+    let contacts_with_sent_messages = await db.all(
+        "SELECT DISTINCT sender_id, sender_is_company " + 
+        "FROM messages WHERE receiver_id = ? AND receiver_is_company = ?;",
+        [requester_id, requester_as_company]
+    );
+
+    let contacts = [];
+    await contacts_with_received_messages.forEach(async receiver_contact => {
+        const contact_as_company = receiver_contact.receiver_is_company;
+        const contact_id = receiver_contact.receiver_id;
+        
+        let contact = new Object();
+        contact.last_message_id = (await db.get(
+            "SELECT MAX(id) FROM messages WHERE " +
+            "sender_id = ? AND sender_is_company = ? AND " +
+            "receiver_id = ? AND receiver_is_company = ?;",
+            [requester_id, requester_as_company,
+            contact_id, contact_as_company]
+        ))["MAX(id)"];
+        contact.user = contact_as_company ?
+                get_company_info(contact_id) :
+                get_user_info_by_id(contact_id);
+
+        contacts.push(contact)
+    });
+
+    await contacts_with_sent_messages.forEach(async receiver_contact => {
+        const contact_as_company = receiver_contact.receiver_is_company;
+        const contact_id = receiver_contact.receiver_id;
+        
+        let contact = new Object();
+        contact.last_message_id = (await db.get(
+            "SELECT MAX(id) FROM messages WHERE " +
+            "sender_id = ? AND sender_is_company = ? AND " +
+            "receiver_id = ? AND receiver_is_company = ?;",
+            [contact_id, contact_as_company,
+            requester_id, requester_as_company]
+        ))["MAX(id)"];
+        contact.user = contact_as_company ?
+                get_company_info(contact_id) :
+                get_user_info_by_id(contact_id);
+
+        contacts.push(contact)
+    });
+
+    // Sort in descending order
+    contacts.sort((a, b) => {
+        return b - a;
+    })
+
+    return contacts;
+}
+
+module.exports.get_contacts = get_contacts;
