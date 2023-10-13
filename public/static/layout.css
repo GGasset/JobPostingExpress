@@ -86,15 +86,6 @@ header {
     max-width: 1.5rem;
 }
 
-#DMs_div {
-    height: 60%;
-    width: 60%;
-    position: absolute;
-    margin-left: calc(6rem + 27.1% + .5rem);
-    background-color: rgb(117, 93, 61);
-    border-radius: 1%;
-}
-
 .post {
     padding: 1.5rem;
     padding-bottom: 5px;
