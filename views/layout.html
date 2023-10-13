@@ -5,7 +5,8 @@
         <link rel="stylesheet" href="/public/static/layout.css">
         <script type="text/javascript" src="/public/static/layout.js"></script>
         {% if req.session.credentials %}
-            <script src="/public/static/messages.js"></script>    
+            <script src="/public/static/messages.js"></script>
+            <link rel="stylesheet" href="/public/static/messages.css">
         {% endif %}
 
         {% block head %}
@@ -71,7 +72,16 @@
             </div>
         </header>
         <div id="DMs_div" hidden="true">
+            <table class="occupy_all_space">
+                <tr class="occupy_all_space">
+                    <td id="contacts_col">
 
+                    </td>
+                    <td id="messages_col">
+
+                    </td>
+                </tr>
+            </table>
         </div>
         {% block body %}
         {% endblock %}
