@@ -54,7 +54,11 @@ async function add_contact_to_frontend(contact) {
 }
 
 async function open_conversation(is_company, user_id) {
+    const contacts_col = document.querySelector("#contacts_col");
+    contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
 
+    const contact_div = document.querySelector(`${is_company}_${user_id}`);
+    contact_div.classList.add("selected");
 }
 
 async function get_contacts() {
