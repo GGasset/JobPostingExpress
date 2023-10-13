@@ -29,6 +29,31 @@ function open_messages() {
     dms_div.hidden = !is_hidden;
 }
 
+async function add_contact_to_frontend(contact) {
+    let div = document.createElement("div");
+    div.id = `${contact.user.is_company}_${contact.user.id}`;
+    div.classList.add("contact");
+    div.onclick(open_conversation(contact.user.is_company, contact.user.id));
+    div.innerHTML = 
+        "<table>\n" +
+        "   <tr>" +
+        "       <td>" +
+        `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">` +
+        `               <img src="${contact.user.image_url}" alt="Profile picture">` +
+        "           </a>"
+        "       </td>" +
+
+        "       <td>" +
+        `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
+        "       </td>" +
+        "   </tr>" +
+        "</table>";
+}
+
+async function open_conversation(is_company, user_id) {
+
+}
+
 async function get_contacts() {
     let as_company = user_as_company();
     let url = "/API/get_contacts"
@@ -44,7 +69,7 @@ async function get_contacts() {
     return contacts;
 }
 
-async function add_contact() {
+async function add_contact(is_company, user_id) {
 
 }
 
