@@ -1,0 +1,48 @@
+#DMs_div {
+    height: 60%;
+    width: 60%;
+    position: absolute;
+    margin-left: calc(6rem + 27.1% + .5rem);
+    background-color: rgb(201, 133, 43);
+    border-radius: 1%;
+}
+
+.occupy_all_space {
+    height: 100%;
+    width: 100%;
+}
+
+#contacts_col {
+    height: 100%;
+    width: 25%;
+    border: 0px;
+    border-right: .5mm;
+    border-style: solid;
+}
+
+#messages_col {
+    height: 100%;
+    width: 75%;
+}
+
+.contact {
+    height: 3rem;
+    width: 100%;
+
+    border: 0.5mm solid;
+    border-left: 0px;
+}
+
+.contact_img {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+}
+
+.selected {
+    
+}
+
+.scrollable {
+    overflow-y: scroll;
+}
