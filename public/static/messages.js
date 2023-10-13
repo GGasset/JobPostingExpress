@@ -30,7 +30,7 @@ function open_messages() {
 }
 
 async function add_contact_to_frontend(contact) {
-    let div = document.createElement("div");
+    const div = document.createElement("div");
     div.id = `${contact.user.is_company}_${contact.user.id}`;
     div.classList.add("contact");
     div.onclick(open_conversation(contact.user.is_company, contact.user.id));
@@ -48,6 +48,9 @@ async function add_contact_to_frontend(contact) {
         "       </td>" +
         "   </tr>" +
         "</table>";
+
+    const contacts_td = document.querySelector("#contacts_col");
+    contacts_td.innerHTML = div.outerHTML + contacts_td.innerHTML;
 }
 
 async function open_conversation(is_company, user_id) {
