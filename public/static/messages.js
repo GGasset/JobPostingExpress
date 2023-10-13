@@ -29,6 +29,10 @@ function open_messages() {
     dms_div.hidden = !is_hidden;
 }
 
+async function load_contacts() {
+    
+}
+
 async function add_contact_to_frontend(contact) {
     const div = document.createElement("div");
     div.id = `${contact.user.is_company}_${contact.user.id}`;
