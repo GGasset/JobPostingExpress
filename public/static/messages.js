@@ -98,7 +98,7 @@ function add_contact_to_frontend(contact) {
         "   <tr>" +
         "       <td>" +
         `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">` +
-        `               <img src="${contact.user.image_url}" alt="Profile picture">` +
+        `               <img class="contact_img" src="${contact.user.image_url}" alt="Profile picture">` +
         "           </a>" +
         "       </td>" +
         "       <td>" +
