@@ -455,9 +455,9 @@ const get_latest_jobs = async function(n_page) {
     );
 
     let jobs = [];
-    await jobs_ids.forEach(async job_id => {
+    for (const job_id of jobs_ids) {
         jobs.push(await get_job_details(job_id));
-    });
+    };
     return jobs;
 }
 
@@ -477,7 +477,7 @@ const get_jobs_per_specifications = async function(specifications, n_page) {
     const skills = specifications.skills.split(" ");
 
     let skills_ids = [];
-    await skills.forEach(async skill => {
+    for (const skill of skills) {
         const skill_exists = await db.get("SELECT COUNT(skill) FROM skills WHERE skill = ?;", skill)["COUNT(skill)"];
         
         // Check spelling of skill with a dictionary
@@ -486,7 +486,7 @@ const get_jobs_per_specifications = async function(specifications, n_page) {
 
         const skill_id = await db.get("SELECT id FROM skills WHERE skill = ?;", skill).id;
         skills_ids.push(skill_id);
-    });
+    };
 
     let params = [functionality.get_date()];
 
@@ -501,10 +501,10 @@ const get_jobs_per_specifications = async function(specifications, n_page) {
         jobs_query += "location_id = ? AND ";
         params.push(location_id);
     }
-    skills_ids.forEach(skill_id => {
+    for (const skill_id of skills_ids) {
         jobs_query += "skill LIKE '% ? %' AND ";
         params.push(skill_id);
-    });
+    };
     jobs_query += "));";
     jobs_query = jobs_query.replace(" WHERE ));", "));").replace(" AND ));", "));").replace(" ));", "));");
     jobs_query = jobs_query.replace("));", ")) LIMIT ? OFFSET ?;");
@@ -513,10 +513,10 @@ const get_jobs_per_specifications = async function(specifications, n_page) {
 
     let jobs_ids = db.all(jobs_query, params);
     let jobs = [];
-    await jobs_ids.forEach(async id => {
+    for (const id of jobs_ids) {
         id = id.id;
         jobs.push(await get_job_details(id));
-    });
+    };
     return jobs;
 }
 
@@ -615,7 +615,7 @@ const get_contacts = async function(requester_id, requester_as_company) {
     );
 
     let contacts = [];
-    await contacts_with_received_messages.forEach(async receiver_contact => {
+    for (const receiver_contact of contacts_with_received_messages) {
         const contact_as_company = receiver_contact.receiver_is_company;
         const contact_id = receiver_contact.receiver_id;
         
@@ -632,9 +632,9 @@ const get_contacts = async function(requester_id, requester_as_company) {
                 get_user_info_by_id(contact_id);
 
         contacts.push(contact)
-    });
+    };
 
-    await contacts_with_sent_messages.forEach(async receiver_contact => {
+    for (const receiver_contact of contacts_with_sent_messages) {
         const contact_as_company = receiver_contact.receiver_is_company;
         const contact_id = receiver_contact.receiver_id;
         
