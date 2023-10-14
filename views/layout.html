@@ -33,7 +33,7 @@
                 <img onclick="open_messages()" id="DMs_icon" src="/public/message_icon.png" alt="Messages" class="header_icon">
 
                 {% if req.session.credentials %}
-                    <element class="inside_icon_counter" id="unread_message_count" hidden="true">
+                    <element class="inside_icon counter" id="unread_message_count" hidden="true">
                         99+
                     </element>
                 {% endif %}
