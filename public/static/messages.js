@@ -30,7 +30,7 @@ function open_messages() {
 }
 
 async function load_contacts() {
-    
+    //const contacts = 
 }
 
 async function add_contact_to_frontend(contact) {
@@ -40,18 +40,18 @@ async function add_contact_to_frontend(contact) {
     div.onclick(open_conversation(contact.user.is_company, contact.user.id));
     div.innerHTML = 
         "<table>\n" +
-        "   <tr>" +
-        "       <td>" +
-        `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">` +
-        `               <img src="${contact.user.image_url}" alt="Profile picture">` +
-        "           </a>"
-        "       </td>" +
+        "   <tr>\n" +
+        "       <td>\n" +
+        `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">\n` +
+        `               <img src="${contact.user.image_url}" alt="Profile picture">\n` +
+        "           </a>\n"
+        "       </td>\n" +
 
-        "       <td>" +
-        `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
-        "       </td>" +
-        "   </tr>" +
-        "</table>";
+        "       <td>\n" +
+        `           ${contact.user.is_company ? `${contact.user.company_name} (Company)\n` : `${contact.user.first_name} ${contact.user.last_name}`}\n` +
+        "       </td>\n" +
+        "   </tr>\n" +
+        "</table>\n";
 
     const contacts_td = document.querySelector("#contacts_col");
     contacts_td.innerHTML = div.outerHTML + contacts_td.innerHTML;
