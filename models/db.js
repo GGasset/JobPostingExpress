@@ -651,7 +651,14 @@ const get_contacts = async function(requester_id, requester_as_company) {
                 get_user_info_by_id(contact_id);
 
         contacts.push(contact)
-    });
+    };
+
+    for (const contact of contacts) {
+        const contact_is_company = contact.user.is_company;
+        const contact_id = contact.user.id;
+        contact.unread_message_count = 
+            await get_unread_message_count_for_conversation(requester_id, requester_as_company, contact_id, contact_is_company);
+    };
 
     // Sort in descending order
     contacts.sort((a, b) => {
