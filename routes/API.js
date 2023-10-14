@@ -19,6 +19,8 @@ API_router.get("user_info/:is_company/:id", (req, res) => {
         const user_id = req.params.id;
 
         let user_info = is_company ? await db.get_company_info(user_id) : await db.get_user_info_by_id(user_id);
+        if (user_info.id === undefined)
+            throw "Not found";
         user_info.email = undefined;
         return user_info;
     }).then(user_info => {
