@@ -52,6 +52,15 @@ async function load_contacts() {
     });
 }
 
+async function add_contact_from_icon() {
+    const element_id = this.id;
+    const splitted_id = element_id.split('_');
+    const is_company = splitted_id[0];
+    const user_id = splitted_id[1];
+
+    await add_contact(is_company, user_id);
+}
+
 async function add_contact(is_company, user_id) {
     try {
         const contact = document.querySelector(`#${is_company}_${user_id}`);
