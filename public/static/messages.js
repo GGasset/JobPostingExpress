@@ -78,12 +78,20 @@ function add_contact_to_frontend(contact) {
 
         "       <td>\n" +
         `           ${contact.user.is_company ? `${contact.user.company_name} (Company)\n` : `${contact.user.first_name} ${contact.user.last_name}`}\n` +
-        "       </td>\n" +
+        "       </td>\n";
+        
+    if (contact.unread_message_count > 99)
+        contact.unread_message_count = "99+";
+
+    if (contact.unread_message_count > 0 && contact.unread_message_count !== undefined)
+        div.innerHTML +=
         `       <td>\n` +
         `           <div class="counter">\n` +
         `               ${contact.unread_message_count}\n` +
         `           </div>\n` +
-        `       </td>\n` +
+        `       </td>\n`;
+       
+    div.innerHTML +=
         "   </tr>\n" +
         "</table>\n";
 
