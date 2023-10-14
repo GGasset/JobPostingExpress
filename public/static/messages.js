@@ -53,6 +53,16 @@ async function load_contacts() {
 }
 
 async function add_contact(is_company, user_id) {
+    try {
+        const contact = document.querySelector(`#${is_company}_${user_id}`);
+        if (contact !== undefined) {
+            open_conversation(is_company, user_id);
+            return;
+        }
+    } catch (error) {
+        
+    }
+
     let user_info = await fetch(`/API/user_info/${is_company}/${user_id}`, {
         method: "GET"
     }).then(async raw => {
