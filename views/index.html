@@ -25,7 +25,7 @@
     {% for post in posts %}
         <div class="post">
             {% if req.session.credentials %}
-                <img onclick="add_contact_from_icon()" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
+                <img onclick="add_contact_from_icon(this)" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
             {% endif %}
             <table>
                 <tr>

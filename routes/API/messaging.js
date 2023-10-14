@@ -16,7 +16,7 @@ messaging_router.get("/get_contacts", (req, res) => {
             req.session.user.id;
 
         const contacts = await db.get_contacts(id, as_company);
-        return contacts;
+        resolve(contacts);
     }).then((contacts) => {
         res.status(200).send(JSON.stringify(contacts));
     });
@@ -32,7 +32,7 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
         const requesting_client_id = requester_as_company ?
             req.session.company.id : req.session.user.id;
         
-        const counterpart_as_company = req.params.is_company;
+        const counterpart_as_company = req.params.is_company == true;
         const counterpart_id = req.params.user_id;
     
         const page_n = req.params.page_n;
@@ -66,7 +66,7 @@ messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => 
         
         const requester_as_company = req.session.as_company;
         const requester_id = requester_as_company ? req.session.company.id : req.session.user_id;
-        const counterpart_as_company = req.params.is_company;
+        const counterpart_as_company = req.params.is_company == true;
         const counterpart_id = req.params.user_id;
 
         let data = {
@@ -83,7 +83,7 @@ messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, r
         let requester_as_company = res.session.as_company;
         let requester_id = requester_as_company ? 
             req.session.company.id : req.session.user.id;
-        let counterpart_as_company = req.params.is_company;
+        let counterpart_as_company = req.params.is_company == true;
         let counterpart_id = req.params.counterpart_id;
     
         await db.mark_conversation_as_watched(requester_id, requester_as_company, counterpart_id, counterpart_as_company);

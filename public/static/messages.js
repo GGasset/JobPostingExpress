@@ -23,8 +23,12 @@ async function set_unread_messages_label() {
     });
 }
 
-function open_messages() {
+function open_messages(hidden=undefined) {
     let dms_div = document.querySelector("#DMs_div");
+    if (hidden !== undefined) {
+        dms_div.hidden = hidden;
+        return;
+    }
     let is_hidden = dms_div.hidden;
     dms_div.hidden = !is_hidden;
 }
@@ -52,8 +56,8 @@ async function load_contacts() {
     });
 }
 
-async function add_contact_from_icon() {
-    const element_id = this.id;
+async function add_contact_from_icon(element) {
+    const element_id = element.id;
     const splitted_id = element_id.split('_');
     const is_company = splitted_id[0];
     const user_id = splitted_id[1];
@@ -63,8 +67,8 @@ async function add_contact_from_icon() {
 
 async function add_contact(is_company, user_id) {
     try {
-        const contact = document.querySelector(`#${is_company}_${user_id}`);
-        if (contact !== undefined) {
+        const contact = document.querySelector(`#contact_${is_company}_${user_id}`);
+        if (contact !== null) {
             open_conversation(is_company, user_id);
             return;
         }
@@ -77,42 +81,36 @@ async function add_contact(is_company, user_id) {
     }).then(async raw => {
         return await raw.json();
     });
-
     add_contact_to_frontend(user_info);
 }
 
 function add_contact_to_frontend(contact) {
     const div = document.createElement("div");
-    div.id = `${contact.user.is_company}_${contact.user.id}`;
+    div.id = `contact_${contact.user.is_company}_${contact.user.id}`;
     div.classList.add("contact");
-    div.onclick(open_conversation(contact.user.is_company, contact.user.id));
-    div.innerHTML = 
-        "<table>\n" +
-        "   <tr>\n" +
-        "       <td>\n" +
-        `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">\n` +
-        `               <img src="${contact.user.image_url}" alt="Profile picture">\n` +
-        "           </a>\n"
-        "       </td>\n" +
-
-        "       <td>\n" +
-        `           ${contact.user.is_company ? `${contact.user.company_name} (Company)\n` : `${contact.user.first_name} ${contact.user.last_name}`}\n` +
-        "       </td>\n";
-        
+    div.onclick = `open_conversation(${contact.user.is_company}, ${contact.user.id})`;
+    
     if (contact.unread_message_count > 99)
         contact.unread_message_count = "99+";
 
-    div.innerHTML +=
-        `       <td id="${contact.user.is_company}_${contact.user.id}_unread_count">\n` +
-        `           <div class="counter">\n` +
-        `               ${contact.unread_message_count}\n` +
-        `           </div>\n` +
-        `       </td>\n`;
-       
-    div.innerHTML +=
-        "   </tr>\n" +
-        "</table>\n";
-
+    div.innerHTML = 
+        "<table>" +
+        "   <tr>" +
+        "       <td>" +
+        `           <a href="${contact.user.is_company ? '/companies' : '/users'}/${contact.user.id}">` +
+        `               <img src="${contact.user.image_url}" alt="Profile picture">` +
+        "           </a>" +
+        "       </td>" +
+        "       <td>" +
+        `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
+        "       </td>" +
+        `       <td id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
+        `           <div class="counter">` +
+        `               ${contact.unread_message_count}` +
+        `           </div>` +
+        `       </td>` +
+        "   </tr>" +
+        "</table>";
     const contacts_td = document.querySelector("#contacts_col");
     contacts_td.innerHTML = div.outerHTML + contacts_td.innerHTML;
 
@@ -124,8 +122,10 @@ async function open_conversation(is_company, user_id) {
     const contacts_col = document.querySelector("#contacts_col");
     contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
 
-    const contact_div = document.querySelector(`${is_company}_${user_id}`);
+    const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
     contact_div.classList.add("selected");
+
+    open_messages(false);
 }
 
 async function send_message() {
