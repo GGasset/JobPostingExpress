@@ -655,7 +655,7 @@ const get_contacts = async function(requester_id, requester_as_company) {
 
     // Sort in descending order
     contacts.sort((a, b) => {
-        return b - a;
+        return b.last_message_id - a.last_message_id;
     })
 
     // Remove counterpart duplicates
