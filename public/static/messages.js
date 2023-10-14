@@ -93,9 +93,8 @@ function add_contact_to_frontend(contact) {
     if (contact.unread_message_count > 99)
         contact.unread_message_count = "99+";
 
-    if (contact.unread_message_count > 0 && contact.unread_message_count !== undefined)
-        div.innerHTML +=
-        `       <td>\n` +
+    div.innerHTML +=
+        `       <td id="${contact.user.is_company}_${contact.user.id}_unread_count">\n` +
         `           <div class="counter">\n` +
         `               ${contact.unread_message_count}\n` +
         `           </div>\n` +
@@ -107,6 +106,9 @@ function add_contact_to_frontend(contact) {
 
     const contacts_td = document.querySelector("#contacts_col");
     contacts_td.innerHTML = div.outerHTML + contacts_td.innerHTML;
+
+    let unread_message_count_label = document.querySelector(`#${contact.user.is_company}_${contact.user.id}_unread_count`);
+    unread_message_count_label.hidden = contact.unread_message_count === 0;
 }
 
 async function open_conversation(is_company, user_id) {
