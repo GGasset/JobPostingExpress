@@ -4,7 +4,7 @@
     <div class="post">
         {% if req.session.credentials and post.user.is_company != req.session.as_company %}
             <img onclick="add_contact_from_icon(this)" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
-        {% else %}
+        {% elif req.session.credentials %}
             {% if req.session.as_company %}
                 {% if req.session.company.id != post.user.id %}
                     <img onclick="add_contact_from_icon(this)" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
@@ -76,15 +76,15 @@
     <hr>
     {% for comment in post.comments %}
         <div class="post">
-            {% if req.session.credentials and post.user.is_company != req.session.as_company %}
+            {% if req.session.credentials and comment.user.is_company != req.session.as_company %}
                 <img onclick="add_contact_from_icon(this)" id="{{ comment.user.is_company }}_{{ comment.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
-            {% else %}
+            {% elif req.session.credentials %}
                 {% if req.session.as_company %}
-                    {% if req.session.company.id != post.user.id %}
+                    {% if req.session.company.id != comment.user.id %}
                         <img onclick="add_contact_from_icon(this)" id="{{ comment.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
                     {% endif %}
                 {% else %}
-                    {% if req.session.user.id != post.user.id %}
+                    {% if req.session.user.id != comment.user.id %}
                         <img onclick="add_contact_from_icon(this)" id="{{ comment.user.is_company }}_{{ comment.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
                     {% endif %}
                 {% endif %}

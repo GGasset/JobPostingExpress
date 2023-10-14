@@ -26,7 +26,7 @@
         <div class="post">
             {% if req.session.credentials and post.user.is_company != req.session.as_company %}
                 <img onclick="add_contact_from_icon(this)" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
-            {% else %}
+            {% elif req.session.credentials %}
                 {% if req.session.as_company %}
                     {% if req.session.company.id != post.user.id %}
                         <img onclick="add_contact_from_icon(this)" id="{{ post.user.is_company }}_{{ post.user.id }}" class="post_icon post_header_icon" src="/public/message_icon.png" alt="Send message">
