@@ -36,7 +36,7 @@
 }
 
 .contact:hover {
-    background-color: rgb(192, 101, 79);
+    background-color: rgb(189, 73, 44);
 }
 
 .contact_img {
@@ -46,7 +46,7 @@
 }
 
 .selected {
-    
+    background-color: rgb(235, 101, 67);
 }
 
 .scrollable {
