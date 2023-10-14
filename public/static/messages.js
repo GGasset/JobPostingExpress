@@ -81,7 +81,10 @@ async function add_contact(is_company, user_id) {
     }).then(async raw => {
         return await raw.json();
     });
+
+    user_info.unread_message_count = 0;
     add_contact_to_frontend(user_info);
+    open_conversation(is_company, user_id);
 }
 
 function add_contact_to_frontend(contact) {
@@ -101,7 +104,7 @@ function add_contact_to_frontend(contact) {
         `               <img class="contact_img" src="${contact.user.image_url}" alt="Profile picture">` +
         "           </a>" +
         "       </td>" +
-        "       <td>" +
+        "       <td style='width: 100%;'>" +
         `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
         "       </td>" +
         `       <td id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
