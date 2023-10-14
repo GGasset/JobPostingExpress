@@ -42,6 +42,16 @@ async function load_contacts() {
     });
 }
 
+async function add_contact(is_company, user_id) {
+    let user_info = await fetch(`/API/user_info/${is_company}/${user_id}`, {
+        method: "GET"
+    }).then(async raw => {
+        return await raw.json();
+    });
+
+    add_contact_to_frontend(user_info);
+}
+
 function add_contact_to_frontend(contact) {
     const div = document.createElement("div");
     div.id = `${contact.user.is_company}_${contact.user.id}`;
@@ -87,10 +97,6 @@ async function get_contacts() {
     });
 
     return contacts;
-}
-
-async function add_contact(is_company, user_id) {
-
 }
 
 async function get_unread_conversations() {
