@@ -107,6 +107,10 @@ header {
     height: 1rem;
 }
 
+.post_header_icon {
+    margin-top: 1mm;
+}
+
 .post_icon:hover {
     background-color: rgb(144, 138, 235);
     cursor: pointer;
