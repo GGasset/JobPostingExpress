@@ -18,6 +18,7 @@ messaging_router.get("/get_contacts", (req, res) => {
         const contacts = await db.get_contacts(id, as_company);
         return contacts;
     }).then((contacts) => {
+        res.status(200).send(JSON.stringify(contacts));
     });
 });
 
