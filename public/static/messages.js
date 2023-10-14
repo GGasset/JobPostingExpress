@@ -66,14 +66,10 @@ async function add_contact_from_icon(element) {
 }
 
 async function add_contact(is_company, user_id) {
-    try {
-        const contact = document.querySelector(`#contact_${is_company}_${user_id}`);
-        if (contact !== null) {
-            open_conversation(is_company, user_id);
-            return;
-        }
-    } catch (error) {
-        
+    const contact = document.querySelector(`#contact_${is_company}_${user_id}`);
+    if (contact !== null) {
+        open_conversation(is_company, user_id);
+        return;
     }
 
     let user_info = await fetch(`/API/user_info/${is_company}/${user_id}`, {
