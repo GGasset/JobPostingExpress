@@ -29,6 +29,21 @@ function open_messages() {
     dms_div.hidden = !is_hidden;
 }
 
+async function get_contacts() {
+    let as_company = user_as_company();
+    let url = "/API/get_contacts"
+    if (as_company)
+        url = "/company" + url;
+    let contacts = await fetch(url, {
+        credentials: "include",
+        method: "GET"
+    }).then(async raw => {
+        return await raw.json();
+    });
+
+    return contacts;
+}
+
 async function load_contacts() {
     const contacts = await get_contacts();
 
