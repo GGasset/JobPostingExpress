@@ -23,6 +23,8 @@ API_router.get("user_info/:is_company/:id", (req, res) => {
         return user_info;
     }).then(user_info => {
         res.status(200).send(JSON.stringify(user_info));
+    }).catch(reason => {
+        res.status(404).send();
     });
 });
 
