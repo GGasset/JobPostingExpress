@@ -30,12 +30,7 @@ function open_messages() {
 }
 
 async function load_contacts() {
-    const contacts = await fetch("/API/get_contacts", {
-        credentials: "include",
-        method: "GET"
-    }).then(async raw => {
-        return await raw.json();
-    });
+    const contacts = await get_contacts();
 
     contacts.forEach(contact => {
         add_contact_to_frontend(contact);
@@ -69,6 +64,11 @@ function add_contact_to_frontend(contact) {
         "       <td>\n" +
         `           ${contact.user.is_company ? `${contact.user.company_name} (Company)\n` : `${contact.user.first_name} ${contact.user.last_name}`}\n` +
         "       </td>\n" +
+        `       <td>\n` +
+        `           <div class="counter">\n` +
+        `               ${contact.unread_message_count}\n` +
+        `           </div>\n` +
+        `       </td>\n` +
         "   </tr>\n" +
         "</table>\n";
 
@@ -82,25 +82,6 @@ async function open_conversation(is_company, user_id) {
 
     const contact_div = document.querySelector(`${is_company}_${user_id}`);
     contact_div.classList.add("selected");
-}
-
-async function get_contacts() {
-    let as_company = user_as_company();
-    let url = "/API/get_contacts"
-    if (as_company)
-        url = "/company" + url;
-    let contacts = await fetch(url, {
-        credentials: "include",
-        method: "GET"
-    }).then(async raw => {
-        return await raw.json();
-    });
-
-    return contacts;
-}
-
-async function get_unread_conversations() {
-
 }
 
 async function send_message() {
