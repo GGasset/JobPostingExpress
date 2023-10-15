@@ -80,6 +80,9 @@ messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => 
 
 messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, res) => {
     new Promise(async (resolve, reject) => {
+        if (!authentication.require_authentication(req, res)) {
+            reject("Credentials not included");
+        }
         let requester_as_company = res.session.as_company;
         let requester_id = requester_as_company ? 
             req.session.company.id : req.session.user.id;
@@ -88,6 +91,13 @@ messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, r
     
         await db.mark_conversation_as_watched(requester_id, requester_as_company, counterpart_id, counterpart_as_company);
         res.status(204).send();
+    }).catch(reason => {
+        if (reason == "Credentials not included") {
+            res.status(403).send();
+            return;
+        }
+
+        res.status(500).send();
     });
 });
 
