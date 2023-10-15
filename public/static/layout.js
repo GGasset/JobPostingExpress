@@ -8,6 +8,8 @@ window.onload = () => {
 
     if (document.querySelector("#unread_message_count") !== undefined)
         set_unread_messages_label();
+
+    connect_to_server();
 }
 
 function user_as_company() {
