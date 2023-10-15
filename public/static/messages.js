@@ -103,10 +103,8 @@ function add_contact_to_frontend(contact) {
         "       <td style='width: 100%;'>" +
         `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
         "       </td>" +
-        `       <td id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
-        `           <div class="counter">` +
-        `               ${contact.unread_message_count}` +
-        `           </div>` +
+        `       <td class="counter" id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
+        `           ${contact.unread_message_count}` +
         `       </td>` +
         "   </tr>" +
         "</table>";
