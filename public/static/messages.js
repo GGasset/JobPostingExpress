@@ -125,6 +125,29 @@ async function open_conversation(is_company, user_id) {
     open_messages(false);
 }
 
+async function mark_conversation_as_watched(is_company, user_id) {
+    let mark_conversation_as_watched_url = `/API/watch_conversation/${is_company}/${user_id}`;
+    if (is_company)
+        mark_conversation_as_watched_url = "/company" + mark_conversation_as_watched_url;
+    
+    await fetch(mark_conversation_as_watched_url, {
+        credentials: "include",
+        method: "POST"
+    });
+
+    update_unread_conversation_message_count_label(is_company, user_id, 0);
+}
+
+// Get value from API if modifying count in a relative manner
+function update_unread_conversation_message_count_label(is_company, user_id, value) {
+    if (value > 99)
+        value = "99+";
+    
+    const counter = document.querySelector(`#${is_company}_${user_id}_unread_count`);
+    counter.hidden = value == 0;
+    counter.innerHTML = value;
+}
+
 async function send_message() {
     let as_company = user_as_company();
     
