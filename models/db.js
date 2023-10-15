@@ -589,7 +589,7 @@ const get_unread_message_count_for_conversation = async function(requester_id, r
 const mark_conversation_as_watched = async function(requester_id, requester_as_company, sender_id, sender_is_company) {
     await db.run(
         "UPDATE messages SET watched_by_receiver = 1" + 
-        "WHERE receiver_id = ? AND receiver_is_company = ?" +
+        " WHERE receiver_id = ? AND receiver_is_company = ?" +
         " AND sender_id = ? AND sender_is_company = ?;",
         [requester_id, requester_as_company, sender_id, sender_is_company]
     );
