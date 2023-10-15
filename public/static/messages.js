@@ -23,10 +23,10 @@ async function set_unread_messages_label() {
     });
 }
 
-function open_messages(hidden=undefined) {
+function open_messages(visible=undefined) {
     let dms_div = document.querySelector("#DMs_div");
-    if (hidden !== undefined) {
-        dms_div.hidden = hidden;
+    if (visible !== undefined) {
+        dms_div.hidden = !visible;
         return;
     }
     let is_hidden = dms_div.hidden;
