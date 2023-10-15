@@ -51,6 +51,11 @@ async function get_contacts() {
 async function load_contacts() {
     const contacts = await get_contacts();
 
+    for (let i = contacts.length - 1; i >= 0; i--) {
+        const contact = contacts[i];
+        add_contact_to_frontend(contact);
+    }
+
     contacts.forEach(contact => {
         add_contact_to_frontend(contact);
     });
@@ -59,7 +64,7 @@ async function load_contacts() {
 async function add_contact_from_icon(element) {
     const element_id = element.id;
     const splitted_id = element_id.split('_');
-    const is_company = splitted_id[0];
+    const is_company = splitted_id[0] == "true";
     const user_id = splitted_id[1];
 
     await add_contact(is_company, user_id);
@@ -123,9 +128,7 @@ async function open_conversation(is_company, user_id) {
 
     const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
     contact_div.classList.add("selected");
-    mark_conversation_as_watched(is_company, user_id).then(function() {
-        update_unread_conversation_message_count_label(is_company, user_id, 0);
-    });
+    mark_conversation_as_watched(is_company, user_id);
 
     let conversation = conversations[`${is_company}_${user_id}`];
     if (conversation === undefined) {
@@ -133,12 +136,12 @@ async function open_conversation(is_company, user_id) {
         // Save conversation in object
     }
 
-    open_messages(false);
+    open_messages(true);
 }
 
 async function mark_conversation_as_watched(is_company, user_id) {
     let mark_conversation_as_watched_url = `/API/watch_conversation/${is_company}/${user_id}`;
-    if (is_company)
+    if (user_as_company())
         mark_conversation_as_watched_url = "/company" + mark_conversation_as_watched_url;
     
     await fetch(mark_conversation_as_watched_url, {
