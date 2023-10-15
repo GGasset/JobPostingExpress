@@ -133,10 +133,16 @@ async function open_conversation(is_company, user_id) {
     contact_div.classList.add("selected");
     mark_conversation_as_watched(is_company, user_id);
 
-    let conversation = conversations[`${is_company}_${user_id}`];
+    let key = `${is_company}_${user_id}`;
+    let conversation = conversations[key];
     if (conversation === undefined) {
         // Leave conversation variable as if it existed before
         // Save conversation in object
+        let new_conversation = [{
+            written_text: ""
+        }];
+
+        conversations[key] = new_conversation;
     }
 
     open_messages(true);
@@ -157,7 +163,7 @@ function get_empty_conversations() {
     let output = [];
     
     Object.keys(conversations).forEach(key => {
-        if (conversations[key].length === 0)
+        if (conversations[key].length === 1)
             output.push(key);
     });
     
