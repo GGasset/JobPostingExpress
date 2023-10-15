@@ -1,3 +1,5 @@
+let conversations = new Object();
+
 async function set_unread_messages_label() {
     let as_company = user_as_company();
     let url = "/API/get_unread_messages";
@@ -61,13 +63,16 @@ async function load_contacts() {
     });
 }
 
-async function add_contact_from_icon(element) {
+function add_contact_from_icon(element) {
     const element_id = element.id;
     const splitted_id = element_id.split('_');
     const is_company = splitted_id[0] == "true";
     const user_id = splitted_id[1];
 
-    await add_contact(is_company, user_id);
+    delete_empty_conversations();
+
+    add_contact(is_company, user_id);
+
 }
 
 async function add_contact(is_company, user_id) {
@@ -120,8 +125,6 @@ function add_contact_to_frontend(contact) {
     unread_message_count_label.hidden = contact.unread_message_count === 0;
 }
 
-let conversations = new Object();
-
 async function open_conversation(is_company, user_id) {
     const contacts_col = document.querySelector("#contacts_col");
     contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
@@ -137,6 +140,34 @@ async function open_conversation(is_company, user_id) {
     }
 
     open_messages(true);
+}
+
+function delete_empty_conversations() {
+    const empty_conversations_keys = get_empty_conversations();
+    empty_conversations_keys.forEach(key => {
+        const splitted = key.split('_');
+        const is_company = splitted[0];
+        const user_id = splitted[1];
+
+        delete_conversation(is_company, user_id);
+    });
+}
+
+function get_empty_conversations() {
+    let output = [];
+    
+    Object.keys(conversations).forEach(key => {
+        if (conversations[key].length === 0)
+            output.push(key);
+    });
+    
+    return output;
+}
+
+function delete_conversation(is_company, user_id) {
+    const conversation_key = `${is_company}_${user_id}`
+    conversations[conversation_key] = undefined;
+    document.querySelector(`#contact_${is_company}_${user_id}`).remove();
 }
 
 async function mark_conversation_as_watched(is_company, user_id) {
