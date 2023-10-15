@@ -115,12 +115,23 @@ function add_contact_to_frontend(contact) {
     unread_message_count_label.hidden = contact.unread_message_count === 0;
 }
 
+let conversations = new Object();
+
 async function open_conversation(is_company, user_id) {
     const contacts_col = document.querySelector("#contacts_col");
     contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
 
     const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
     contact_div.classList.add("selected");
+    mark_conversation_as_watched(is_company, user_id).then(function() {
+        update_unread_conversation_message_count_label(is_company, user_id, 0);
+    });
+
+    let conversation = conversations[`${is_company}_${user_id}`];
+    if (conversation === undefined) {
+        // Leave conversation variable as if it existed before
+        // Save conversation in object
+    }
 
     open_messages(false);
 }
