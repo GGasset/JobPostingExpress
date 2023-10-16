@@ -54,10 +54,6 @@ module.exports.server = server;
 module.exports.session = app_session;
 
 
-const PORT = 3000;
-server.listen(PORT, () => {
-	console.log(`http://localhost:${PORT}`)
-});
 
 // Add Routers
 const main_router = require('./routes/main_pages');
@@ -75,3 +71,8 @@ app.use('/public', resources_router);
 app.use('/API', API_router);
 app.use('/profiles', profiles_router);
 app.use('/jobs', jobs_router);
+
+const PORT = 3000;
+server.listen(PORT, () => {
+	console.log(`http://localhost:${PORT}`)
+});
