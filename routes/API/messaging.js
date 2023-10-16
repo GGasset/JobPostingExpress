@@ -3,8 +3,33 @@ const bcrypt = require("bcrypt");
 
 const authentication = require("../../public/server_side/authentication");
 const db = require("../../models/db");
+const index = require("../../index");
 
 const messaging_router = express.Router()
+// Socket server
+const { Server } = require("socket.io");
+const io = new Server(index.server);
+// Socket middleware
+io.engine.use(index.session);
+
+// Socket user handler
+const connections = new Object();
+io.on('connection', async (connection) => {
+    try {
+        const session = connection.request.session;
+        const as_company = session.as_company;
+        const id = as_company ? session.company.id : session.user.id;
+        const str_id = `${as_company}_${id}`;
+        console.log(str_id + " Conected")
+        connections[str_id] = connection;
+
+        connection.on('disconnect', () => {
+            connections[str_id] = undefined;
+        })	
+    } catch (error) {
+        connection.disconnect(true);
+    }
+});
 
 const salt = bcrypt.genSaltSync();
 

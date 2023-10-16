@@ -20,7 +20,12 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 
 // Session configuration (Credentials
-app.use(session({secret: process.env.session_secret, resave: true, saveUninitialized: true}));
+const app_session = session({
+	secret: process.env.session_secret, 
+	resave: true, 
+	saveUninitialized: true
+});
+app.use(app_session);
 
 // Middleware
 app.use((req, res, next) => {
@@ -42,7 +47,19 @@ app.use(function(req, res, next) {
 	});
 })
 
-// Routers
+// Open server
+const server = require("http").createServer(app);
+
+module.exports.server = server;
+module.exports.session = app_session;
+
+
+const PORT = 3000;
+server.listen(PORT, () => {
+	console.log(`http://localhost:${PORT}`)
+});
+
+// Add Routers
 const main_router = require('./routes/main_pages');
 const companies_router = require('./routes/companies');
 const session_router = require('./routes/session_init');
@@ -58,25 +75,3 @@ app.use('/public', resources_router);
 app.use('/API', API_router);
 app.use('/profiles', profiles_router);
 app.use('/jobs', jobs_router);
-
-const PORT = 3000;
-const server = app.listen(PORT, () => {
-	console.log(`http://localhost:${PORT}`)
-});
-
-// Socket server
-const socket = require("socket.io");
-
-const socket_io = socket.listen(server);
-
-connections = new Object();
-socket_io.sockets.on('connection', async (connection) => {
-	connection.on("test", (arg, callback) => {
-		console.log(arg);
-		console.log(`USER ${connection.request.session.user.id}`)
-		callback("done")
-	})
-	connection.on('disconnect', () => {
-
-	})
-});
