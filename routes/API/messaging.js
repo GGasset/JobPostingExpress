@@ -50,7 +50,7 @@ messaging_router.get("/get_contacts", (req, res) => {
     });
 });
 
-messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) => {
+messaging_router.get("/get_messages/:is_company/:user_id/:page_n/:sent_messages_during_session", (req, res) => {
     new Promise(async (resolve, reject) => {
         if (!authentication.require_authentication(req, res)) {
             return;
@@ -64,7 +64,8 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n", (req, res) =>
         const counterpart_id = req.params.user_id;
     
         const page_n = req.params.page_n;
-        const messages = await db.get_last_messages(page_n, requesting_client_id, requester_as_company, counterpart_id, counterpart_as_company);
+        const sent_messages_during_session = req.params.sent_messages_during_session;
+        const messages = await db.get_last_messages(page_n, requesting_client_id, requester_as_company, counterpart_id, counterpart_as_company, sent_messages_during_session);
         
         res.status(200).send(JSON.stringify(messages));
     })
