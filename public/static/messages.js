@@ -2,7 +2,6 @@ let socket = undefined;
 
 function connect_to_server() {
     socket = io();
-    socket.emit("test", "test");
 }
 
 let conversations = new Object();
