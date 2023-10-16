@@ -20,7 +20,6 @@ io.on('connection', async (connection) => {
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
         const str_id = `${as_company}_${id}`;
-        console.log(str_id + " Conected")
         connections[str_id] = connection;
 
         connection.on('disconnect', () => {

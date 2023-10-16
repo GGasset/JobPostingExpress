@@ -1,7 +1,10 @@
 let socket = undefined;
 
 function connect_to_server() {
-    socket = io();
+    const socket = io();
+    socket.on("message", (message) => {
+
+    })
 }
 
 let conversations = new Object();
