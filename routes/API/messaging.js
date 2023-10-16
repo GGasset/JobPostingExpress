@@ -9,8 +9,12 @@ const messaging_router = express.Router()
 // Socket server
 const { Server } = require("socket.io");
 const io = new Server(index.server);
+
 // Socket middleware
 io.engine.use(index.session);
+
+// if not authenticated ignore
+//io.engine.use(())
 
 // Socket user handler
 const connections = new Object();
