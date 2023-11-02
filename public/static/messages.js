@@ -1,13 +1,37 @@
 let socket = undefined;
+let conversations = new Object();
+
 
 function connect_to_server() {
-    const socket = io();
-    socket.on("message", (message) => {
+    socket = io();
+    socket.on("message", raw_message_json => {
+        const data = JSON.parse(raw_message_json);
+        const counterpart_id = data.id;
+        const message = data.message;
+        const message_data = {
+            text: message,
+            sender: "counterpart"
+        }
 
+        // add message to conversations
+        let conversation = conversations[counterpart_id];
+        if (conversation === undefined)
+            conversation = create_conversation(counterpart_id);
+        conversation[0].session_message_traffic += 1;
+        conversation[0].messages.push(message_data);
+
+        const contact_div = document.querySelector(`#contact_${counterpart_id}`);
+        if (!contact_div.classList.contains("selected")) {
+            // This means that chat isn't open
+            /*
+            * unread_count does need to be modified
+            * there's no need to add messages immediately to conversation frontend
+            */
+           const unread_count_label = document.querySelector(`#${counterpart_id}_unread_count`);
+           unread_count_label.innerHTML = unread_count_label.innerHTML + 1;
+        }
     })
 }
-
-let conversations = new Object();
 
 async function set_unread_messages_label() {
     let as_company = user_as_company();
@@ -145,16 +169,23 @@ async function open_conversation(is_company, user_id) {
     let key = `${is_company}_${user_id}`;
     let conversation = conversations[key];
     if (conversation === undefined) {
-        // Leave conversation variable as if it existed before
-        // Save conversation in object
-        let new_conversation = [{
-            written_text: ""
-        }];
-
-        conversations[key] = new_conversation;
+        conversation = create_conversation(key);
+        // Add get_messages to start of the array
+        let messages_to_load = get_messages(key, 0);
+        for (let message of messages_to_load) {
+            conversation.insert(message, 1)
+        }
     }
 
     open_messages(true);
+}
+
+async function get_messages(counter_part_id, page_n) {
+    // TODO: add metadata to each message
+    
+    let conversation = conversations[counter_part_id];
+    const messages_during_session = conversation[0].session_message_traffic;
+    
 }
 
 function delete_empty_conversations() {
@@ -211,4 +242,14 @@ function update_unread_conversation_message_count_label(is_company, user_id, val
 async function send_message() {
     let as_company = user_as_company();
     
+}
+
+function create_conversation(conversation_id) {
+    let new_conversation = [{
+        written_text: "",
+        session_message_traffic: 0
+    }];
+
+    conversations[conversation_id] = new_conversation;
+    return new_conversation;
 }
