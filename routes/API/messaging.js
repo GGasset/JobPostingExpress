@@ -27,6 +27,12 @@ io.on('connection', async (connection) => {
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
         const str_id = `${as_company}_${id}`;
+        if (connections[str_id] !== undefined) {
+            let i = 1;
+            while (connections[str_id = `${as_company}_${id}_${i}`] !== undefined) {
+                i++;
+            }
+        }
         connections[str_id] = connection;
 
         connection.on('disconnect', () => {
