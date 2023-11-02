@@ -10,7 +10,7 @@ function connect_to_server() {
         const message = data.message;
         const message_data = {
             text: message,
-            sender: "counterpart"
+            is_counterpart: true
         }
 
         // add message to conversations
@@ -171,13 +171,8 @@ async function open_conversation(is_company, user_id) {
     if (conversation === undefined) {
         // Leave conversation variable as if it existed before
         // Save conversation in object
-        let new_conversation = [{
-            // Text that the viewer started writing
-            written_text: "",
-            session_message_traffic: 0
-        }];
 
-        conversation = conversations[key] = new_conversation;
+        conversation = conversations[key] = create_conversation(key);
     }
 
     document.querySelector("#messages_col").hidden = false;
@@ -198,11 +193,13 @@ async function open_conversation(is_company, user_id) {
 }
 
 function add_message(is_counterpart, message, create_message = true, conversation_key = undefined) {
-    if (create_message)
+    if (create_message) {
+        conversations[conversation_key][0].session_message_traffic += 1;
         conversations[conversation_key].push({
             "is_counterpart": is_counterpart,
             "message": message
         });
+    }
 
     const row = 
         "<tr>" +
@@ -285,4 +282,13 @@ function update_unread_conversation_message_count_label(is_company, user_id, val
     const counter = document.querySelector(`#${is_company}_${user_id}_unread_count`);
     counter.hidden = value == 0;
     counter.innerHTML = value;
+}
+
+function create_conversation(conversation_key) {
+    let new_conversation = [{
+        // Text that the viewer started writing
+        written_text: "",
+        session_message_traffic: 0
+    }];
+    return conversations[conversation_key] = new_conversation;
 }
