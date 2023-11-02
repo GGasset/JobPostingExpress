@@ -172,7 +172,7 @@ async function open_conversation(is_company, user_id) {
         // Leave conversation variable as if it existed before
         // Save conversation in object
 
-        conversation = conversations[key] = create_conversation(key);
+        conversation = create_conversation(key);
     }
 
     document.querySelector("#messages_col").hidden = false;
