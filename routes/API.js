@@ -15,9 +15,8 @@ API_router.use(job_posting_router);
 
 API_router.get("/user_info/:is_company/:id", (req, res) => {
     new Promise(async (resolve, reject) => {
-        const is_company = req.params.is_company == true;
+        const is_company = req.params.is_company == "true";
         const user_id = req.params.id;
-
         let user_info = is_company ? await db.get_company_info(user_id) : await db.get_user_info_by_id(user_id);
         
         if (user_info.id === undefined)

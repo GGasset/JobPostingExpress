@@ -130,7 +130,7 @@ function add_contact_to_frontend(contact) {
     const div = document.createElement("div");
     div.id = `contact_${contact.user.is_company}_${contact.user.id}`;
     div.classList.add("contact");
-    div.onclick = `open_conversation(${contact.user.is_company}, ${contact.user.id})`;
+    div.setAttribute("onclick", `open_conversation(${contact.user.is_company}, ${contact.user.id})`);
     
     if (contact.unread_message_count > 99)
         contact.unread_message_count = "99+";
@@ -169,15 +169,62 @@ async function open_conversation(is_company, user_id) {
     let key = `${is_company}_${user_id}`;
     let conversation = conversations[key];
     if (conversation === undefined) {
-        conversation = create_conversation(key);
-        // Add get_messages to start of the array
-        let messages_to_load = get_messages(key, 0);
-        for (let message of messages_to_load) {
-            conversation.insert(message, 1)
-        }
+        // Leave conversation variable as if it existed before
+        // Save conversation in object
+        let new_conversation = [{
+            // Text that the viewer started writing
+            written_text: "",
+            session_message_traffic: 0
+        }];
+
+        conversation = conversations[key] = new_conversation;
+    }
+
+    document.querySelector("#messages_col").hidden = false;
+    document.querySelector("#conversation_key").value = key;
+
+    const messages_table = document.querySelector("#messages_table");
+    messages_table.innerHTML = "";
+    for (let i = conversation.length - 1; i >= 1; i--) {
+        const conversation_element = conversation[i];
+        
+        const is_counterpart = conversation_element.is_counterpart;
+        const message = conversation_element.message;
+
+        add_message(is_counterpart, message, false);
     }
 
     open_messages(true);
+}
+
+function add_message(is_counterpart, message, create_message = true, conversation_key = undefined) {
+    if (create_message)
+        conversations[conversation_key].push({
+            "is_counterpart": is_counterpart,
+            "message": message
+        });
+
+    const row = 
+        "<tr>" +
+            `<td class="${is_counterpart? "message" : ""} messages_col">${is_counterpart ? message : ""}</td>` + 
+            `<td class="col_between_messages"></td>` + 
+            `<td class="${is_counterpart? "" : "message"} messages_col">${is_counterpart? "" : message}</td>` +
+        "</tr>";
+
+    const messages_table = document.querySelector("#messages_table");
+    messages_table.innerHTML = messages_table.innerHTML + row;
+}
+
+function send_message() {
+    let conversation_key = document.querySelector("#conversation_key").value;
+    let message_box = document.querySelector("#written_message");
+    let message = message_box.value;
+
+    add_message(false, message, true, conversation_key);
+    message_box.value = "";
+
+    let as_company = user_as_company();
+    return false;
 }
 
 async function get_messages(counter_part_id, page_n) {
@@ -203,8 +250,9 @@ function get_empty_conversations() {
     let output = [];
     
     Object.keys(conversations).forEach(key => {
-        if (conversations[key].length === 1)
-            output.push(key);
+        if (conversations[key] !== undefined)
+            if (conversations[key].length === 1)
+                output.push(key);
     });
     
     return output;
@@ -237,19 +285,4 @@ function update_unread_conversation_message_count_label(is_company, user_id, val
     const counter = document.querySelector(`#${is_company}_${user_id}_unread_count`);
     counter.hidden = value == 0;
     counter.innerHTML = value;
-}
-
-async function send_message() {
-    let as_company = user_as_company();
-    
-}
-
-function create_conversation(conversation_id) {
-    let new_conversation = [{
-        written_text: "",
-        session_message_traffic: 0
-    }];
-
-    conversations[conversation_id] = new_conversation;
-    return new_conversation;
 }
