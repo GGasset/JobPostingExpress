@@ -148,13 +148,47 @@ async function open_conversation(is_company, user_id) {
         // Leave conversation variable as if it existed before
         // Save conversation in object
         let new_conversation = [{
-            written_text: ""
+            // Text that the viewer started writing
+            written_text: "",
+            session_message_traffic: 0
         }];
 
-        conversations[key] = new_conversation;
+        conversation = conversations[key] = new_conversation;
+    }
+
+    document.querySelector("#messages_col").hidden = false;
+    document.querySelector("#conversation_key").value = key;
+
+    const messages_table = document.querySelector("#messages_table");
+    messages_table.innerHTML = "";
+    for (let i = conversation.length - 1; i >= 1; i--) {
+        const conversation_element = conversation[i];
+        
+        const is_counterpart = conversation_element.is_counterpart;
+        const message = conversation.message;
+
+        add_message(is_counterpart, message, false);
     }
 
     open_messages(true);
+}
+
+function add_message(is_counterpart, message, create_message = true, conversation_key = undefined) {
+    if (create_message)
+        conversations[conversation_key].push({
+            "is_counterpart": is_counterpart,
+            "message": message
+        });
+
+    const row = 
+        "<tr>" +
+            `<td class="${is_counterpart? "message" : ""} messages_col">${is_counterpart ? message : ""}</td>` + 
+            `<td class="col_between_messages"></td>` + 
+            `<td class="${is_counterpart? "" : "message"} messages_col">${is_counterpart? "" : message}</td>` +
+        "</tr>";
+
+    const messages_table = document.querySelector("#messages_table");
+    messages_table.innerHTML = messages_table.innerHTML + row;
 }
 
 function delete_empty_conversations() {
@@ -210,5 +244,5 @@ function update_unread_conversation_message_count_label(is_company, user_id, val
 
 async function send_message() {
     let as_company = user_as_company();
-    
+    return false;
 }

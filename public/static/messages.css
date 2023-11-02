@@ -24,6 +24,30 @@
 #messages_col {
     height: 100%;
     width: 75%;
+    position: relative;
+}
+
+#messages_table {
+    position: absolute;
+    bottom: 6rem;
+    overflow-y: scroll;
+    height: fit-content;
+    width: 100%;
+}
+
+.message_col {
+    width: 40%;
+    height: fit-content;
+}
+
+.col_between_messages {
+    width: 20%;
+    height: fit-content;
+}
+
+.message {
+    background-color: rgb(233, 230, 48);
+    height: fit-content;
 }
 
 .contact {

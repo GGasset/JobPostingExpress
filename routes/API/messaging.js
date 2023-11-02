@@ -20,6 +20,9 @@ io.engine.use(index.session);
 const connections = new Object();
 io.on('connection', async (connection) => {
     try {
+        if (!authentication.is_authenticated(connection.request))
+            throw "user not logged in";
+
         const session = connection.request.session;
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
@@ -155,9 +158,6 @@ messaging_router.post("/message/:is_company/:user_id", (req, res) => {
         let message_data = new Object();
         //message_data.message = 
     }).then(message_data => {
-        const encrypted_private_key = bcrypt.hashSync(privateKey, sal)
-        message_data.public_key = publicKey;
-        message_data.private_key = encrypted_private_key
     });
 });
 

@@ -76,8 +76,15 @@
                     <td id="contacts_col">
 
                     </td>
-                    <td id="messages_col">
+                    <td id="messages_col" hidden="true">
+                        <table id="messages_table">
 
+                        </table>
+                        <form action="" onsubmit="send_message()">
+                            <input type="text" id="written_message" class="message_input">
+                            <input type="image" name="submit" class="message_submit">
+                            <input type="hidden" id="conversation_key" value="">
+                        </form>
                     </td>
                 </tr>
             </table>
