@@ -106,7 +106,7 @@ function add_contact_to_frontend(contact) {
     const div = document.createElement("div");
     div.id = `contact_${contact.user.is_company}_${contact.user.id}`;
     div.classList.add("contact");
-    div.onclick = `open_conversation(${contact.user.is_company}, ${contact.user.id})`;
+    div.setAttribute("onclick", `open_conversation(${contact.user.is_company}, ${contact.user.id})`);
     
     if (contact.unread_message_count > 99)
         contact.unread_message_count = "99+";
@@ -165,7 +165,7 @@ async function open_conversation(is_company, user_id) {
         const conversation_element = conversation[i];
         
         const is_counterpart = conversation_element.is_counterpart;
-        const message = conversation.message;
+        const message = conversation_element.message;
 
         add_message(is_counterpart, message, false);
     }
@@ -191,6 +191,18 @@ function add_message(is_counterpart, message, create_message = true, conversatio
     messages_table.innerHTML = messages_table.innerHTML + row;
 }
 
+function send_message() {
+    let conversation_key = document.querySelector("#conversation_key").value;
+    let message_box = document.querySelector("#written_message");
+    let message = message_box.value;
+
+    add_message(false, message, true, conversation_key);
+    message_box.value = "";
+
+    let as_company = user_as_company();
+    return false;
+}
+
 function delete_empty_conversations() {
     const empty_conversations_keys = get_empty_conversations();
     empty_conversations_keys.forEach(key => {
@@ -206,8 +218,9 @@ function get_empty_conversations() {
     let output = [];
     
     Object.keys(conversations).forEach(key => {
-        if (conversations[key].length === 1)
-            output.push(key);
+        if (conversations[key] !== undefined)
+            if (conversations[key].length === 1)
+                output.push(key);
     });
     
     return output;
@@ -240,9 +253,4 @@ function update_unread_conversation_message_count_label(is_company, user_id, val
     const counter = document.querySelector(`#${is_company}_${user_id}_unread_count`);
     counter.hidden = value == 0;
     counter.innerHTML = value;
-}
-
-async function send_message() {
-    let as_company = user_as_company();
-    return false;
 }
