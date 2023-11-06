@@ -77,20 +77,29 @@
 
                     </td>
                     <td id="messages_col" hidden="true">
-                        <table>
-                            <tr>
+                        <table class="occupy_all_space">
+                            <tr style="height: calc(100% - 6rem); min-height: calc(100% - 6rem); max-height: calc(100% - 6rem);">
                                 <td>
                                     <div id="messages_table_div_wrapper">
-                                        <table id="messages_table">
+                                        <table id="messages_table" class="occupy_all_space">
                                         </table>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr style="height: 6rem; width: 100%;">
                                 <td>
                                     <div id="message_form">
-                                        <input type="text" id="written_message" class="message_input">
-                                        <input type="image" onclick="send_message()" id="send_button" src="/public/send_message_icon.png" name="submit" class="message_submit">
+                                        <table class="occupy_all_space">
+                                            <tr>
+                                                <td style="width: calc(100% - 5rem);">
+                                                    <!--input type="text" id="written_message" class="message_input"-->
+                                                    <textarea id="written_message" maxlength="2000"></textarea>
+                                                </td>
+                                                <td style="width: 5rem;">
+                                                    <input type="image" onclick="send_message()" id="send_button" src="/public/send_message_icon.png" name="submit" class="message_submit">
+                                                </td>
+                                            </tr>
+                                        </table>
                                         <input type="hidden" id="conversation_key" value="">
                                     </div>
                                 </td>
