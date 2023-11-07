@@ -95,6 +95,7 @@
 #written_message {
     height: 5rem;
     width: 100%;
+    resize: none;
 }
 
 #send_button {
