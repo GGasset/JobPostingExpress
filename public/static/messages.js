@@ -202,10 +202,10 @@ function add_message(is_counterpart, message, create_message = true, conversatio
     }
 
     const row = 
-        "<tr style='width: 100%; position: relative;'>" +
-            `<td class="messages_col text_on_left"><div class="${is_counterpart? "message" : ""}">${is_counterpart ? message : ""}</div></td>` + 
-            `<td class="col_between_messages"><div></div></td>` + 
-            `<td class="messages_col text_on_right"><div class="${is_counterpart? "" : "message"}">${is_counterpart? "" : message}</div></td>` +
+        "<tr>" +
+            `<td class="messages_col text_on_left">${is_counterpart? `<div class='message'>${message}</div>` : "" }</td>` + 
+            `<td class="col_between_messages"></td>` + 
+            `<td class="messages_col text_on_right">${is_counterpart? "" : `<div style='float: right;' class="message">${message}</div>`}</td>` +
         "</tr>";
 
     const messages_table = document.querySelector("#messages_table");
