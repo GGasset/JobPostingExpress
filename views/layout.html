@@ -70,45 +70,47 @@
                 {% endif %}
             </div>
         </header>
-        <div id="DMs_div" hidden="true">
-            <table class="occupy_all_space">
-                <tr class="occupy_all_space">
-                    <td id="contacts_col">
+        {% if req.session.credentials %}
+            <div id="DMs_div" hidden="true">
+                <table class="occupy_all_space">
+                    <tr class="occupy_all_space">
+                        <td id="contacts_col">
 
-                    </td>
-                    <td id="messages_col" hidden="true">
-                        <table class="occupy_all_space">
-                            <tr style="height: calc(100% - 6rem); min-height: calc(100% - 6rem); max-height: calc(100% - 6rem);">
-                                <td>
-                                    <div id="messages_table_div_wrapper">
-                                        <table id="messages_table" class="occupy_all_space">
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr style="height: 6rem; width: 100%;">
-                                <td>
-                                    <div id="message_form">
-                                        <table class="occupy_all_space">
-                                            <tr>
-                                                <td style="width: calc(100% - 5rem);">
-                                                    <!--input type="text" id="written_message" class="message_input"-->
-                                                    <textarea id="written_message" maxlength="2000"></textarea>
-                                                </td>
-                                                <td style="width: 5rem;">
-                                                    <input type="image" onclick="send_message()" id="send_button" src="/public/send_message_icon.png" name="submit" class="message_submit">
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <input type="hidden" id="conversation_key" value="">
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </div>
+                        </td>
+                        <td id="messages_col" hidden="true">
+                            <table class="occupy_all_space">
+                                <tr style="height: calc(100% - 6rem); min-height: calc(100% - 6rem); max-height: calc(100% - 6rem);">
+                                    <td>
+                                        <div id="messages_table_div_wrapper">
+                                            <table id="messages_table" class="occupy_all_space">
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="height: 6rem; width: 100%;">
+                                    <td>
+                                        <div id="message_form">
+                                            <table class="occupy_all_space">
+                                                <tr>
+                                                    <td style="width: calc(100% - 5rem);">
+                                                        <!--input type="text" id="written_message" class="message_input"-->
+                                                        <textarea id="written_message" maxlength="2000"></textarea>
+                                                    </td>
+                                                    <td style="width: 5rem;">
+                                                        <input type="image" onclick="send_message()" id="send_button" src="/public/send_message_icon.png" name="submit" class="message_submit">
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <input type="hidden" id="conversation_key" value="">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endif %}
         {% block body %}
         {% endblock %}
     </body>
