@@ -39,8 +39,10 @@ io.on('connection', (connection) => {
         connection.on('message', function(data) {
             const received = JSON.parse(data);
             const to_send = {
-
+                "message": received.message,
+                "id": client_str_id
             }
+            connections[received.id].emit("message", to_send);
         })        
 
         connection.on('disconnect', () => {
