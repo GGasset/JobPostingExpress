@@ -27,7 +27,7 @@ io.on('connection', (connection) => {
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
         const client_str_id = `${as_company}_${id}`;
-        let str_id = original_str_id;
+        let str_id = client_str_id;
         if (connections[str_id] !== undefined) {
             let i = 1;
             while (connections[str_id = `${as_company}_${id}_${i}`] !== undefined) {
@@ -36,13 +36,17 @@ io.on('connection', (connection) => {
         }
         connections[str_id] = connection;
 
-        connection.on('message', function(data) {
-            const received = JSON.parse(data);
-            const to_send = {
-                "message": received.message,
-                "id": client_str_id
+        connection.on('message_sent', function(data) {
+            try {
+                const received = JSON.parse(data);
+                const to_send = {
+                    "message": received.message,
+                    "id": client_str_id
+                }
+                connections[received.id].emit("message_received", to_send);
+            } catch (error) {
+                
             }
-            connections[received.id].emit("message", to_send);
         })        
 
         connection.on('disconnect', () => {
