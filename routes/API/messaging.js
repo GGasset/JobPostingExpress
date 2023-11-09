@@ -26,7 +26,8 @@ io.on('connection', (connection) => {
         const session = connection.request.session;
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
-        const str_id = `${as_company}_${id}`;
+        const client_str_id = `${as_company}_${id}`;
+        let str_id = original_str_id;
         if (connections[str_id] !== undefined) {
             let i = 1;
             while (connections[str_id = `${as_company}_${id}_${i}`] !== undefined) {
@@ -34,6 +35,13 @@ io.on('connection', (connection) => {
             }
         }
         connections[str_id] = connection;
+
+        connection.on('message', function(data) {
+            const received = JSON.parse(data);
+            const to_send = {
+
+            }
+        })        
 
         connection.on('disconnect', () => {
             let splitted_id = str_id.split('_');
@@ -56,9 +64,6 @@ io.on('connection', (connection) => {
     }
 });
 
-io.on('message', function(connection) {
-
-})
 
 const salt = bcrypt.genSaltSync();
 
