@@ -18,7 +18,7 @@ io.engine.use(index.session);
 
 // Socket user handler
 const connections = new Object();
-io.on('connection', async (connection) => {
+io.on('connection', (connection) => {
     try {
         if (!authentication.is_authenticated(connection.request))
             throw "user not logged in";
@@ -36,12 +36,29 @@ io.on('connection', async (connection) => {
         connections[str_id] = connection;
 
         connection.on('disconnect', () => {
+            let splitted_id = str_id.split('_');
+            let id_body = `${splitted_id[0]}_${splitted_id[1]}`;
+            let next_id_tail = splitted_id.length == 3? 
+                parseInt(splitted_id[2]) + 1 
+                : 1;
+
+            let next_id = `${id_body}_${next_id_tail}`;
             connections[str_id] = undefined;
+            while (connections[next_id] !== undefined) {
+                connections[str_id] = connections[next_id];
+                str_id = next_id;
+                next_id_tail++;
+                next_id = `${id_body}_${next_id_tail}`;
+            }
         })	
     } catch (error) {
         connection.disconnect(true);
     }
 });
+
+io.on('message', function(connection) {
+
+})
 
 const salt = bcrypt.genSaltSync();
 
