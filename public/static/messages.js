@@ -4,7 +4,7 @@ let conversations = new Object();
 
 function connect_to_server() {
     socket = io();
-    socket.on("message", raw_message_json => {
+    socket.on("message_received", raw_message_json => {
         const data = JSON.parse(raw_message_json);
         const counterpart_id = data.id;
         const message = data.message;
@@ -154,10 +154,16 @@ function add_contact_to_frontend(contact) {
 }
 
 async function open_conversation(is_company, user_id) {
+    const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
+    if (contact_div.classList.contains('selected'))
+    {
+        open_messages(true);
+        return;
+    }
+
     const contacts_col = document.querySelector("#contacts_col");
     contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
 
-    const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
     contact_div.classList.add("selected");
     mark_conversation_as_watched(is_company, user_id);
 
@@ -181,20 +187,32 @@ async function open_conversation(is_company, user_id) {
         const is_counterpart = conversation_element.is_counterpart;
         const message = conversation_element.message;
 
-        add_message(is_counterpart, message, false);
+        add_message(is_counterpart, message, key, false);
     }
 
     open_messages(true);
 }
 
-function add_message(is_counterpart, message, conversation_key, is_new_message = true) {
+function add_message(is_counterpart, message, conversation_key, is_new_message = true, add_to_conversation = true) {
     if (is_new_message)
+    {
         conversations[conversation_key][0].session_message_traffic += 1;
+    }
 
-    conversations[conversation_key].push({
-        "is_counterpart": is_counterpart,
-        "message": message
-    });
+    if (add_to_conversation)
+    {
+        if (is_new_message)
+        {
+            
+        }
+        else 
+        {
+            conversations[conversation_key].push({
+                "is_counterpart": is_counterpart,
+                "message": message
+            });    
+        }
+    }
 
     const row = 
         "<tr>" +
@@ -219,7 +237,7 @@ function send_message() {
         "message": message,
         "id": conversation_key
     }
-    io.emit('message', JSON.stringify(data));
+    socket.emit('message_sent', JSON.stringify(data));
 }
 
 async function get_messages(counter_part_id, page_n) {
