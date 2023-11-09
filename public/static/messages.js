@@ -8,17 +8,12 @@ function connect_to_server() {
         const data = JSON.parse(raw_message_json);
         const counterpart_id = data.id;
         const message = data.message;
-        const message_data = {
-            text: message,
-            is_counterpart: true
-        }
 
         // add message to conversations
         let conversation = conversations[counterpart_id];
         if (conversation === undefined)
             conversation = create_conversation(counterpart_id);
-        conversation[0].session_message_traffic += 1;
-        conversation[0].messages.push(message_data);
+        add_message(true, message, true, counterpart_id);
 
         const contact_div = document.querySelector(`#contact_${counterpart_id}`);
         if (!contact_div.classList.contains("selected")) {
@@ -192,14 +187,14 @@ async function open_conversation(is_company, user_id) {
     open_messages(true);
 }
 
-function add_message(is_counterpart, message, create_message = true, conversation_key = undefined) {
-    if (create_message) {
+function add_message(is_counterpart, message, conversation_key, is_new_message = true) {
+    if (is_new_message)
         conversations[conversation_key][0].session_message_traffic += 1;
-        conversations[conversation_key].push({
-            "is_counterpart": is_counterpart,
-            "message": message
-        });
-    }
+
+    conversations[conversation_key].push({
+        "is_counterpart": is_counterpart,
+        "message": message
+    });
 
     const row = 
         "<tr>" +
@@ -217,7 +212,7 @@ function send_message() {
     let message_box = document.querySelector("#written_message");
     let message = message_box.value;
 
-    add_message(false, message, true, conversation_key);
+    add_message(false, message, conversation_key, true);
     message_box.value = "";
 
     let as_company = user_as_company();
