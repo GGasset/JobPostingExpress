@@ -215,8 +215,11 @@ function send_message() {
     add_message(false, message, conversation_key, true);
     message_box.value = "";
 
-    let as_company = user_as_company();
-    return false;
+    const data = {
+        "message": message,
+        "id": conversation_key
+    }
+    io.emit('message', JSON.stringify(data));
 }
 
 async function get_messages(counter_part_id, page_n) {
