@@ -2,9 +2,11 @@ let socket = undefined;
 let conversations = new Object();
 
 
+
 function connect_to_server() {
     socket = io();
     socket.on("message_received", raw_message_json => {
+        console.log(raw_message_json)
         const data = JSON.parse(raw_message_json);
         const counterpart_id = data.id;
         const message = data.message;
@@ -237,6 +239,7 @@ function send_message() {
         "message": message,
         "id": conversation_key
     }
+    console.log(data)
     socket.emit('message_sent', JSON.stringify(data));
 }
 

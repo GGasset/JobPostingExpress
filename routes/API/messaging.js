@@ -22,7 +22,7 @@ io.on('connection', (connection) => {
     try {
         if (!authentication.is_authenticated(connection.request))
             throw "user not logged in";
-
+        console.log(connection.conn)
         const session = connection.request.session;
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
@@ -34,18 +34,23 @@ io.on('connection', (connection) => {
                 i++;
             }
         }
+        connection.join(client_str_id);
         connections[str_id] = connection;
 
-        connection.on('message_sent', function(data) {
+        connection.on('message_sent', async function(data) {
             try {
+                console.log(data)
                 const received = JSON.parse(data);
                 const to_send = {
                     "message": received.message,
                     "id": client_str_id
                 }
-                connections[received.id].emit("message_received", to_send);
+
+                const receiver_sockets = await io.in(client_str_id).fetchSockets();
+                for (const socket of receiver_sockets)
+                    socket.emit(to_send);
             } catch (error) {
-                
+                console.log(error)
             }
         })        
 
@@ -66,6 +71,7 @@ io.on('connection', (connection) => {
             }
         })	
     } catch (error) {
+        console.log(error)
         connection.disconnect(true);
     }
 });
