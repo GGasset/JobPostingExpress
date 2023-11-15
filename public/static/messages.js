@@ -110,10 +110,12 @@ function add_contact_from_icon(element) {
 
 }
 
-async function add_contact(is_company, user_id, open_DMs = true) {
+async function add_contact(is_company, user_id, open_DMs_div = true) {
     const contact = document.querySelector(`#contact_${is_company}_${user_id}`);
     if (contact !== null) {
-        open_conversation(is_company, user_id);
+        if (open_DMs_div) {
+            open_conversation(is_company, user_id);
+        }
         return;
     }
 
@@ -125,7 +127,7 @@ async function add_contact(is_company, user_id, open_DMs = true) {
 
     user_info.unread_message_count = 0;
     add_contact_to_frontend(user_info);
-    if (open_DMs) {
+    if (open_DMs_div) {
         open_conversation(is_company, user_id);
     }
 }
