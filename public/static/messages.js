@@ -15,7 +15,7 @@ function connect_to_server() {
         let conversation = conversations[counterpart_id];
         if (conversation === undefined)
             conversation = create_conversation(counterpart_id);
-        add_message(true, message, true, counterpart_id);
+        add_message(true, message, counterpart_id, true, true);
 
         const contact_div = document.querySelector(`#contact_${counterpart_id}`);
         if (!contact_div.classList.contains("selected")) {
