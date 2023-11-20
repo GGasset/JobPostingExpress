@@ -17,7 +17,6 @@ io.engine.use(index.session);
 //io.engine.use(())
 
 // Socket user handler
-const connections = new Object();
 io.on('connection', (connection) => {
     try {
         if (!authentication.is_authenticated(connection.request))
