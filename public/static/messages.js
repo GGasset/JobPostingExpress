@@ -15,7 +15,7 @@ function connect_to_server() {
         let conversation = conversations[counterpart_id];
         if (conversation === undefined)
             conversation = create_conversation(counterpart_id);
-        add_message(true, message, counterpart_id, true, true);
+        add_message(true, message, counterpart_id, true);
 
         let contact_div = document.querySelector(`#contact_${counterpart_id}`);
         if (contact_div === null) {
@@ -204,12 +204,7 @@ async function open_conversation(is_company, user_id) {
     open_messages(true);
 }
 
-function add_message(is_counterpart, message, conversation_key, is_new_message = true, add_to_conversation = true) {
-    if (is_new_message)
-    {
-        conversations[conversation_key][0].session_message_traffic += 1;
-    }
-
+function add_message(is_counterpart, message, conversation_key, is_new_message = true) {
     if (add_to_conversation)
     {
         const message_data = {
@@ -218,7 +213,8 @@ function add_message(is_counterpart, message, conversation_key, is_new_message =
         };
         if (is_new_message)
         {
-            conversations[conversation_key].push(message_data);    
+            conversations[conversation_key].push(message_data);
+            conversations[conversation_key][0].session_message_traffic += 1;
         }
         else 
         {
