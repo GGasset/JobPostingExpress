@@ -22,50 +22,29 @@ io.on('connection', (connection) => {
     try {
         if (!authentication.is_authenticated(connection.request))
             throw "user not logged in";
-
         const session = connection.request.session;
         const as_company = session.as_company;
         const id = as_company ? session.company.id : session.user.id;
         const client_str_id = `${as_company}_${id}`;
-        let str_id = client_str_id;
-        if (connections[str_id] !== undefined) {
-            let i = 1;
-            while (connections[str_id = `${as_company}_${id}_${i}`] !== undefined) {
-                i++;
-            }
-        }
-        connections[str_id] = connection;
+        
+        connection.join(client_str_id);
 
-        connection.on('message_sent', function(data) {
+        connection.on('message_sent', async function(data) {
             try {
                 const received = JSON.parse(data);
                 const to_send = {
                     "message": received.message,
                     "id": client_str_id
                 }
-                connections[received.id].emit("message_received", to_send);
+
+                const receiver_sockets = io.in(received.id);
+                receiver_sockets.emit('message_received', JSON.stringify(to_send));
             } catch (error) {
-                
+                console.log(error)
             }
-        })        
-
-        connection.on('disconnect', () => {
-            let splitted_id = str_id.split('_');
-            let id_body = `${splitted_id[0]}_${splitted_id[1]}`;
-            let next_id_tail = splitted_id.length == 3? 
-                parseInt(splitted_id[2]) + 1 
-                : 1;
-
-            let next_id = `${id_body}_${next_id_tail}`;
-            connections[str_id] = undefined;
-            while (connections[next_id] !== undefined) {
-                connections[str_id] = connections[next_id];
-                str_id = next_id;
-                next_id_tail++;
-                next_id = `${id_body}_${next_id_tail}`;
-            }
-        })	
+        })
     } catch (error) {
+        console.log(error)
         connection.disconnect(true);
     }
 });

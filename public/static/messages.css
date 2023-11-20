@@ -2,7 +2,7 @@
     height: 60%;
     width: 60%;
     position: fixed;
-    margin-left: calc(6rem + 27.1% + .5rem);
+    margin-left: calc(27.1%);
     background-color: rgb(238, 128, 100);
     border-radius: 1%;
 }

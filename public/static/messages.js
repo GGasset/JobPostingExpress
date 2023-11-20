@@ -2,9 +2,11 @@ let socket = undefined;
 let conversations = new Object();
 
 
+
 function connect_to_server() {
     socket = io();
     socket.on("message_received", raw_message_json => {
+        console.log(raw_message_json)
         const data = JSON.parse(raw_message_json);
         const counterpart_id = data.id;
         const message = data.message;
@@ -13,9 +15,14 @@ function connect_to_server() {
         let conversation = conversations[counterpart_id];
         if (conversation === undefined)
             conversation = create_conversation(counterpart_id);
-        add_message(true, message, true, counterpart_id);
+        add_message(true, message, counterpart_id, true, true);
 
-        const contact_div = document.querySelector(`#contact_${counterpart_id}`);
+        let contact_div = document.querySelector(`#contact_${counterpart_id}`);
+        if (contact_div === null) {
+            const splitted_id = counterpart_id.split('_');
+            add_contact(splitted_id[0] == true, splitted_id[1], false);
+        }
+        contact_div = document.querySelector(`#contact_${counterpart_id}`);
         if (!contact_div.classList.contains("selected")) {
             // This means that chat isn't open
             /*
@@ -103,10 +110,12 @@ function add_contact_from_icon(element) {
 
 }
 
-async function add_contact(is_company, user_id) {
+async function add_contact(is_company, user_id, open_DMs_div = true) {
     const contact = document.querySelector(`#contact_${is_company}_${user_id}`);
     if (contact !== null) {
-        open_conversation(is_company, user_id);
+        if (open_DMs_div) {
+            open_conversation(is_company, user_id);
+        }
         return;
     }
 
@@ -118,7 +127,9 @@ async function add_contact(is_company, user_id) {
 
     user_info.unread_message_count = 0;
     add_contact_to_frontend(user_info);
-    open_conversation(is_company, user_id);
+    if (open_DMs_div) {
+        open_conversation(is_company, user_id);
+    }
 }
 
 function add_contact_to_frontend(contact) {
@@ -240,6 +251,7 @@ function send_message() {
         "message": message,
         "id": conversation_key
     }
+    console.log(data)
     socket.emit('message_sent', JSON.stringify(data));
 }
 
