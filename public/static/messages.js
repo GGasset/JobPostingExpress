@@ -247,7 +247,6 @@ function send_message() {
         "message": message,
         "id": conversation_key
     }
-    console.log(data)
     socket.emit('message_sent', JSON.stringify(data));
 }
 
