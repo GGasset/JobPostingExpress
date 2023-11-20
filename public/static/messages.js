@@ -251,7 +251,6 @@ function send_message() {
 }
 
 async function get_messages(counter_part_id, page_n) {
-    // TODO: add metadata to each message
     
     let conversation = conversations[counter_part_id];
     const messages_during_session = conversation[0].session_message_traffic;
