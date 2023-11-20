@@ -201,16 +201,19 @@ function add_message(is_counterpart, message, conversation_key, is_new_message =
 
     if (add_to_conversation)
     {
+        const message_data = {
+                "is_counterpart": is_counterpart,
+                "message": message
+        };
         if (is_new_message)
         {
-            
+            conversations[conversation_key].push(message_data);    
         }
         else 
         {
-            conversations[conversation_key].push({
-                "is_counterpart": is_counterpart,
-                "message": message
-            });    
+            conversations[conversation_key].unshift(message_data);
+            conversations[conversation_key][0] = conversations[conversation_key][1];
+            conversations[conversation_key][1] = message_data;
         }
     }
 
@@ -222,7 +225,7 @@ function add_message(is_counterpart, message, conversation_key, is_new_message =
         "</tr>";
 
     const messages_table = document.querySelector("#messages_table");
-    messages_table.innerHTML = messages_table.innerHTML + row;
+    messages_table.innerHTML = is_new_message ? messages_table.innerHTML + row : row + messages_table.innerHTML;
 }
 
 function send_message() {
