@@ -563,9 +563,9 @@ const get_last_messages = async function(page_n, requester_id, requester_is_comp
     return messages;
 }
 
-const store_message = async function(message, sender_id, sender_is_company, receiver_id, receiver_is_company) {
-    await db.run("INSERT INTO messages (message, sender_id, sender_is_company, receiver_id, receiver_is_company) VALUES (?, ?, ?, ?, ?);",
-        [message, sender_id, sender_is_company, receiver_id, receiver_is_company]);
+const store_message = async function(message, sender_id, sender_is_company, receiver_id, receiver_is_company, encrypted_private_key) {
+    await db.run("INSERT INTO messages (message, sender_id, sender_is_company, receiver_id, receiver_is_company, encrypted_private_key) VALUES (?, ?, ?, ?, ?, ?);",
+        [message, sender_id, sender_is_company, receiver_id, receiver_is_company, encrypted_private_key]);
 }
 
 const get_unread_message_count = async function(requester_id, requester_as_company) {
