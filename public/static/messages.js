@@ -205,23 +205,20 @@ async function open_conversation(is_company, user_id) {
 }
 
 function add_message(is_counterpart, message, conversation_key, is_new_message = true) {
-    if (add_to_conversation)
+    const message_data = {
+            "is_counterpart": is_counterpart,
+            "message": message
+    };
+    if (is_new_message)
     {
-        const message_data = {
-                "is_counterpart": is_counterpart,
-                "message": message
-        };
-        if (is_new_message)
-        {
-            conversations[conversation_key].push(message_data);
-            conversations[conversation_key][0].session_message_traffic += 1;
-        }
-        else 
-        {
-            conversations[conversation_key].unshift(message_data);
-            conversations[conversation_key][0] = conversations[conversation_key][1];
-            conversations[conversation_key][1] = message_data;
-        }
+        conversations[conversation_key].push(message_data);
+        conversations[conversation_key][0].session_message_traffic += 1;
+    }
+    else 
+    {
+        conversations[conversation_key].unshift(message_data);
+        conversations[conversation_key][0] = conversations[conversation_key][1];
+        conversations[conversation_key][1] = message_data;
     }
 
     const row = 
@@ -250,12 +247,12 @@ function send_message() {
     socket.emit('message_sent', JSON.stringify(data));
 }
 
-async function get_messages(counterpart_id, page_n) {
+async function get_messages(counterpart_str_id, page_n) {
     
-    let conversation = conversations[counterpart_id];
+    let conversation = conversations[counterpart_str_id];
     const messages_during_session = conversation[0].session_message_traffic;
     
-    const counterpart_data = counterpart_id.split('_');
+    const counterpart_data = counterpart_str_id.split('_');
     
     const counterpart_is_company = counterpart_data[0] == 'true';
     const counterpart_id = parseInt(counterpart_data[1]);
@@ -276,7 +273,7 @@ async function get_messages(counterpart_id, page_n) {
         let is_counterpart = message.sender_is_company == compared_counterpart_is_company;
         is_counterpart = is_counterpart && message.sender_id == counterpart_id;
 
-        add_message(is_counterpart, message.message, counterpart_id, false);
+        add_message(is_counterpart, message.message, counterpart_str_id, false);
     }
 }
 
