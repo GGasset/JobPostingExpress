@@ -250,11 +250,34 @@ function send_message() {
     socket.emit('message_sent', JSON.stringify(data));
 }
 
-async function get_messages(counter_part_id, page_n) {
+async function get_messages(counterpart_id, page_n) {
     
-    let conversation = conversations[counter_part_id];
+    let conversation = conversations[counterpart_id];
     const messages_during_session = conversation[0].session_message_traffic;
     
+    const counterpart_data = counterpart_id.split('_');
+    
+    const counterpart_is_company = counterpart_data[0] == 'true';
+    const counterpart_id = parseInt(counterpart_data[1]);
+
+    const raw_messages = await fetch(
+        `/API/get_messages/${counterpart_is_company}/${counterpart_id}/${page_n}/${messages_during_session}`, 
+        {
+            credentials: 'include',
+            method: 'get'
+        }
+    )
+
+    const messages = JSON.parse(raw_messages)
+
+    for (const message of messages) {
+        const compared_counterpart_is_company = counterpart_is_company == 'true'?
+            1 : 0;
+        let is_counterpart = message.sender_is_company == counterpart_is_company;
+        is_counterpart = is_counterpart && message.sender_id == counterpart_id;
+
+        add_message(is_counterpart, message.message, counterpart_id, false);
+    }
 }
 
 function delete_empty_conversations() {
