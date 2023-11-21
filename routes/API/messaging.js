@@ -75,7 +75,7 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n/:sent_messages_
         const requesting_client_id = requester_as_company ?
             req.session.company.id : req.session.user.id;
         
-        const counterpart_as_company = req.params.is_company == true;
+        const counterpart_as_company = req.params.is_company == 'true';
         const counterpart_id = req.params.user_id;
     
         const page_n = req.params.page_n;
