@@ -273,7 +273,7 @@ async function get_messages(counterpart_id, page_n) {
     for (const message of messages) {
         const compared_counterpart_is_company = counterpart_is_company == 'true'?
             1 : 0;
-        let is_counterpart = message.sender_is_company == counterpart_is_company;
+        let is_counterpart = message.sender_is_company == compared_counterpart_is_company;
         is_counterpart = is_counterpart && message.sender_id == counterpart_id;
 
         add_message(is_counterpart, message.message, counterpart_id, false);
