@@ -52,7 +52,6 @@ io.on('connection', (connection) => {
                     Buffer.from(received.message)
                 );
                 
-                console.log('a');
                 await db.store_message(encrypted_message, id, as_company, receiver_id, receiver_is_company, pair.private_key);
 
                 const receiver_sockets = io.in(received.id);
