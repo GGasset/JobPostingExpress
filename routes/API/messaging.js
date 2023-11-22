@@ -1,3 +1,5 @@
+const crypto = require('node:crypto');
+
 const express = require("express");
 const bcrypt = require("bcrypt");
 
@@ -35,6 +37,23 @@ io.on('connection', (connection) => {
                     "message": received.message,
                     "id": client_str_id
                 }
+
+                const receiver_data = received.id.split('_');
+                const receiver_is_company = receiver_data[0] == 'true';
+                const receiver_id = parseInt(receiver_data[1]);
+
+                const pair = get_key_pair();
+                const encrypted_message = crypto.publicEncrypt(
+                    {
+                        key: pair.public_key,
+                        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                        oaepHash: 'sha256'
+                    },
+                    Buffer.from(received.message)
+                );
+                
+                console.log('a');
+                await db.store_message(encrypted_message, id, as_company, receiver_id, receiver_is_company, pair.private_key);
 
                 const receiver_sockets = io.in(received.id);
                 receiver_sockets.emit('message_received', JSON.stringify(to_send));
@@ -137,24 +156,27 @@ messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, r
     });
 });
 
-messaging_router.get("/get_private_public_key_pair", (req, res) => {
-    new Promise((resolve, reject) => {
-        const { privateKey: private_key, publicKey: public_key } = crypto.generateKeyPairSync('rsa', {
-            modulusLength: 2048,
-            publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-            },
-            privateKeyEncoding: {
+function get_key_pair() {
+    const { privateKey: private_key, publicKey: public_key } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+        },
+        privateKeyEncoding: {
             type: 'pkcs8',
             format: 'pem'
-            }
-        }); 
-        let pair = new Object();
-        pair.private_key = private_key;
-        pair.public_key = public_key;
+        }
+    }); 
+    let pair = new Object();
+    pair.private_key = private_key;
+    pair.public_key = public_key;
 
-        res.status(200).send(JSON.stringify(pair));
+    return pair;
+}
+
+messaging_router.get("/get_private_public_key_pair", (req, res) => {
+    new Promise((resolve, reject) => {
     });
 });
 

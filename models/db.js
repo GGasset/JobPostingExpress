@@ -555,6 +555,16 @@ const get_last_messages = async function(page_n, requester_id, requester_is_comp
     for (let i = 0; i < messages.length; i++) {
         const message = messages[i];
 
+        messages[i].message = crypto.privateDecrypt(
+            {
+                key: message.private_key,
+                padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                oaepHash: 'sha256'
+            },
+            Buffer.from(message.message)
+        );
+        messages[i].private_key = null;
+
         messages[i].from_counterpart = message.sender_id == counterpart_id && message.sender_is_company;
         messages[i].sender = message.sender_is_company ? 
             await get_company_info(message.sender_id) : await get_user_info_by_id(message.sender_id);
@@ -563,9 +573,9 @@ const get_last_messages = async function(page_n, requester_id, requester_is_comp
     return messages;
 }
 
-const store_message = async function(message, sender_id, sender_is_company, receiver_id, receiver_is_company, private_key) {
+const store_message = async function(encrypted_message_buffer, sender_id, sender_is_company, receiver_id, receiver_is_company, private_key) {
     await db.run("INSERT INTO messages (message, sender_id, sender_is_company, receiver_id, receiver_is_company, private_key) VALUES (?, ?, ?, ?, ?, ?);",
-        [message, sender_id, sender_is_company, receiver_id, receiver_is_company, private_key]);
+        [encrypted_message_buffer, sender_id, sender_is_company, receiver_id, receiver_is_company, private_key]);
 }
 
 const get_unread_message_count = async function(requester_id, requester_as_company) {
