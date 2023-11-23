@@ -334,7 +334,8 @@ function create_conversation(conversation_key) {
     let new_conversation = [{
         // Text that the viewer started writing
         written_text: "",
-        session_message_traffic: 0
+        session_message_traffic: 0,
+        loaded_up_to_page: 0
     }];
     return conversations[conversation_key] = new_conversation;
 }
