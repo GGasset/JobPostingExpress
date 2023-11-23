@@ -179,21 +179,4 @@ messaging_router.get("/get_private_public_key_pair", (req, res) => {
     });
 });
 
-messaging_router.post("/message/:is_company/:user_id", (req, res) => {
-    // Add end-to-end encryption and https?
-    /*
-     * Public Private key pairs using crypto-js
-     * Store pair in message, 
-     * send the decrypted version of the private key to the receiver
-     * send the public key to the sender
-    */
-
-    new Promise((resolve, reject) => {
-        let message_data = new Object();
-        //message_data.message = 
-    }).then(message_data => {
-    });
-});
-
-
 module.exports = messaging_router;

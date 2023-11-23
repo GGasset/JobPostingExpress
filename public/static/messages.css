@@ -138,3 +138,7 @@
 .scrollable {
     overflow-y: scroll;
 }
+
+.contact_counter {
+    width: 1.5rem;
+}

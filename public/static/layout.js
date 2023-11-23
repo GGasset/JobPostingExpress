@@ -6,10 +6,12 @@ window.onload = () => {
             message_div.remove();
         }, message_disappear_time_s * 1000);
 
-    if (document.querySelector("#unread_message_count") !== undefined)
+    if (document.querySelector("#unread_message_count") !== undefined) {
         set_unread_messages_label();
+        connect_to_server();
+        setup_messages();
+    }
 
-    connect_to_server();
 }
 
 function user_as_company() {

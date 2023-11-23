@@ -628,7 +628,7 @@ const get_contacts = async function(requester_id, requester_as_company) {
     for (const receiver_contact of contacts_with_received_messages) {
         const contact_as_company = receiver_contact.receiver_is_company;
         const contact_id = receiver_contact.receiver_id;
-        
+
         let contact = new Object();
         contact.last_message_id = (await db.get(
             "SELECT MAX(id) FROM messages WHERE " +
@@ -638,16 +638,16 @@ const get_contacts = async function(requester_id, requester_as_company) {
             contact_id, contact_as_company]
         ))["MAX(id)"];
         contact.user = contact_as_company ?
-                get_company_info(contact_id) :
-                get_user_info_by_id(contact_id);
+                await get_company_info(contact_id) :
+                await get_user_info_by_id(contact_id);
 
         contacts.push(contact)
     };
 
-    for (const receiver_contact of contacts_with_sent_messages) {
-        const contact_as_company = receiver_contact.receiver_is_company;
-        const contact_id = receiver_contact.receiver_id;
-        
+    for (const contact_who_sent of contacts_with_sent_messages) {
+        const contact_as_company = contact_who_sent.sender_is_company;
+        const contact_id = contact_who_sent.sender_id;
+
         let contact = new Object();
         contact.last_message_id = (await db.get(
             "SELECT MAX(id) FROM messages WHERE " +
@@ -657,13 +657,16 @@ const get_contacts = async function(requester_id, requester_as_company) {
             requester_id, requester_as_company]
         ))["MAX(id)"];
         contact.user = contact_as_company ?
-                get_company_info(contact_id) :
-                get_user_info_by_id(contact_id);
+                await get_company_info(contact_id) :
+                await get_user_info_by_id(contact_id);
+
+        contact.user.is_company_admin = undefined;
 
         contacts.push(contact)
     };
 
     for (const contact of contacts) {
+        console.log(contact)
         const contact_is_company = contact.user.is_company;
         const contact_id = contact.user.id;
         contact.unread_message_count = 

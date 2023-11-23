@@ -35,6 +35,10 @@ function connect_to_server() {
     })
 }
 
+async function setup_messages() {
+    await load_contacts();
+}
+
 async function set_unread_messages_label() {
     let as_company = user_as_company();
     let url = "/API/get_unread_messages";
@@ -90,12 +94,9 @@ async function load_contacts() {
 
     for (let i = contacts.length - 1; i >= 0; i--) {
         const contact = contacts[i];
+
         add_contact_to_frontend(contact);
     }
-
-    contacts.forEach(contact => {
-        add_contact_to_frontend(contact);
-    });
 }
 
 function add_contact_from_icon(element) {
@@ -152,7 +153,7 @@ function add_contact_to_frontend(contact) {
         "       <td style='width: 100%;'>" +
         `           ${contact.user.is_company ? `${contact.user.company_name} (Company)` : `${contact.user.first_name} ${contact.user.last_name}`}` +
         "       </td>" +
-        `       <td class="counter" id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
+        `       <td class="counter contact_counter" id="${contact.user.is_company}_${contact.user.id}_unread_count">` +
         `           ${contact.unread_message_count}` +
         `       </td>` +
         "   </tr>" +
