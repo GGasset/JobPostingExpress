@@ -1,3 +1,5 @@
+const crypto = require('node:crypto');
+
 const sanitizer = require('sanitize-html');
 
 const authentication = require('../public/server_side/authentication');
@@ -562,7 +564,7 @@ const get_last_messages = async function(page_n, requester_id, requester_is_comp
                 oaepHash: 'sha256'
             },
             Buffer.from(message.message)
-        );
+        ).toString();
         messages[i].private_key = null;
 
         messages[i].from_counterpart = message.sender_id == counterpart_id && message.sender_is_company;
@@ -666,7 +668,6 @@ const get_contacts = async function(requester_id, requester_as_company) {
     };
 
     for (const contact of contacts) {
-        console.log(contact)
         const contact_is_company = contact.user.is_company;
         const contact_id = contact.user.id;
         contact.unread_message_count = 
