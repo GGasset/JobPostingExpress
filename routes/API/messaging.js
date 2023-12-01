@@ -99,7 +99,6 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n/:sent_messages_
         const page_n = req.params.page_n;
         const sent_messages_during_session = req.params.sent_messages_during_session;
         const messages = await db.get_last_messages(page_n, requesting_client_id, requester_as_company, counterpart_id, counterpart_as_company, sent_messages_during_session);
-        
         res.status(200).send(JSON.stringify(messages));
     })
 });
@@ -107,7 +106,7 @@ messaging_router.get("/get_messages/:is_company/:user_id/:page_n/:sent_messages_
 messaging_router.get("/get_unread_messages", (req, res) => {
     new Promise(async (resolve, reject) => {
         if (!authentication.require_authentication(req, res))
-            throw "Not logged in";
+            reject("Not logged in");
 
         const as_company = req.session.as_company;
         const user_id = as_company ? req.session.company.id : req.session.user.id;
@@ -124,11 +123,11 @@ messaging_router.get("/get_unread_messages", (req, res) => {
 messaging_router.get("/get_unread_messages/:is_company/:user_id", (req, res) => {
     new Promise(async (resolve, reject) => {
         if (!authentication.require_authentication(req, res))
-            throw "Not logged in";
+            reject("Not logged in");
         
         const requester_as_company = req.session.as_company;
         const requester_id = requester_as_company ? req.session.company.id : req.session.user_id;
-        const counterpart_as_company = req.params.is_company == true;
+        const counterpart_as_company = req.params.is_company == 'true';
         const counterpart_id = req.params.user_id;
 
         let data = {
@@ -146,7 +145,7 @@ messaging_router.post("/watch_conversation/:is_company/:counterpart_id", (req, r
             let requester_as_company = req.session.as_company;
             let requester_id = requester_as_company ? 
                 req.session.company.id : req.session.user.id;
-            let counterpart_as_company = req.params.is_company == true;
+            let counterpart_as_company = req.params.is_company == 'true';
             let counterpart_id = req.params.counterpart_id;
         
             await db.mark_conversation_as_watched(requester_id, requester_as_company, counterpart_id, counterpart_as_company);

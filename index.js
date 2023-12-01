@@ -29,9 +29,8 @@ app.use(app_session);
 
 // Middleware
 app.use((req, res, next) => {
-	//console.log(`Requested "${req.url}" ${req.method}`)
 	res.on('finish', () => {
-		console.log(`${res.statusCode} "${req.url}" ${req.method}`)
+		console.log(`${res.statusCode} company? ${req.session.as_company} "${req.url}" ${req.method}`)
 	})
 	next();
 });

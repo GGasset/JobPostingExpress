@@ -1,6 +1,6 @@
 let socket = undefined;
 let conversations = new Object();
-
+let can_change_conversation = true;
 
 
 function connect_to_server() {
@@ -120,7 +120,11 @@ async function add_contact(is_company, user_id, open_DMs_div = true) {
         return;
     }
 
-    let user_info = await fetch(`/API/user_info/${is_company}/${user_id}`, {
+    let url = `/API/user_info/${is_company}/${user_id}`;
+    if (user_as_company()) {
+        url = '/company' + url;
+    }
+    let user_info = await fetch(url, {
         method: "GET"
     }).then(async raw => {
         return await raw.json();
@@ -166,6 +170,10 @@ function add_contact_to_frontend(contact) {
 }
 
 async function open_conversation(is_company, user_id) {
+    if (!can_change_conversation) {
+        return;
+    }
+
     const contact_div = document.querySelector(`#contact_${is_company}_${user_id}`);
     if (contact_div.classList.contains('selected'))
     {
@@ -177,7 +185,7 @@ async function open_conversation(is_company, user_id) {
     contacts_col.innerHTML = contacts_col.innerHTML.replace(" selected", "");
 
     contact_div.classList.add("selected");
-    mark_conversation_as_watched(is_company, user_id);
+    await mark_conversation_as_watched(is_company, user_id);
 
     let key = `${is_company}_${user_id}`;
     let conversation = conversations[key];
@@ -186,6 +194,7 @@ async function open_conversation(is_company, user_id) {
         // Save conversation in object
 
         conversation = create_conversation(key);
+        load_more(key);
     }
 
     document.querySelector("#messages_col").hidden = false;
@@ -199,27 +208,32 @@ async function open_conversation(is_company, user_id) {
         const is_counterpart = conversation_element.is_counterpart;
         const message = conversation_element.message;
 
-        add_message(is_counterpart, message, key, false);
+        add_message(is_counterpart, message, key, true, false);
     }
+
+
 
     open_messages(true);
 }
 
-function add_message(is_counterpart, message, conversation_key, is_new_message = true) {
+function add_message(is_counterpart, message, conversation_key, is_new_message = true, add_to_conversation = true) {
     const message_data = {
             "is_counterpart": is_counterpart,
             "message": message
     };
-    if (is_new_message)
-    {
-        conversations[conversation_key].push(message_data);
-        conversations[conversation_key][0].session_message_traffic += 1;
-    }
-    else 
-    {
-        conversations[conversation_key].unshift(message_data);
-        conversations[conversation_key][0] = conversations[conversation_key][1];
-        conversations[conversation_key][1] = message_data;
+
+    if (add_to_conversation) {
+        if (is_new_message)
+        {
+            conversations[conversation_key].push(message_data);
+            conversations[conversation_key][0].session_message_traffic += 1;
+        }
+        else 
+        {
+            conversations[conversation_key].unshift(message_data);
+            conversations[conversation_key][0] = conversations[conversation_key][1];
+            conversations[conversation_key][1] = message_data;
+        }
     }
 
     const row = 
@@ -231,6 +245,34 @@ function add_message(is_counterpart, message, conversation_key, is_new_message =
 
     const messages_table = document.querySelector("#messages_table");
     messages_table.innerHTML = is_new_message ? messages_table.innerHTML + row : row + messages_table.innerHTML;
+}
+
+function add_load_more_button(str_id) {
+    let previous_load_more_button = document.querySelector('#load_more_button');
+    if (previous_load_more_button !== null) {
+        previous_load_more_button.remove();
+    }
+
+    let load_button = document.createElement('button');
+    load_button.innerHTML = 'load_more';
+    load_button.id = 'load_more_button';
+
+    load_button.addEventListener('click', async function() {
+        load_more(str_id);
+    })
+
+    let messages_table = 
+    messages_table.innerHTML = load_button.outerHTML + messages_ta;
+}
+
+async function load_more(str_id) {
+    can_change_conversation = false;
+    let returned_message_count = await get_messages(str_id, conversations[str_id][0].loaded_up_to_page);
+    conversations[str_id][0].loaded_up_to_page += 1;
+    if (returned_message_count > 0) {
+        add_load_more_button(str_id);
+    }
+    can_change_conversation = true;
 }
 
 function send_message() {
@@ -258,15 +300,19 @@ async function get_messages(counterpart_str_id, page_n) {
     const counterpart_is_company = counterpart_data[0] == 'true';
     const counterpart_id = parseInt(counterpart_data[1]);
 
+    let url = `/API/get_messages/${counterpart_is_company}/${counterpart_id}/${page_n}/${messages_during_session}`;
+    if (user_as_company()) {
+        url = '/company' + url;
+    }
     const raw_messages = await fetch(
-        `/API/get_messages/${counterpart_is_company}/${counterpart_id}/${page_n}/${messages_during_session}`, 
+        url, 
         {
             credentials: 'include',
             method: 'get'
         }
     )
 
-    const messages = JSON.parse(raw_messages)
+    const messages = await raw_messages.json();
 
     for (const message of messages) {
         const compared_counterpart_is_company = counterpart_is_company == 'true'?
@@ -276,6 +322,8 @@ async function get_messages(counterpart_str_id, page_n) {
 
         add_message(is_counterpart, message.message, counterpart_str_id, false);
     }
+
+    return messages.length;
 }
 
 function delete_empty_conversations() {
@@ -316,6 +364,11 @@ async function mark_conversation_as_watched(is_company, user_id) {
         credentials: "include",
         method: "POST"
     });
+
+    const conversation_unread_count = parseInt(document.querySelector(`#${is_company}_${user_id}_unread_count`).innerHTML);
+    const total_unread_count_element = document.querySelector('#unread_message_count');
+    const total_unread_message_count = parseInt(total_unread_count_element.innerHTML);
+    total_unread_count_element.innerHTML = total_unread_message_count - conversation_unread_count;
 
     update_unread_conversation_message_count_label(is_company, user_id, 0);
 }
