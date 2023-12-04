@@ -38,7 +38,7 @@ io.on('connection', (connection) => {
                     "id": client_str_id
                 }
 
-                const receiver_data = to_send.id.split('_');
+                const receiver_data = received.id.split('_');
                 const receiver_is_company = receiver_data[0] == 'true';
                 const receiver_id = parseInt(receiver_data[1]);
 
@@ -52,16 +52,20 @@ io.on('connection', (connection) => {
                     Buffer.from(received.message)
                 );
                 
+                /*console.log(`sender_as_company: ${as_company}`)
+                console.log(`sender_id: ${id}`)
+                console.log(`receiver_is_company: ${receiver_is_company}`)
+                console.log(`receiver_id: ${receiver_id}`)*/
                 await db.store_message(encrypted_message, id, as_company, receiver_id, receiver_is_company, pair.private_key);
 
-                const receiver_sockets = io.in(to_send.id);
+                const receiver_sockets = io.in(receiver_id.id);
                 receiver_sockets.emit('message_received', JSON.stringify(to_send));
             } catch (error) {
-                console.log(error)
+                //console.log(error)
             }
         })
     } catch (error) {
-        console.log(error)
+        //console.log(error)
         connection.disconnect(true);
     }
 });

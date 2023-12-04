@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 app.use(function(req, res, next) {
 	// If as_company get user data
 	new Promise(async function(resolve, reject) {
-		if (authentication.is_authenticated(req))
+		if (authentication.is_authenticated(req) && !req.url.includes('/public'))
 		{
 			req.session.as_company = false;
 		}
