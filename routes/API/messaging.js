@@ -58,7 +58,7 @@ io.on('connection', (connection) => {
                 console.log(`receiver_id: ${receiver_id}`)*/
                 await db.store_message(encrypted_message, id, as_company, receiver_id, receiver_is_company, pair.private_key);
 
-                const receiver_sockets = io.in(receiver_id.id);
+                const receiver_sockets = io.in(receiver_id);
                 receiver_sockets.emit('message_received', JSON.stringify(to_send));
             } catch (error) {
                 //console.log(error)
